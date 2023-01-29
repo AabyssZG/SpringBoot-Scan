@@ -5,8 +5,11 @@ from inc import output,console
 import requests, sys
 from tqdm import tqdm
 from termcolor import cprint
+import requests.packages.urllib3
+
 
 def url(urllist):
+    requests.packages.urllib3.disable_warnings()
     f1 = open("urlout.txt", "wb+")
     f1.close()
     cprint(f"================开始对目标URL测试SpringBoot信息泄露端点================", "cyan")
@@ -20,7 +23,7 @@ def url(urllist):
                 u = urllist + "/" + web
             else:
                 u = urllist + web
-            r = requests.get(u)
+            r = requests.get(u,verify=False)
             if r.status_code == 200:
                 cprint("[+]状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
                 f2 = open("urlout.txt", "a")
@@ -51,7 +54,8 @@ def file(filename):
                         u = url + "/" + web
                     else:
                         u = url + web
-                    r = requests.get(u)
+                    requests.packages.urllib3.disable_warnings()
+                    r = requests.get(u,verify=False)
                     if r.status_code == 200:
                         cprint("[+]状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
                         f2 = open("output.txt", "a")
@@ -72,7 +76,8 @@ def dump(urllist):
         urllist = urllist + "/"
     def download(url: str, fname: str):
         # 用流stream的方式获取url的数据
-        resp = requests.get(url, stream=True)
+        requests.packages.urllib3.disable_warnings()
+        resp = requests.get(url, stream=True ,verify=False)
         # 拿到文件的长度，并把total初始化为0
         total = int(resp.headers.get('content-length', 0))
         # 打开当前目录的fname文件(名字你来传入)

@@ -7,8 +7,6 @@
 
 **我还整理了一篇SpringBootd的相关渗透姿势在我的个人博客，欢迎各位师傅前来交流哈哈：[https://blog.zgsec.cn/index.php/archives/129/](https://blog.zgsec.cn/index.php/archives/129/)**
 
-
-
 # 工具使用
 ```
   ______                       __                      _______                        __
@@ -51,8 +49,12 @@
 
 **注意，本工具优化了使用者体验，不管是对单一URL扫描还是读取TXT进行批量扫描，`example.com` 和`http://example.com/` 以及`http://example.com` 都不会报错，程序会自行判断并识别**
 
-**同时，解决了SSL证书问题，可以对采用SSL证书的Spring Boot框架进行扫描（自签名证书请改成http://即可）**
+**同时，解决了SSL证书问题，可以对采用SSL证书的Spring Boot框架进行扫描（自签名证书请改成 `http://` 即可）**
 
+# 安装Python依赖库
+```
+pip3 install -r requirements.txt
+```
 
 # 工具演示
 

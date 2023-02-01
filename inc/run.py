@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python
+#!/usr/bin/env python
 # coding=utf-8
 
 from inc import output,console
@@ -23,18 +23,26 @@ def url(urllist):
                 u = urllist + "/" + web
             else:
                 u = urllist + web
-            r = requests.get(u,verify=False)
+            try:
+                requests.packages.urllib3.disable_warnings()
+                r = requests.get(u, timeout=6, verify=False)  # 设置超时6秒
+            except KeyboardInterrupt:
+                print("Ctrl + C 手动终止了进程")
+                sys.exit()
+            except:
+                cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
+                break
             if r.status_code == 200:
-                cprint("[+]状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
+                cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
                 f2 = open("urlout.txt", "a")
                 f2.write(u + '\n')
                 f2.close()
             else:
-                cprint("[-]状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u ,"yellow")
+                cprint("[-] 状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u ,"yellow")
     count = len(open("urlout.txt", 'rU').readlines())
     if count >= 1:
         print('\n')
-        cprint("[+][+][+]发现目标URL存在SpringBoot敏感信息泄露，已经导出至 urlout.txt ，共%d行记录" % count,"magenta")
+        cprint("[+][+][+] 发现目标URL存在SpringBoot敏感信息泄露，已经导出至 urlout.txt ，共%d行记录" % count,"red")
     sys.exit()
 
 def file(filename):
@@ -54,19 +62,26 @@ def file(filename):
                         u = url + "/" + web
                     else:
                         u = url + web
-                    requests.packages.urllib3.disable_warnings()
-                    r = requests.get(u,verify=False)
+                    try:
+                        requests.packages.urllib3.disable_warnings()
+                        r = requests.get(u, timeout=6 ,verify=False) #设置超时6秒
+                    except KeyboardInterrupt:
+                        print("Ctrl + C 手动终止了进程")
+                        sys.exit()
+                    except:
+                        cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
+                        break
                     if r.status_code == 200:
-                        cprint("[+]状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
+                        cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
                         f2 = open("output.txt", "a")
                         f2.write(u + '\n')
                         f2.close()
                     else:
-                        cprint("[-]状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u ,"yellow")
+                        cprint("[-] 状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u ,"yellow")
     count = len(open("output.txt", 'rU').readlines())
     if count >= 1:
         print('\n')
-        cprint("[+][+][+]发现目标TXT内存在SpringBoot敏感信息泄露，已经导出至 output.txt ，共%d行记录"%count,"magenta")
+        cprint("[+][+][+] 发现目标TXT内存在SpringBoot敏感信息泄露，已经导出至 output.txt ，共%d行记录"%count,"red")
     sys.exit()
 
 def dump(urllist):
@@ -74,6 +89,15 @@ def dump(urllist):
         urllist = str("http://") + str(urllist)
     if str(urllist[-1]) != "/":
         urllist = urllist + "/"
+    try:
+        requests.packages.urllib3.disable_warnings()
+        r = requests.get(urllist, timeout=6, verify=False)  # 设置超时6秒
+    except KeyboardInterrupt:
+        print("Ctrl + C 手动终止了进程")
+        sys.exit()
+    except:
+        cprint("[-] URL为" + urllist + "的目标积极拒绝请求，予以跳过！", "magenta")
+        sys.exit()
     def download(url: str, fname: str):
         # 用流stream的方式获取url的数据
         requests.packages.urllib3.disable_warnings()
@@ -101,38 +125,38 @@ def dump(urllist):
     url5 = urllist + "hystrix.stream"
 
     if str(requests.head(url1)) != "<Response [200]>":
-        cprint("[-]在 /actuator/heapdump 未发现heapdump敏感文件泄露" ,"yellow")
+        cprint("[-] 在 /actuator/heapdump 未发现heapdump敏感文件泄露" ,"yellow")
     else:
         url = url1
-        cprint("[+][+][+]发现 /actuator/heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"magenta")
+        cprint("[+][+][+] 发现 /actuator/heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
         download(url, "heapdump")
         sys.exit()
     if str(requests.head(url2)) != "<Response [200]>":
-        cprint("[-]在 /heapdump 未发现heapdump敏感文件泄露" ,"yellow")
+        cprint("[-] 在 /heapdump 未发现heapdump敏感文件泄露" ,"yellow")
     else:
         url = url2
-        cprint("[+][+][+]发现 /heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"magenta")
+        cprint("[+][+][+] 发现 /heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
         download(url, "heapdump")
         sys.exit()
     if str(requests.head(url3)) != "<Response [200]>":
-        cprint("[-]在 /heapdump.json 未发现heapdump敏感文件泄露" ,"yellow")
+        cprint("[-] 在 /heapdump.json 未发现heapdump敏感文件泄露" ,"yellow")
     else:
         url = url3
-        cprint("[+][+][+]发现 /heapdump.json 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"magenta")
+        cprint("[+][+][+] 发现 /heapdump.json 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
         download(url, "heapdump.json")
         sys.exit()
     if str(requests.head(url4)) != "<Response [200]>":
-        cprint("[-]在 /gateway/actuator/heapdump 未发现heapdump敏感文件泄露" ,"yellow")
+        cprint("[-] 在 /gateway/actuator/heapdump 未发现heapdump敏感文件泄露" ,"yellow")
     else:
         url = url4
-        cprint("[+][+][+]发现 /gateway/actuator/heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"magenta")
+        cprint("[+][+][+] 发现 /gateway/actuator/heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
         download(url, "heapdump")
         sys.exit()
     if str(requests.head(url5)) != ("<Response [401]>" or "<Response [200]>"):
-        cprint("[-]在 /hystrix.stream 未发现hystrix监控数据文件泄露，请手动验证","yellow")
+        cprint("[-] 在 /hystrix.stream 未发现hystrix监控数据文件泄露，请手动验证","yellow")
     else:
         url = url5
-        cprint("[+][+][+]发现 /hystrix.stream 监控数据文件泄露" + ' ' + "下载端点URL为:" + url ,"magenta")
+        cprint("[+][+][+] 发现 /hystrix.stream 监控数据文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
         download(url, "hystrix.stream")
         sys.exit()
     sys.exit()

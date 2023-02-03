@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python
+#!/usr/bin/env python
 # coding=utf-8
 
 import time, os, sys
@@ -21,7 +21,7 @@ def logo():
            /      \                                                                          
           |  $$$$$$\  _______  ______   _______      +-------------------------------------+ 
           | $$___\$$ /       \|      \ |       \     +                                     + 
-           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 1.03                       + 
+           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.01                       + 
            _\$$$$$$\| $$      /      $$| $$  | $$    + Author: 曾哥(@AabyssZG)             + 
           |  \__| $$| $$_____|  $$$$$$$| $$  | $$    + Whoami: https://github.com/AabyssZG + 
            \$$    $$ \$$     \\$$    $$| $$  | $$    +                                     + 
@@ -38,10 +38,12 @@ def usage():
         读取目标TXT进行批量信息泄露扫描:    python3 SpringBoot-Scan.py -f url.txt
         对单一URL进行漏洞扫描:             python3 SpringBoot-Scan.py -v http://example.com/
         扫描并下载SpringBoot敏感文件:      python3 SpringBoot-Scan.py -d http://example.com/
+        使用HTTP代理并自动进行连通性测试:    python3 SpringBoot-Scan.py -p <代理IP:端口>
 
 参数:
         -u  --url       对单一URL进行信息泄露扫描
         -f  --file      读取目标TXT进行批量信息泄露扫描  
         -v  --vul       对单一URL进行漏洞利用
         -d  --dump      扫描并下载SpringBoot敏感文件（可提取敏感信息）
+        -p  --proxy     使用HTTP进行代理（默认连通性测试www.baidu.com）
         ''', end='')

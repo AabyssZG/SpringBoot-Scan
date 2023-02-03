@@ -19,7 +19,8 @@ def SpringBoot_Scan_Proxy(args):
         headers = {"User-Agent": "Mozilla/5.0"}  # 响应头
         try:
             requests.packages.urllib3.disable_warnings()
-            res = requests.get(testurl, timeout=10, proxies=proxies, headers=headers)
+            res = requests.get(testurl, timeout=10, proxies=proxies, verify=False, headers=headers)
+            print(res.status_code)
             # 发起请求,返回响应码
             if res.status_code == 200:
                 print("GET www.baidu.com 状态码为:" + str(res.status_code))

@@ -27,13 +27,11 @@
            /      \
           |  $$$$$$\  _______  ______   _______      +-------------------------------------+
           | $$___\$$ /       \|      \ |       \     +                                     +
-           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 1.03                       +
+           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.01                       +
            _\$$$$$$\| $$      /      $$| $$  | $$    + Author: 曾哥(@AabyssZG)             +
           |  \__| $$| $$_____|  $$$$$$$| $$  | $$    + Whoami: https://github.com/AabyssZG +
            \$$    $$ \$$     \\$$    $$| $$  | $$    +                                     +
             \$$$$$$   \$$$$$$$ \$$$$$$$ \$$   \$$    +-------------------------------------+
-
-
 
 
 用法:
@@ -41,12 +39,14 @@
         读取目标TXT进行批量信息泄露扫描:    python3 SpringBoot-Scan.py -f url.txt
         对单一URL进行漏洞利用:             python3 SpringBoot-Scan.py -v example.com
         扫描并下载SpringBoot敏感文件:      python3 SpringBoot-Scan.py -d example.com
+        使用HTTP代理并自动进行连通性测试:    python3 SpringBoot-Scan.py -p <代理IP:端口>
 
 参数:
         -u  --url       对单一URL进行信息泄露扫描
         -f  --file      读取目标TXT进行批量信息泄露扫描
         -v  --vul       对单一URL进行漏洞利用
         -d  --dump      扫描并下载SpringBoot敏感文件（可提取敏感信息）
+        -p  --proxy     使用HTTP进行代理（默认连通性测试www.baidu.com）
 ```
 
 **注意，本工具优化了使用者体验，不管是对单一URL扫描还是读取TXT进行批量扫描，`example.com` 和`http://example.com/` 以及`http://example.com` 都不会报错，程序会自行判断并识别**
@@ -65,6 +65,20 @@ pip3 install -r requirements.txt
 Dir.txt为内置的信息泄露端点字典，我基本收集齐了Spring Boot的相关敏感信息泄露端点
 
 如果有遗漏，欢迎各位师傅跟我联系哈哈
+
+### 测试并使用代理
+
+```
+python3 SpringBoot-Scan.py -p <代理IP:端口>
+```
+
+![测试代理](./pic/测试代理.png)
+
+比如我想对单一URL进行信息泄露扫描并使用代理
+```
+python3 SpringBoot-Scan.py -u example.com -p <代理IP:端口>
+```
+同样，其他参数（`-u` / `-f` / `-u` / `-d`）均可以配合代理使用
 
 ### 对单一URL进行信息泄露扫描
 

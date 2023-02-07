@@ -77,7 +77,7 @@ def CVE_2022_22963(url, proxies):
     rsp = '"error":"Internal Server Error"'
 
     if code == 500 and rsp in text:
-        cprint(f'[+] {url} 存在编号为CVE-2022-22965的RCE漏洞，请手动反弹shell', "red")
+        cprint(f'[+] {url} 存在编号为CVE-2022-22963的RCE漏洞，请手动反弹shell', "red")
         print('\n')
     else:
         cprint("[-] CVE-2022-22963漏洞不存在", "yellow")

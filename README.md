@@ -11,6 +11,7 @@
 
 # 📝 二、TODO
 
+* [x] 由 `13exp` 师傅友情制作GUI图形化版本
 * [x] 添加支持CVE-2022-22947 (Spring Cloud Gateway SpELRCE)
 * [x] 添加支持CVE-2022-22963 (Spring Cloud Function SpEL RCE)
 * [x] 添加支持CVE-2022-22965 (Spring Core RCE)
@@ -20,6 +21,11 @@
 * [x] 随机User-Agent请求头
 * [x] 解决SSL证书问题 (自签名证书请改成 `http://` 即可)
 * [x] 智能识别目标地址 (`example.com` 和`http://example.com/` 以及`http://example.com` 都不会报错)
+
+**GUI图形化版本，由 [13exp](https://github.com/13exp/) 师傅友情制作，GUI地址：[https://github.com/13exp/SpringBoot-Scan-GUI](https://github.com/13exp/SpringBoot-Scan-GUI)**
+
+**感觉好用，师傅们可以点个Star哈哈~**
+![GUI](./pic/GUI.png)
 
 # 🚨 三、安装Python依赖库
 ```

@@ -153,4 +153,18 @@ hystrix.stream
 
 如果有师傅有其他敏感文件的目录，可以提交issues，谢谢！！！
 
-![star](https://starchart.cc/AabyssZG/SpringBoot-Scan.svg)
+# 🙏 六、感谢各位师傅
+
+## Stargazers
+
+[![Stargazers repo roster for @AabyssZG/SpringBoot-Scan](https://reporoster.com/stars/AabyssZG/SpringBoot-Scan)](https://github.com/AabyssZG/SpringBoot-Scan/stargazers)
+
+
+## Forkers
+
+[![Forkers repo roster for @AabyssZG/SpringBoot-Scan](https://reporoster.com/forks/AabyssZG/SpringBoot-Scan)](https://github.com/AabyssZG/SpringBoot-Scan/network/members)
+
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=AabyssZG/SpringBoot-Scan&type=Date)](https://star-history.com/#AabyssZG/SpringBoot-Scan&Date)

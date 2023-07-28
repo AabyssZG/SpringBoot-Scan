@@ -34,7 +34,7 @@ def url(urllist,proxies):
             try:
                 header = {"User-Agent": random.choice(ua)}
                 requests.packages.urllib3.disable_warnings()
-                r = requests.get(url=u, headers=header, timeout=6, verify=False, proxies=proxies)  # 设置超时6秒
+                r = requests.get(url=u, headers=header, timeout=16, verify=False, proxies=proxies)  # 设置超时6秒
                 if r.status_code == 503:
                     sys.exit()
             except KeyboardInterrupt:
@@ -76,7 +76,7 @@ def file(filename,proxies):
                     try:
                         header = {"User-Agent": random.choice(ua)}
                         requests.packages.urllib3.disable_warnings()
-                        r = requests.get(url=u, headers=header, timeout=6, verify=False, proxies=proxies)  # 设置超时6秒
+                        r = requests.get(url=u, headers=header, timeout=16, verify=False, proxies=proxies)  # 设置超时6秒
                     except KeyboardInterrupt:
                         print("Ctrl + C 手动终止了进程")
                         sys.exit()
@@ -103,7 +103,7 @@ def dump(urllist,proxies):
         urllist = urllist + "/"
     try:
         requests.packages.urllib3.disable_warnings()
-        r = requests.get(urllist, timeout=6, verify=False, proxies=proxies)  # 设置超时6秒
+        r = requests.get(urllist, timeout=16, verify=False, proxies=proxies)  # 设置超时6秒
         if r.status_code == 503:
             sys.exit()
     except KeyboardInterrupt:
@@ -115,7 +115,7 @@ def dump(urllist,proxies):
     def download(url: str, fname: str, proxies: str):
        # 用流stream的方式获取url的数据
         requests.packages.urllib3.disable_warnings()
-        resp = requests.get(url, timeout=6, stream=True, verify=False, proxies=proxies)
+        resp = requests.get(url, timeout=16, stream=True, verify=False, proxies=proxies)
         # 拿到文件的长度，并把total初始化为0
         total = int(resp.headers.get('content-length', 0))
         # 打开当前目录的fname文件(名字你来传入)

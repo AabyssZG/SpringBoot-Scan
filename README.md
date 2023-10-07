@@ -16,7 +16,7 @@
 * [x] 添加支持CVE-2022-22963 (Spring Cloud Function SpEL RCE)
 * [x] 添加支持CVE-2022-22965 (Spring Core RCE)
 * [x] 命令执行漏洞式支持交互式执行命令
-* [x] 验证代理是否存活
+* [x] 验证代理是否存活，并可以使用HTTP认证
 * [x] 支持使用HTTP/HTTPS代理所有流量
 * [x] 随机User-Agent请求头
 * [x] 解决SSL证书问题 (自签名证书请改成 `http://` 即可)
@@ -89,6 +89,7 @@ Dir.txt为内置的信息泄露端点字典，我基本收集齐了Spring Boot�
 
 ```
 python3 SpringBoot-Scan.py -p <代理IP:端口>
+python3 SpringBoot-Scan.py -p <HTTP认证账号:HTTP认证密码@代理IP:端口>
 ```
 
 ![测试代理](./pic/测试代理.png)

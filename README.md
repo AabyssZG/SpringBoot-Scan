@@ -158,12 +158,12 @@ hystrix.stream
 
 ## Stargazers
 
-[![Stargazers repo roster for @AabyssZG/SpringBoot-Scan](https://reporoster.com/stars/AabyssZG/SpringBoot-Scan)](https://github.com/AabyssZG/SpringBoot-Scan/stargazers)
+[![Stargazers repo roster for @AabyssZG/SpringBoot-Scan](http://reporoster.com/stars/AabyssZG/SpringBoot-Scan)](https://github.com/AabyssZG/SpringBoot-Scan/stargazers)
 
 
 ## Forkers
 
-[![Forkers repo roster for @AabyssZG/SpringBoot-Scan](https://reporoster.com/forks/AabyssZG/SpringBoot-Scan)](https://github.com/AabyssZG/SpringBoot-Scan/network/members)
+[![Forkers repo roster for @AabyssZG/SpringBoot-Scan](http://reporoster.com/forks/AabyssZG/SpringBoot-Scan)](https://github.com/AabyssZG/SpringBoot-Scan/network/members)
 
 
 ## Star History

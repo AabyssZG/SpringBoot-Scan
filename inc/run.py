@@ -20,21 +20,16 @@ ua = [
 def url(urllist,proxies):
     f1 = open("urlout.txt", "wb+")
     f1.close()
-    cprint(f"================开始对目标URL测试SpringBoot信息泄露端点================", "cyan")
+    cprint(f"======开始对目标URL测试SpringBoot信息泄露端点======", "cyan")
     with open("Dir.txt", 'r') as web:
         webs = web.readlines()
         for web in webs:
             web = web.strip()
-            if ('://' not in urllist):
-                urllist = str("http://") + str(urllist)
-            if str(urllist[-1]) != "/":
-                u = urllist + "/" + web
-            else:
-                u = urllist + web
+            u = urllist + web
             try:
                 header = {"User-Agent": random.choice(ua)}
                 requests.packages.urllib3.disable_warnings()
-                r = requests.get(url=u, headers=header, timeout=16, verify=False, proxies=proxies)  # 设置超时6秒
+                r = requests.get(url=u, headers=header, timeout=6, verify=False, proxies=proxies)  # 设置超时6秒
                 if r.status_code == 503:
                     sys.exit()
             except KeyboardInterrupt:
@@ -59,7 +54,7 @@ def url(urllist,proxies):
 def file(filename,proxies):
     f1 = open("output.txt", "wb+")
     f1.close()
-    cprint("================开始读取目标TXT并测试SpringBoot信息泄露端点================","cyan")
+    cprint("======开始读取目标TXT并测试SpringBoot信息泄露端点======","cyan")
     with open(filename, 'r') as temp:
         for url in temp.readlines():
             url = url.strip()
@@ -76,7 +71,7 @@ def file(filename,proxies):
                     try:
                         header = {"User-Agent": random.choice(ua)}
                         requests.packages.urllib3.disable_warnings()
-                        r = requests.get(url=u, headers=header, timeout=16, verify=False, proxies=proxies)  # 设置超时6秒
+                        r = requests.get(url=u, headers=header, timeout=6, verify=False, proxies=proxies)  # 设置超时6秒
                     except KeyboardInterrupt:
                         print("Ctrl + C 手动终止了进程")
                         sys.exit()
@@ -97,25 +92,10 @@ def file(filename,proxies):
     sys.exit()
 
 def dump(urllist,proxies):
-    if ('://' not in urllist):
-        urllist = str("http://") + str(urllist)
-    if str(urllist[-1]) != "/":
-        urllist = urllist + "/"
-    try:
-        requests.packages.urllib3.disable_warnings()
-        r = requests.get(urllist, timeout=16, verify=False, proxies=proxies)  # 设置超时6秒
-        if r.status_code == 503:
-            sys.exit()
-    except KeyboardInterrupt:
-        print("Ctrl + C 手动终止了进程")
-        sys.exit()
-    except:
-        cprint("[-] URL为 " + urllist + " 的目标积极拒绝请求，予以跳过！", "magenta")
-        sys.exit()
     def download(url: str, fname: str, proxies: str):
        # 用流stream的方式获取url的数据
         requests.packages.urllib3.disable_warnings()
-        resp = requests.get(url, timeout=16, stream=True, verify=False, proxies=proxies)
+        resp = requests.get(url, timeout=6, stream=True, verify=False, proxies=proxies)
         # 拿到文件的长度，并把total初始化为0
         total = int(resp.headers.get('content-length', 0))
         # 打开当前目录的fname文件(名字你来传入)
@@ -130,7 +110,7 @@ def dump(urllist,proxies):
             for data in resp.iter_content(chunk_size=1024):
                 size = file.write(data)
                 bar.update(size)
-    cprint("================开始对目标URL测试SpringBoot敏感文件泄露并下载================","cyan")
+    cprint("======开始对目标URL测试SpringBoot敏感文件泄露并下载======","cyan")
     # 下载文件，并传入文件名
     url1 = urllist + "actuator/heapdump"
     url2 = urllist + "heapdump"

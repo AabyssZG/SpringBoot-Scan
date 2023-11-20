@@ -36,7 +36,6 @@ actuator/resolveAttributes
 actuator/scheduledtasks
 actuator/sessions
 actuator/springWebflow
-actuator/shutdown
 actuator/sso
 actuator/ssoSessions
 actuator/statistics
@@ -106,7 +105,6 @@ prometheus
 refresh
 scheduledtasks
 sessions
-shutdown
 spring-security-oauth-resource/swagger-ui.html
 spring-security-rest/api/swagger-ui.html
 static/swagger.json

@@ -45,7 +45,7 @@ def url(urllist,proxies):
                 f2.close()
             else:
                 cprint("[-] 状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u ,"yellow")
-    count = len(open("urlout.txt", 'rU').readlines())
+    count = len(open("urlout.txt", 'r').readlines())
     if count >= 1:
         print('\n')
         cprint("[+][+][+] 发现目标URL存在SpringBoot敏感信息泄露，已经导出至 urlout.txt ，共%d行记录" % count,"red")
@@ -85,7 +85,7 @@ def file(filename,proxies):
                         f2.close()
                     else:
                         cprint("[-] 状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u ,"yellow")
-    count = len(open("output.txt", 'rU').readlines())
+    count = len(open("output.txt", 'r').readlines())
     if count >= 1:
         print('\n')
         cprint("[+][+][+] 发现目标TXT内存在SpringBoot敏感信息泄露，已经导出至 output.txt ，共%d行记录"%count,"red")

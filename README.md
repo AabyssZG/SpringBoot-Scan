@@ -36,7 +36,13 @@
 
 # 🚨 三、安装Python依赖库
 ```
-pip3 install -r requirements.txt
+pip install -r requirements.txt
+```
+
+如果pip安装速度慢，可以采用国内源进行安装：
+
+```
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
 # 🐉 四、工具使用

@@ -29,7 +29,7 @@ def url(urllist,proxies):
             try:
                 header = {"User-Agent": random.choice(ua)}
                 requests.packages.urllib3.disable_warnings()
-                r = requests.get(url=u, headers=header, timeout=6, verify=False, proxies=proxies)  # 设置超时6秒
+                r = requests.get(url=u, headers=header, timeout=6, allow_redirects=False, verify=False, proxies=proxies)  # 设置超时6秒
                 if r.status_code == 503:
                     sys.exit()
             except KeyboardInterrupt:
@@ -71,7 +71,7 @@ def file(filename,proxies):
                     try:
                         header = {"User-Agent": random.choice(ua)}
                         requests.packages.urllib3.disable_warnings()
-                        r = requests.get(url=u, headers=header, timeout=6, verify=False, proxies=proxies)  # 设置超时6秒
+                        r = requests.get(url=u, headers=header, timeout=6, allow_redirects=False, verify=False, proxies=proxies)  # 设置超时6秒
                     except KeyboardInterrupt:
                         print("Ctrl + C 手动终止了进程")
                         sys.exit()

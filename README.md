@@ -17,11 +17,11 @@
 * [x] 添加支持CVE-2021-21234 (任意文件读取漏洞)
 * [x] 支持自动对Spring进行指纹识别
 * [x] 在漏洞利用模块，对错误进行输出为 `error.log`
-* [x] 支持使用带认证的HTTP代理
+* [x] 支持使用带认证的HTTP代理节点，自动检测节点状态
 * [x] 由 `13exp` 师傅友情制作GUI图形化版本
-* [x] 添加支持CVE-2022-22947 (Spring Cloud Gateway SpELRCE)
-* [x] 添加支持CVE-2022-22963 (Spring Cloud Function SpEL RCE)
-* [x] 添加支持CVE-2022-22965 (Spring Core RCE)
+* [x] 添加支持CVE-2022-22947 (Spring Cloud Gateway SpELRCE漏洞)
+* [x] 添加支持CVE-2022-22963 (Spring Cloud Function SpEL RCE漏洞)
+* [x] 添加支持CVE-2022-22965 (Spring Core RCE漏洞)
 * [x] 命令执行漏洞式支持交互式执行命令
 * [x] 验证代理是否存活，并可以使用HTTP认证
 * [x] 支持使用HTTP/HTTPS代理所有流量
@@ -58,7 +58,7 @@ pip3 install -r requirements.txt
            /      \
           |  $$$$$$\  _______  ______   _______      +-------------------------------------+
           | $$___\$$ /       \|      \ |       \     +                                     +
-           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.10                       +
+           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.12                       +
            _\$$$$$$\| $$      /      $$| $$  | $$    + Author: 曾哥(@AabyssZG)             +
           |  \__| $$| $$_____|  $$$$$$$| $$  | $$    + Whoami: https://github.com/AabyssZG +
            \$$    $$ \$$     \\$$    $$| $$  | $$    +                                     +

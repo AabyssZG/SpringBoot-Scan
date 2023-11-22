@@ -31,8 +31,10 @@
 
 **GUI图形化版本，由 [13exp](https://github.com/13exp/) 师傅友情制作，GUI地址：[https://github.com/13exp/SpringBoot-Scan-GUI](https://github.com/13exp/SpringBoot-Scan-GUI)**
 
-**感觉好用，师傅们可以点个Star哈哈~**
 ![GUI](./pic/GUI.png)
+
+**注：因为本项目的 `vul.py` 和GUI项目均包含漏洞利用模块，杀软报毒和查杀为正常情况。如果觉得工具不错，师傅们可以点个Star哈哈~**
+
 
 # 🚨 三、安装Python依赖库
 ```

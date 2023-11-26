@@ -44,10 +44,13 @@ actuator/threaddump
 actuator/trace
 auditevents
 autoconfig
+api
 api.html
 api/index.html
 api/swagger-ui.html
 api/v2/api-docs
+api/v2;%0A/api-docs
+api/v2;%252Ftest/api-docs
 api-docs
 beans
 caches

@@ -1,3 +1,4 @@
+api-docs
 actuator
 actuator/auditLog
 actuator/auditevents
@@ -42,10 +43,12 @@ actuator/statistics
 actuator/status
 actuator/threaddump
 actuator/trace
+actuator/env.css
 auditevents
 autoconfig
 api
 api.html
+api/actuator
 api/index.html
 api/swagger-ui.html
 api/v2/api-docs
@@ -66,6 +69,7 @@ dubbo-provider/distv2/index.html
 dump
 entity/all
 env
+env.css
 env/(name)
 eureka
 flyway
@@ -88,8 +92,8 @@ gateway/actuator/scheduledtasks
 gateway/actuator/swagger-ui.html
 gateway/actuator/threaddump
 gateway/actuator/trace
+gateway/routes
 health
-heapdump.json
 httptrace
 hystrix
 info
@@ -106,6 +110,8 @@ liquibase
 metrics
 mappings
 monitor
+nacos
+prod-api/actuator
 prometheus
 refresh
 scheduledtasks
@@ -130,6 +136,7 @@ template/swagger-ui.html
 trace
 user/swagger-ui.html
 version
+v1/swagger-resources
 v1.1/swagger-ui.html
 v1.1;%0A/api-docs
 v1.2/swagger-ui.html
@@ -156,6 +163,7 @@ v2.2/swagger-ui.html
 v2.2;%0A/api-docs
 v2.3/swagger-ui.html
 v2.3;%0A/api-docs
+v1/swagger.json
 v2/swagger.json
 v2;%0A/api-docs
 v2;%252Ftest/api-docs

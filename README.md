@@ -36,7 +36,6 @@
 
 **注：因为本项目的 `vul.py` 和GUI项目均包含漏洞利用模块，杀软报毒和查杀为正常情况。如果觉得工具不错，师傅们可以点个Star哈哈~**
 
-
 # 🚨 三、安装Python依赖库
 ```
 pip install -r requirements.txt
@@ -49,6 +48,15 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
 # 🐉 四、工具使用
+
+如何找到互联网上的Spring框架，Fofa语法如下：
+
+```
+icon_hash="116323821"||body="Whitelabel Error Page"
+```
+
+工具的参数如下：
+
 ```
 # python3 SpringBoot-Scan.py
   ______                       __                      _______                        __
@@ -95,9 +103,9 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 # 🛸 五、工具演示
 
-### 0# 信息泄露字典
+### 0# 端点爆破
 
-Dir.txt为内置的信息泄露端点字典，我基本收集齐了Spring Boot的相关敏感信息泄露端点
+Dir.txt为内置的Spring端点爆破字典，我基本收集齐了Spring Boot的相关敏感信息泄露端点
 
 如果有遗漏，欢迎各位师傅跟我联系哈哈
 
@@ -117,7 +125,7 @@ python3 SpringBoot-Scan.py -p <HTTP认证账号:HTTP认证密码@代理IP:端口
 ```
 同样，其他参数（`-u` / `-f` / `-u` / `-d`）均可以配合代理使用
 
-### 2# 对单一URL进行信息泄露扫描
+### 2# 对单一URL进行敏感端点爆破
 
 ```
 python3 SpringBoot-Scan.py -u example.com

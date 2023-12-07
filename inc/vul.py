@@ -357,13 +357,28 @@ def Eureka_xstream_RCE(url,proxies):
         f2.close()
 
 def vul(url,proxies):
-    CVE_2021_21234(url, proxies)
-    CVE_2022_22947(url, proxies)
-    CVE_2022_22963(url, proxies)
-    CVE_2022_22965(url, proxies)
-    SnakeYAML_RCE(url, proxies)
-    JolokiaRCE(url,proxies)
-    JeeSpring_2023(url, proxies)
-    Eureka_xstream_RCE(url,proxies)
+    functions = {
+        1: CVE_2021_21234,
+        2: CVE_2022_22947,
+        3: CVE_2022_22963,
+        4: CVE_2022_22965,
+        5: SnakeYAML_RCE,
+        6: JolokiaRCE,
+        7: JeeSpring_2023,
+        8: Eureka_xstream_RCE,
+    }
+    cprint("[+] 目前漏洞库内容如下：","green")
+    for num, func in functions.items():
+        print(f"{num}. {func.__name__}")
+    choices = input("\n请输入要检测的漏洞 (例子：1,3,5 直接回车即检测全部漏洞): ")
+    if choices == '':
+        choices = "1,2,3,4,5,6,7,8"
+    choices = [int(choice) for choice in choices.split(',')]
+    for choice in choices:
+        selected_func = functions.get(choice)
+        if selected_func:
+            selected_func(url, proxies)
+        else:
+            print(f"输入错误，请重新输入: {choice}")
     cprint("后续会加入更多漏洞利用模块，请师傅们敬请期待~", "red")
     sys.exit()

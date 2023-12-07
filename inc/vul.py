@@ -369,7 +369,7 @@ def vul(url,proxies):
     }
     cprint("[+] 目前漏洞库内容如下：","green")
     for num, func in functions.items():
-        print(f"{num}. {func.__name__}")
+        print(f" {num}: {func.__name__}")
     try:
         choices = input("\n请输入要检测的漏洞 (例子：1,3,5 直接回车即检测全部漏洞): ")
         if choices == '':

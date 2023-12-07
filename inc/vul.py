@@ -370,15 +370,20 @@ def vul(url,proxies):
     cprint("[+] 目前漏洞库内容如下：","green")
     for num, func in functions.items():
         print(f"{num}. {func.__name__}")
-    choices = input("\n请输入要检测的漏洞 (例子：1,3,5 直接回车即检测全部漏洞): ")
-    if choices == '':
-        choices = "1,2,3,4,5,6,7,8"
-    choices = [int(choice) for choice in choices.split(',')]
+    try:
+        choices = input("\n请输入要检测的漏洞 (例子：1,3,5 直接回车即检测全部漏洞): ")
+        if choices == '':
+            choices = "1,2,3,4,5,6,7,8"
+        choices = [int(choice) for choice in choices.split(',')]
+    except Exception as e:
+        print("请不要输入无意义的字符串")
+        sys.exit()
     for choice in choices:
         selected_func = functions.get(choice)
         if selected_func:
             selected_func(url, proxies)
         else:
-            print(f"输入错误，请重新输入: {choice}")
+            print(f"{choice} 输入错误，请重新输入漏洞选择模块\n")
+            break
     cprint("后续会加入更多漏洞利用模块，请师傅们敬请期待~", "red")
     sys.exit()

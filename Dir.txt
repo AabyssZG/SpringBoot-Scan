@@ -134,6 +134,7 @@ system/druid/index.html
 threaddump
 template/swagger-ui.html
 trace
+users
 user/swagger-ui.html
 version
 v1/swagger-resources

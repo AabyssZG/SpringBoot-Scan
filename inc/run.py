@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
+  ################
+ #   AabyssZG   #
+################
 
 from inc import output,console
 import requests, sys, random
@@ -37,7 +40,7 @@ def url(urllist,proxies):
                 sys.exit()
             except:
                 cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
-                break
+                #break
             if r.status_code == 200:
                 cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
                 f2 = open("urlout.txt", "a")
@@ -77,7 +80,7 @@ def file(filename,proxies):
                         sys.exit()
                     except:
                         cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
-                        break
+                        #break
                     if r.status_code == 200:
                         cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
                         f2 = open("output.txt", "a")

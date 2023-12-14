@@ -41,11 +41,13 @@ def url(urllist,proxies):
             except:
                 cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
                 #break
-            if r.status_code == 200:
+            if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text)):
                 cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
                 f2 = open("urlout.txt", "a")
                 f2.write(u + '\n')
                 f2.close()
+            elif(r.status_code == 200):
+                cprint("[+] 状态码%d" % r.status_code + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"magenta")
             else:
                 cprint("[-] 状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u ,"yellow")
     count = len(open("urlout.txt", 'r').readlines())
@@ -81,11 +83,13 @@ def file(filename,proxies):
                     except:
                         cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
                         #break
-                    if r.status_code == 200:
+                    if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text)):
                         cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
                         f2 = open("output.txt", "a")
                         f2.write(u + '\n')
                         f2.close()
+                    elif(r.status_code == 200):
+                        cprint("[+] 状态码%d" % r.status_code + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"magenta")
                     else:
                         cprint("[-] 状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u ,"yellow")
     count = len(open("output.txt", 'r').readlines())

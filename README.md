@@ -62,13 +62,19 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 # 🐉 四、工具使用
 
-如何找到互联网上的Spring框架，Fofa语法如下：
+如何找到互联网上的Spring框架，ZoomEye语法如下：
+
+```
+app:"Spring Framework"
+```
+
+Fofa语法如下：
 
 ```
 icon_hash="116323821"||body="Whitelabel Error Page"
 ```
 
-工具的参数如下：
+本工具的参数如下：
 
 ```
 # python3 SpringBoot-Scan.py

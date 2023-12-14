@@ -138,6 +138,7 @@ users
 user/swagger-ui.html
 version
 v1/swagger-resources
+v2/swagger-resources
 v1.1/swagger-ui.html
 v1.1;%0A/api-docs
 v1.2/swagger-ui.html
@@ -166,7 +167,10 @@ v2.3/swagger-ui.html
 v2.3;%0A/api-docs
 v1/swagger.json
 v2/swagger.json
+v3/swagger.json
 v2;%0A/api-docs
+v3;%0A/api-docs
 v2;%252Ftest/api-docs
+v3;%252Ftest/api-docs
 webpage/system/druid/index.html
 %20/swagger-ui.html

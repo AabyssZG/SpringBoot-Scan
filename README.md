@@ -109,6 +109,7 @@ icon_hash="116323821"||body="Whitelabel Error Page"
         对单一URL进行漏洞利用:             python3 SpringBoot-Scan.py -v example.com
         扫描并下载SpringBoot敏感文件:      python3 SpringBoot-Scan.py -d example.com
         使用HTTP代理并自动进行连通性测试:    python3 SpringBoot-Scan.py -p <代理IP:端口>
+        通过ZoomEye密钥进行API下载数据:      python3 SpringBoot-Scan.py -z <ZoomEye的API-KEY>
 
 参数:
         -u  --url       对单一URL进行信息泄露扫描
@@ -116,15 +117,22 @@ icon_hash="116323821"||body="Whitelabel Error Page"
         -v  --vul       对单一URL进行漏洞利用
         -d  --dump      扫描并下载SpringBoot敏感文件（可提取敏感信息）
         -p  --proxy     使用HTTP进行代理（默认连通性测试www.baidu.com）
+        -z  --zoomeye   通过对接ZoomEye的API批量下载Spring的资产测绘数据
 ```
 
 # 🛸 五、工具演示
 
-### 0# 端点爆破
+### 0# 通过ZoomEye进行Spring资产测绘
 
-Dir.txt为内置的Spring端点爆破字典，我基本收集齐了Spring Boot的相关敏感信息泄露端点
+本工具专门对接了ZoomEye的API接口，使用API-KEY即可批量下载Spring的资产测绘数据：
 
-如果有遗漏，欢迎各位师傅跟我联系哈哈
+```
+python3 SpringBoot-Scan.py -z <ZoomEye的API-KEY>
+```
+
+![ZoomEye](./pic/ZoomEye.png)
+
+**注：资产测绘结束后，会把通过API下载的结果导出到 `zoomout.txt`，就可以使用其他参数进行操作啦**
 
 ### 1# 测试并使用代理
 
@@ -144,13 +152,17 @@ python3 SpringBoot-Scan.py -p <HTTP认证账号:HTTP认证密码@代理IP:端口
 
 ### 2# 对单一URL进行敏感端点爆破
 
+`Dir.txt` 为内置的Spring端点爆破字典，我基本收集齐了Spring Boot的相关敏感信息泄露端点
+
+如果有遗漏，欢迎各位师傅跟我联系哈哈
+
 ```
 python3 SpringBoot-Scan.py -u example.com
 ```
 
 ![扫描单一URL](./pic/扫描单一URL.png)
 
-**注：扫描结束后，会把成功的结果导出为同目录下的urlout.txt**
+**注：扫描结束后，会把成功的结果导出为同目录下的 `urlout.txt`**
 
 ### 3# 读取目标TXT进行批量信息泄露扫描
 

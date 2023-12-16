@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
+  ################
+ #   AabyssZG   #
+################
 
 from inc import output,run,vul,console
 import requests, sys
@@ -34,10 +37,8 @@ def SpringBoot_Scan_Proxy(args):
     else:
         proxies = ''
 
-    if (args.url or args.file or args.vul or args.dump):
+    if (args.url or args.file or args.vul or args.dump or args.zoomeye):
         console.SpringBoot_Scan_console(args, proxies)
     else:
         output.usage()
         sys.exit()
-
-

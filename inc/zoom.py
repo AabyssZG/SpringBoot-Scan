@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python
+#!/usr/bin/env python
 # coding=utf-8
   ################
  #   AabyssZG   #
@@ -36,7 +36,12 @@ def Key_Dowload(key,proxies,choices):
         "API-KEY": key,
         "Content-Type": "application/x-www-form-urlencoded"
         }
-    pages = (choices//20) + 1
+    pagesys = (choices%20)
+    pageszc = (choices//20)
+    if pagesys > 0:
+        pages = pageszc + 1
+    else:
+        pages = pageszc
     i = 1
     f2 = open("zoomout.txt", "wb+")
     f2.close()
@@ -80,6 +85,7 @@ def Key_Test(key,proxies,choices):
         else:
             cprint("[-] API返回状态码为 %d" % testre.status_code,"yellow")
             cprint("[-] 请根据返回的状态码，参考官方手册：https://www.zoomeye.org/doc","yellow")
+            sys.exit()
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()

@@ -3,7 +3,7 @@
 # ✈️ 一、工具概述
 日常渗透过程中，经常会碰到Spring Boot搭建的微服务，于是就想做一个针对Spring Boot的开源渗透框架，主要用作扫描Spring Boot的敏感信息泄露端点，并可以直接测试Spring的相关高危漏洞。于是，就写了这么一个工具：SpringBoot-Scan  【简称：“SB-Scan”（错乱】
 
-**当前工具版本号：V2.20-2023/12/16**
+**当前工具版本号：V2.21-2023/12/22**
 
 **我还整理了一篇SpringBoot的相关渗透姿势在我的个人博客，欢迎各位师傅前来交流哈哈：[https://blog.zgsec.cn/archives/129.html](https://blog.zgsec.cn/archives/129.html)**
 
@@ -27,6 +27,7 @@
 
 ## 功能支持的更新
 
+* [x] 新增Fofa资产测绘导出模块，自动对接API接口将资产导出至 `fofaout.txt`
 * [x] 新增ZoomEye资产测绘导出模块，自动对接API接口将资产导出至 `zoomout.txt`
 * [x] 在Spring端点爆破的时候，新增过滤一些无效回显的页面，提高工作效率
 * [x] 对端点爆破字典进行优化，增加一些绕过语句，如果有补充欢迎提交
@@ -96,7 +97,7 @@ icon_hash="116323821"||body="Whitelabel Error Page"
            /      \
           |  $$$$$$\  _______  ______   _______      +-------------------------------------+
           | $$___\$$ /       \|      \ |       \     +                                     +
-           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.20                       +
+           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.21                       +
            _\$$$$$$\| $$      /      $$| $$  | $$    + Author: 曾哥(@AabyssZG)             +
           |  \__| $$| $$_____|  $$$$$$$| $$  | $$    + Whoami: https://github.com/AabyssZG +
            \$$    $$ \$$     \\$$    $$| $$  | $$    +                                     +
@@ -105,24 +106,19 @@ icon_hash="116323821"||body="Whitelabel Error Page"
 
 用法:
         对单一URL进行信息泄露扫描:         python3 SpringBoot-Scan.py -u example.com
-        读取目标TXT进行批量信息泄露扫描:    python3 SpringBoot-Scan.py -f url.txt
+        读取目标TXT进行批量信息泄露扫描:    python3 SpringBoot-Scan.py -uf url.txt
         对单一URL进行漏洞利用:             python3 SpringBoot-Scan.py -v example.com
         扫描并下载SpringBoot敏感文件:      python3 SpringBoot-Scan.py -d example.com
         使用HTTP代理并自动进行连通性测试:    python3 SpringBoot-Scan.py -p <代理IP:端口>
         通过ZoomEye密钥进行API下载数据:      python3 SpringBoot-Scan.py -z <ZoomEye的API-KEY>
-
-参数:
-        -u  --url       对单一URL进行信息泄露扫描
-        -f  --file      读取目标TXT进行批量信息泄露扫描
-        -v  --vul       对单一URL进行漏洞利用
-        -d  --dump      扫描并下载SpringBoot敏感文件（可提取敏感信息）
-        -p  --proxy     使用HTTP进行代理（默认连通性测试www.baidu.com）
-        -z  --zoomeye   通过对接ZoomEye的API批量下载Spring的资产测绘数据
+        通过Fofa密钥进行API下载数据:         python3 SpringBoot-Scan.py -f <Fofa的API-KEY>
 ```
 
 # 🛸 五、工具演示
 
-### 0# 通过ZoomEye进行Spring资产测绘
+## 0# Spring资产测绘
+
+### 通过ZoomEye进行Spring资产测绘
 
 本工具专门对接了ZoomEye的API接口，使用API-KEY即可批量下载Spring的资产测绘数据：
 
@@ -134,7 +130,19 @@ python3 SpringBoot-Scan.py -z <ZoomEye的API-KEY>
 
 **注：资产测绘结束后，会把通过API下载的结果导出到 `zoomout.txt`，就可以使用其他参数进行操作啦**
 
-### 1# 测试并使用代理
+### 通过Fofa进行Spring资产测绘
+
+本工具专门对接了Fofa的API接口，使用API-KEY即可批量下载Spring的资产测绘数据：
+
+```
+python3 SpringBoot-Scan.py -f <Fofa的API-KEY>
+```
+
+![Fofa](./pic/Fofa.png)
+
+**注：资产测绘结束后，会把通过API下载的结果导出到 `fofaout.txt`，就可以使用其他参数进行操作啦**
+
+## 1# 测试并使用代理
 
 ```
 python3 SpringBoot-Scan.py -p <代理IP:端口>
@@ -150,7 +158,7 @@ python3 SpringBoot-Scan.py -p <HTTP认证账号:HTTP认证密码@代理IP:端口
 ```
 同样，其他参数（`-u` / `-f` / `-u` / `-d`）均可以配合代理使用
 
-### 2# 对单一URL进行敏感端点爆破
+## 2# 对单一URL进行敏感端点爆破
 
 `Dir.txt` 为内置的Spring端点爆破字典，我基本收集齐了Spring Boot的相关敏感信息泄露端点
 
@@ -164,17 +172,17 @@ python3 SpringBoot-Scan.py -u example.com
 
 **注：扫描结束后，会把成功的结果导出为同目录下的 `urlout.txt`**
 
-### 3# 读取目标TXT进行批量信息泄露扫描
+## 3# 读取目标TXT进行批量信息泄露扫描
 
 ```
-python3 SpringBoot-Scan.py -f url.txt
+python3 SpringBoot-Scan.py -uf url.txt
 ```
 
 ![读取TXT并批量扫描](./pic/读取TXT并批量扫描.png)
 
-**注：扫描结束后，会把成功的结果导出为同目录下的output.txt**
+**注：由于版本更新，在2.21版本之后，读取TXT并扫描的参数改为 `uf`，扫描结束后，会把成功的结果导出为同目录下的 `output.txt`**
 
-### 4# 对单一URL进行漏洞利用
+## 4# 对单一URL进行漏洞利用
 
 ```
 python3 SpringBoot-Scan.py -v example.com
@@ -186,7 +194,7 @@ python3 SpringBoot-Scan.py -v example.com
 
 **同时，后期将加入更多漏洞利用内置模块，请师傅们敬请期待~**
 
-### 5# 扫描并下载SpringBoot敏感文件
+## 5# 扫描并下载SpringBoot敏感文件
 
 ```
 python3 SpringBoot-Scan.py -d example.com

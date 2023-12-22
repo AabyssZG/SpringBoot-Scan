@@ -26,7 +26,7 @@ def JSON_load(text):
         print(f"Service: {outurl}")
 
 def Key_Dowload(key,proxies,choices):
-    cprint("======通过ZoomEye密钥进行API下载数据======","green")
+    cprint("======通过Fofa密钥进行API下载数据======","green")
     Headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
         "Content-Type": "application/x-www-form-urlencoded"

@@ -37,7 +37,7 @@ def SpringBoot_Scan_Proxy(args):
     else:
         proxies = ''
 
-    if (args.url or args.urlfile or args.vul or args.dump or args.zoomeye or args.fofa):
+    if (args.url or args.urlfile or args.vul or args.vulfile or args.dump or args.zoomeye or args.fofa):
         console.SpringBoot_Scan_console(args, proxies)
     else:
         output.usage()

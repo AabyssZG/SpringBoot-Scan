@@ -13,6 +13,7 @@ def get_parser():
     p.add_argument("-u", "--url", type=str, help="对单一URL进行信息泄露扫描")
     p.add_argument("-uf", "--urlfile", type=str, help="读取目标TXT进行信息泄露扫描")
     p.add_argument("-v", "--vul", type=str, help="对单一URL进行漏洞利用")
+    p.add_argument("-vf", "--vulfile", type=str, help="读取目标TXT进行批量漏洞扫描")
     p.add_argument("-d", "--dump", type=str, help="扫描并下载SpringBoot敏感文件（可提取敏感信息）")
     p.add_argument("-p", "--proxy", type=str, default='', help="使用HTTP代理")
     p.add_argument("-z", "--zoomeye", type=str, default='', help="使用ZoomEye导出Spring框架资产")

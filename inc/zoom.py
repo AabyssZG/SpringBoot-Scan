@@ -51,11 +51,11 @@ def Key_Dowload(key,proxies,choices):
         try:
             requests.packages.urllib3.disable_warnings()
             dowloadre = requests.get(url=dowloadurl, headers=Headers, timeout=6, verify=False, proxies=proxies)
-            if (dowloadre.status_code == 200) or (testre.status_code == 201):
+            if (dowloadre.status_code == 200) or (dowloadre.status_code == 201):
                 JSON_load(dowloadre.text)
                 cprint("-" * 45, "red")
             else:
-                cprint("[-] API返回状态码为 %d" % testre.status_code,"yellow")
+                cprint("[-] API返回状态码为 %d" % dowloadre.status_code,"yellow")
                 cprint("[-] 请根据返回的状态码，参考官方手册：https://www.zoomeye.org/doc","yellow")
         except KeyboardInterrupt:
             print("Ctrl + C 手动终止了进程")

@@ -18,6 +18,7 @@ def get_parser():
     p.add_argument("-p", "--proxy", type=str, default='', help="使用HTTP代理")
     p.add_argument("-z", "--zoomeye", type=str, default='', help="使用ZoomEye导出Spring框架资产")
     p.add_argument("-f", "--fofa", type=str, default='', help="使用Fofa导出Spring框架资产")
+    p.add_argument("-y", "--hunter", type=str, default='', help="使用Hunter导出Spring框架资产")
     args = parser.parse_args()
     return args
 

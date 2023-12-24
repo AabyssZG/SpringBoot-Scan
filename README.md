@@ -22,6 +22,7 @@
 * [x] 添加支持CVE-2018-1273（Spring Data Commons RCE漏洞）
 * [x] 增加漏洞利用选择模块，可以选择单一或多个漏洞进行检测
 * [x] 命令执行漏洞式支持交互式执行命令
+* [x] 增加批量漏洞验证模块（你们一直想要的来啦）
 
 后期将加入更多漏洞利用内置模块（各位师傅能不能赏个Star嘛~ 码代码挺辛苦的哈哈）
 
@@ -97,7 +98,7 @@ icon_hash="116323821"||body="Whitelabel Error Page"
            /      \
           |  $$$$$$\  _______  ______   _______      +-------------------------------------+
           | $$___\$$ /       \|      \ |       \     +                                     +
-           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.21                       +
+           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.22                       +
            _\$$$$$$\| $$      /      $$| $$  | $$    + Author: 曾哥(@AabyssZG)             +
           |  \__| $$| $$_____|  $$$$$$$| $$  | $$    + Whoami: https://github.com/AabyssZG +
            \$$    $$ \$$     \\$$    $$| $$  | $$    +                                     +
@@ -108,6 +109,7 @@ icon_hash="116323821"||body="Whitelabel Error Page"
         对单一URL进行信息泄露扫描:         python3 SpringBoot-Scan.py -u example.com
         读取目标TXT进行批量信息泄露扫描:    python3 SpringBoot-Scan.py -uf url.txt
         对单一URL进行漏洞利用:             python3 SpringBoot-Scan.py -v example.com
+        读取目标TXT进行批量漏洞扫描：      python3 SpringBoot-Scan.py -vf url.txt
         扫描并下载SpringBoot敏感文件:      python3 SpringBoot-Scan.py -d example.com
         使用HTTP代理并自动进行连通性测试:    python3 SpringBoot-Scan.py -p <代理IP:端口>
         通过ZoomEye密钥进行API下载数据:      python3 SpringBoot-Scan.py -z <ZoomEye的API-KEY>
@@ -190,11 +192,21 @@ python3 SpringBoot-Scan.py -v example.com
 
 ![对单一URL进行漏洞利用](./pic/对单一URL进行漏洞利用.png)
 
-默认执行 `id` Payload，只是证明漏洞存在即可，有需要可以提issue来添加一个命令自定义功能
+已经实现RCE漏洞，命令自定义功能（不要拿去干坏事哦）
 
 **同时，后期将加入更多漏洞利用内置模块，请师傅们敬请期待~**
 
-## 5# 扫描并下载SpringBoot敏感文件
+## 5# 读取目标TXT进行批量漏洞扫描
+
+```
+python3 SpringBoot-Scan.py -vf url.txt
+```
+
+![Poc](./pic/Poc.png)
+
+可以自由选择漏洞库里面的漏洞进行批量验证，扫描结束后将导出成功的内容至 `vulout.txt` 内
+
+## 6# 扫描并下载SpringBoot敏感文件
 
 ```
 python3 SpringBoot-Scan.py -d example.com

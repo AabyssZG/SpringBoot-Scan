@@ -4,7 +4,7 @@
  #   AabyssZG   #
 ################
 
-from inc import output,run,vul,springcheck,zoom,fofa,poc
+from inc import output,run,vul,springcheck,zoom,fofa,poc,hunter
 import sys
 
 # 控制台-参数处理和程序调用
@@ -26,6 +26,8 @@ def SpringBoot_Scan_console(args,proxies):
         zoom.ZoomDowload(args.zoomeye,proxies)
     if args.fofa:
         fofa.FofaDowload(args.fofa,proxies)
+    if args.hunter:
+        hunter.HunterDowload(args.hunter,proxies)
     else:
         output.usage()
         sys.exit()

@@ -21,7 +21,7 @@ def logo():
            /      \                                                                          
           |  $$$$$$\  _______  ______   _______      +-------------------------------------+ 
           | $$___\$$ /       \|      \ |       \     +                                     + 
-           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.22                       + 
+           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.30                       + 
            _\$$$$$$\| $$      /      $$| $$  | $$    + Author: 曾哥(@AabyssZG)             + 
           |  \__| $$| $$_____|  $$$$$$$| $$  | $$    + Whoami: https://github.com/AabyssZG + 
            \$$    $$ \$$     \\$$    $$| $$  | $$    +                                     + 
@@ -42,6 +42,7 @@ def usage():
         使用HTTP代理并自动进行连通性测试:    python3 SpringBoot-Scan.py -p <代理IP:端口>
         通过ZoomEye密钥进行API下载数据:      python3 SpringBoot-Scan.py -z <ZoomEye的API-KEY>
         通过Fofa密钥进行API下载数据:         python3 SpringBoot-Scan.py -f <Fofa的API-KEY>
+        通过Hunter密钥进行API下载数据:       python3 SpringBoot-Scan.py -y <Hunter的API-KEY>
 
 参数:
         -u  --url       对单一URL进行信息泄露扫描
@@ -52,6 +53,7 @@ def usage():
         -p  --proxy     使用HTTP进行代理（默认连通性测试www.baidu.com）
         -z  --zoomeye   通过对接ZoomEye的API批量下载Spring的资产测绘数据
         -f  --fofa      通过对接Fofa的API批量下载Spring的资产测绘数据
+        -y  --hunter    通过对接Hunter的API批量下载Spring的资产测绘数据
 
 免责声明：
         1.如果您下载、安装、使用、修改本工具及相关代码，即表明您信任本工具

@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python
+#!/usr/bin/env python
 # coding=utf-8
   ################
  #   AabyssZG   #
@@ -38,8 +38,6 @@ def Key_Dowload(key,proxies,choices):
     else:
         pages = pageszc
     i = 1
-    f2 = open("fofaout.txt", "wb+")
-    f2.close()
     while i <= pages:
         page_url = "&page=" + str(i)
         keyurl = "https://fofa.info/api/v1/search/all?&key=" + key + "&qbase64=aWNvbl9oYXNoPSIxMTYzMjM4MjEifHxib2R5PSJXaGl0ZWxhYmVsIEVycm9yIFBhZ2Ui"
@@ -48,11 +46,11 @@ def Key_Dowload(key,proxies,choices):
         try:
             requests.packages.urllib3.disable_warnings()
             dowloadre = requests.get(url=dowloadurl, headers=Headers, timeout=10, verify=False, proxies=proxies)
-            if (dowloadre.status_code == 200) or (testre.status_code == 201):
+            if (dowloadre.status_code == 200) or (dowloadre.status_code == 201):
                 JSON_load(dowloadre.text)
                 cprint("-" * 45, "red")
             else:
-                cprint("[-] API返回状态码为 %d" % testre.status_code,"yellow")
+                cprint("[-] API返回状态码为 %d" % dowloadre.status_code,"yellow")
                 cprint("[-] 请根据返回的状态码，参考官方手册：https://fofa.info/api","yellow")
         except KeyboardInterrupt:
             print("Ctrl + C 手动终止了进程")
@@ -114,6 +112,8 @@ def FofaDowload(key,proxies):
     except Exception as e:
         print("请不要输入无意义的字符串")
         sys.exit()
+    f2 = open("fofaout.txt", "wb+")
+    f2.close()
     Key_Test(key,proxies,choices)
     count = len(open("fofaout.txt", 'r').readlines())
     if count >= 1:

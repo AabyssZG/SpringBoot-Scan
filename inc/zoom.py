@@ -43,8 +43,6 @@ def Key_Dowload(key,proxies,choices):
     else:
         pages = pageszc
     i = 1
-    f2 = open("zoomout.txt", "wb+")
-    f2.close()
     while i <= pages:
         page_url = "&page=" + str(i)
         keyurl = "https://api.zoomeye.org/host/search?query=app:\"Spring Framework\"&t=web"
@@ -109,6 +107,8 @@ def ZoomDowload(key,proxies):
     except Exception as e:
         print("请不要输入无意义的字符串")
         sys.exit()
+    f2 = open("zoomout.txt", "wb+")
+    f2.close()
     Key_Test(key,proxies,choices)
     count = len(open("zoomout.txt", 'r').readlines())
     if count >= 1:

@@ -28,9 +28,9 @@
 
 ## 功能支持的更新
 
-* [x] 新增Hunter资产测绘导出模块，自动对接API接口将资产导出至 `hunterout.txt`
-* [x] 新增Fofa资产测绘导出模块，自动对接API接口将资产导出至 `fofaout.txt`
-* [x] 新增ZoomEye资产测绘导出模块，自动对接API接口将资产导出至 `zoomout.txt`
+* [x] 新增 [Hunter资产测绘](https://hunter.qianxin.com/) 导出模块，自动对接API接口将资产导出至 `hunterout.txt`
+* [x] 新增 [Fofa资产测绘](https://fofa.info/) 导出模块，自动对接API接口将资产导出至 `fofaout.txt`
+* [x] 新增 [ZoomEye资产测绘](https://www.zoomeye.org/) 导出模块，自动对接API接口将资产导出至 `zoomout.txt`
 * [x] 在Spring端点爆破的时候，新增过滤一些无效回显的页面，提高工作效率
 * [x] 对端点爆破字典进行优化，增加一些绕过语句，如果有补充欢迎提交
 * [x] 支持自动对Spring进行指纹识别
@@ -124,7 +124,7 @@ icon_hash="116323821"||body="Whitelabel Error Page"
 
 ### 通过ZoomEye进行Spring资产测绘
 
-本工具专门对接了ZoomEye的API接口，使用API-KEY即可批量下载Spring的资产测绘数据：
+本工具专门对接了 [ZoomEye的API接口](https://www.zoomeye.org/doc)，使用API-KEY即可批量下载Spring的资产测绘数据：
 
 ```
 python3 SpringBoot-Scan.py -z <ZoomEye的API-KEY>
@@ -136,7 +136,7 @@ python3 SpringBoot-Scan.py -z <ZoomEye的API-KEY>
 
 ### 通过Fofa进行Spring资产测绘
 
-本工具专门对接了Fofa的API接口，使用API-KEY即可批量下载Spring的资产测绘数据：
+本工具专门对接了 [Fofa的API接口](https://fofa.info/api)，使用API-KEY即可批量下载Spring的资产测绘数据：
 
 ```
 python3 SpringBoot-Scan.py -f <Fofa的API-KEY>
@@ -148,7 +148,7 @@ python3 SpringBoot-Scan.py -f <Fofa的API-KEY>
 
 ### 通过Hunter鹰图进行Spring资产测绘
 
-本工具专门对接了鹰图的API接口，使用API-KEY即可批量下载Spring的资产测绘数据：
+本工具专门对接了 [鹰图的API接口](https://hunter.qianxin.com/home/helpCenter?r=5-1-2)，使用API-KEY即可批量下载Spring的资产测绘数据：
 
 ```
 python3 SpringBoot-Scan.py -y <Hunter的API-KEY>

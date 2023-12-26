@@ -172,7 +172,7 @@ python3 SpringBoot-Scan.py -p <HTTP认证账号:HTTP认证密码@代理IP:端口
 python3 SpringBoot-Scan.py -u example.com -p <代理IP:端口>
 python3 SpringBoot-Scan.py -p <HTTP认证账号:HTTP认证密码@代理IP:端口>
 ```
-同样，其他参数（`-u` / `-f` / `-u` / `-d`）均可以配合代理使用
+同样，其他参数（`-u` / `-uf` / `-v` / `-vf` / `-d`）均可以配合代理使用
 
 ## 2# 对单一URL进行敏感端点爆破
 

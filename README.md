@@ -238,6 +238,7 @@ gateway/actuator/heapdump
 heapdump
 heapdump.json
 hystrix.stream
+artemis-portal/artemis/heapdump
 ```
 
 如果有师傅有其他敏感文件的目录，可以提交issues，谢谢！！！

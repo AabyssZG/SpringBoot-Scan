@@ -41,7 +41,7 @@ def url(urllist,proxies):
             except:
                 cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
                 #break
-            if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text) and (len(r.content) != 3318)):
+            if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text) and (len(r.content) != 3318) and ('无访问权限' not in r.text)):
                 cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
                 f2 = open("urlout.txt", "a")
                 f2.write(u + '\n')
@@ -83,7 +83,7 @@ def file(filename,proxies):
                     except:
                         cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
                         #break
-                    if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text) and (len(r.content) != 3318)):
+                    if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text) and (len(r.content) != 3318) and ('无访问权限' not in r.text)):
                         cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
                         f2 = open("output.txt", "a")
                         f2.write(u + '\n')

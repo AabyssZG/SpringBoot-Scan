@@ -28,6 +28,7 @@
 
 ## 功能支持的更新
 
+* [x] 新增在敏感端点爆破爆破（单一和批量）的时候进行延时扫描，防止扫描速度太快被拦截
 * [x] 新增 [Hunter资产测绘](https://hunter.qianxin.com/) 导出模块，自动对接API接口将资产导出至 `hunterout.txt`
 * [x] 新增 [Fofa资产测绘](https://fofa.info/) 导出模块，自动对接API接口将资产导出至 `fofaout.txt`
 * [x] 新增 [ZoomEye资产测绘](https://www.zoomeye.org/) 导出模块，自动对接API接口将资产导出至 `zoomout.txt`
@@ -99,7 +100,7 @@ icon_hash="116323821"||body="Whitelabel Error Page"
            /      \
           |  $$$$$$\  _______  ______   _______      +-------------------------------------+
           | $$___\$$ /       \|      \ |       \     +                                     +
-           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.30                       +
+           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.31                       +
            _\$$$$$$\| $$      /      $$| $$  | $$    + Author: 曾哥(@AabyssZG)             +
           |  \__| $$| $$_____|  $$$$$$$| $$  | $$    + Whoami: https://github.com/AabyssZG +
            \$$    $$ \$$     \\$$    $$| $$  | $$    +                                     +
@@ -186,6 +187,8 @@ python3 SpringBoot-Scan.py -u example.com
 
 ![扫描单一URL](./pic/扫描单一URL.png)
 
+新增延时扫描选项，如果不想延时扫描输入 `0` 回车即可
+
 **注：扫描结束后，会把成功的结果导出为同目录下的 `urlout.txt`**
 
 ## 3# 读取目标TXT进行批量信息泄露扫描
@@ -195,6 +198,8 @@ python3 SpringBoot-Scan.py -uf url.txt
 ```
 
 ![读取TXT并批量扫描](./pic/读取TXT并批量扫描.png)
+
+新增延时扫描选项，如果不想延时扫描输入 `0` 回车即可
 
 **注：由于版本更新，在2.21版本之后，读取TXT并扫描的参数改为 `uf`，扫描结束后，会把成功的结果导出为同目录下的 `output.txt`**
 

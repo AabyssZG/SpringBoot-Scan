@@ -94,7 +94,6 @@ def file(filename,proxies):
                         print("Ctrl + C 手动终止了进程")
                         sys.exit()
                     except Exception as e:
-                        print(e)
                         cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
                         #break
     count = len(open("output.txt", 'r').readlines())

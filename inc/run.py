@@ -25,8 +25,8 @@ def url(urllist,proxies):
     f1.close()
     cprint(f"======开始对目标URL测试SpringBoot信息泄露端点======", "cyan")
     sleeps = input("\n是否要延时扫描 (默认0秒): ")
-    if sleeps == '':
-        sleeps = "0"
+    if sleeps == "":
+        sleeps = int("0")
     with open("Dir.txt", 'r') as web:
         webs = web.readlines()
         for web in webs:
@@ -36,7 +36,7 @@ def url(urllist,proxies):
                 header = {"User-Agent": random.choice(ua)}
                 requests.packages.urllib3.disable_warnings()
                 r = requests.get(url=u, headers=header, timeout=6, allow_redirects=False, verify=False, proxies=proxies)  # 设置超时6秒
-                sleep(int(sleeps))
+                sleep(int(float(sleeps)))
                 if r.status_code == 503:
                     sys.exit()
                 if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text) and (len(r.content) != 3318) and ('无访问权限' not in r.text) and ('认证失败' not in r.text)):
@@ -94,6 +94,7 @@ def file(filename,proxies):
                         print("Ctrl + C 手动终止了进程")
                         sys.exit()
                     except Exception as e:
+                        print(e)
                         cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
                         #break
     count = len(open("output.txt", 'r').readlines())

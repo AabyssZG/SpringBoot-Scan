@@ -53,7 +53,6 @@ def url(urllist,proxies):
                 sys.exit()
             except Exception as e:
                 cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
-                #break
     count = len(open("urlout.txt", 'r').readlines())
     if count >= 1:
         print('\n')
@@ -64,6 +63,9 @@ def file(filename,proxies):
     f1 = open("output.txt", "wb+")
     f1.close()
     cprint("======开始读取目标TXT并测试SpringBoot信息泄露端点======","cyan")
+    sleeps = input("\n是否要延时扫描 (默认0.2秒): ")
+    if sleeps == "":
+        sleeps = "0.2"
     with open(filename, 'r') as temp:
         for url in temp.readlines():
             url = url.strip()
@@ -81,6 +83,7 @@ def file(filename,proxies):
                         header = {"User-Agent": random.choice(ua)}
                         requests.packages.urllib3.disable_warnings()
                         r = requests.get(url=u, headers=header, timeout=6, allow_redirects=False, verify=False, proxies=proxies)  # 设置超时6秒
+                        sleep(int(float(sleeps)))
                         if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text) and (len(r.content) != 3318) and ('无访问权限' not in r.text) and ('认证失败' not in r.text)):
                             cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
                             f2 = open("output.txt", "a")
@@ -95,7 +98,6 @@ def file(filename,proxies):
                         sys.exit()
                     except Exception as e:
                         cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
-                        #break
     count = len(open("output.txt", 'r').readlines())
     if count >= 1:
         print('\n')

@@ -8,11 +8,11 @@ from inc import output,console
 import requests, sys, random
 from tqdm import tqdm
 from termcolor import cprint
+from time import sleep
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
-ua = [
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36,Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36",
+ua = ["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36,Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36",
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36,Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36",
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36,Mozilla/5.0 (X11; NetBSD) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36",
       "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/44.0.2403.155 Safari/537.36",
@@ -24,6 +24,9 @@ def url(urllist,proxies):
     f1 = open("urlout.txt", "wb+")
     f1.close()
     cprint(f"======开始对目标URL测试SpringBoot信息泄露端点======", "cyan")
+    sleeps = input("\n是否要延时扫描 (默认0秒): ")
+    if sleeps == '':
+        sleeps = "0"
     with open("Dir.txt", 'r') as web:
         webs = web.readlines()
         for web in webs:
@@ -33,23 +36,24 @@ def url(urllist,proxies):
                 header = {"User-Agent": random.choice(ua)}
                 requests.packages.urllib3.disable_warnings()
                 r = requests.get(url=u, headers=header, timeout=6, allow_redirects=False, verify=False, proxies=proxies)  # 设置超时6秒
+                sleep(int(sleeps))
                 if r.status_code == 503:
                     sys.exit()
+                if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text) and (len(r.content) != 3318) and ('无访问权限' not in r.text) and ('认证失败' not in r.text)):
+                    cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
+                    f2 = open("urlout.txt", "a")
+                    f2.write(u + '\n')
+                    f2.close()
+                elif(r.status_code == 200):
+                    cprint("[+] 状态码%d" % r.status_code + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"magenta")
+                else:
+                    cprint("[-] 状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u ,"yellow")
             except KeyboardInterrupt:
                 print("Ctrl + C 手动终止了进程")
                 sys.exit()
-            except:
+            except Exception as e:
                 cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
                 #break
-            if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text) and (len(r.content) != 3318) and ('无访问权限' not in r.text)):
-                cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
-                f2 = open("urlout.txt", "a")
-                f2.write(u + '\n')
-                f2.close()
-            elif(r.status_code == 200):
-                cprint("[+] 状态码%d" % r.status_code + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"magenta")
-            else:
-                cprint("[-] 状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u ,"yellow")
     count = len(open("urlout.txt", 'r').readlines())
     if count >= 1:
         print('\n')
@@ -77,21 +81,21 @@ def file(filename,proxies):
                         header = {"User-Agent": random.choice(ua)}
                         requests.packages.urllib3.disable_warnings()
                         r = requests.get(url=u, headers=header, timeout=6, allow_redirects=False, verify=False, proxies=proxies)  # 设置超时6秒
+                        if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text) and (len(r.content) != 3318) and ('无访问权限' not in r.text) and ('认证失败' not in r.text)):
+                            cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
+                            f2 = open("output.txt", "a")
+                            f2.write(u + '\n')
+                            f2.close()
+                        elif(r.status_code == 200):
+                            cprint("[+] 状态码%d" % r.status_code + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"magenta")
+                        else:
+                            cprint("[-] 状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u ,"yellow")
                     except KeyboardInterrupt:
                         print("Ctrl + C 手动终止了进程")
                         sys.exit()
-                    except:
+                    except Exception as e:
                         cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
                         #break
-                    if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text) and (len(r.content) != 3318) and ('无访问权限' not in r.text)):
-                        cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
-                        f2 = open("output.txt", "a")
-                        f2.write(u + '\n')
-                        f2.close()
-                    elif(r.status_code == 200):
-                        cprint("[+] 状态码%d" % r.status_code + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"magenta")
-                    else:
-                        cprint("[-] 状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u ,"yellow")
     count = len(open("output.txt", 'r').readlines())
     if count >= 1:
         print('\n')

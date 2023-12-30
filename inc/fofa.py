@@ -16,6 +16,9 @@ def JSON_load(text):
     # 提取ip和port信息
     ip_port_list = [service[0] for service in data["results"]]
     # 打印提取的信息
+    if ip_port_list == []:
+        cprint("[-] 没有搜索到任何资产，请确认你的语法是否正确","yellow")
+        sys.exit()
     for service in ip_port_list:
         if ("https" not in service):
             service = "http://" + service
@@ -25,7 +28,7 @@ def JSON_load(text):
         f2.close()
         print(f"Service: {outurl}")
 
-def Key_Dowload(key,proxies,choices):
+def Key_Dowload(key,proxies,choices,searchs):
     cprint("======通过Fofa密钥进行API下载数据======","green")
     Headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -40,13 +43,13 @@ def Key_Dowload(key,proxies,choices):
     i = 1
     while i <= pages:
         page_url = "&page=" + str(i)
-        keyurl = "https://fofa.info/api/v1/search/all?&key=" + key + "&qbase64=aWNvbl9oYXNoPSIxMTYzMjM4MjEifHxib2R5PSJXaGl0ZWxhYmVsIEVycm9yIFBhZ2Ui"
+        keyurl = "https://fofa.info/api/v1/search/all?&key=" + key + "&qbase64=" + str(searchs)
         dowloadurl = keyurl + page_url
         cprint("[+] 正在尝试下载第 %d 页数据" % i, "red")
         try:
             requests.packages.urllib3.disable_warnings()
             dowloadre = requests.get(url=dowloadurl, headers=Headers, timeout=10, verify=False, proxies=proxies)
-            if (dowloadre.status_code == 200) or (dowloadre.status_code == 201):
+            if ("\"error\":false" in str(dowloadre.text)):
                 JSON_load(dowloadre.text)
                 cprint("-" * 45, "red")
             else:
@@ -62,7 +65,7 @@ def Key_Dowload(key,proxies,choices):
             f2.close()
         i = i + 1
 
-def Key_Test(key,proxies,choices):
+def Key_Test(key,proxies,choices,searchs):
     cprint("======您的Fofa密钥进行API对接测试======","green")
     Headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -83,7 +86,7 @@ def Key_Test(key,proxies,choices):
                 cprint("[+] 您的账号为VIP会员", "red")
             else:
                 cprint("[.] 您的账号不是VIP会员", "yellow")
-            Key_Dowload(key,proxies,choices)
+            Key_Dowload(key,proxies,choices,searchs)
         else:
             apierror = data["errmsg"]
             cprint("[-] 发生错误，API返回结果为 %s" % apierror,"yellow")
@@ -112,9 +115,15 @@ def FofaDowload(key,proxies):
     except Exception as e:
         print("请不要输入无意义的字符串")
         sys.exit()
+    search = input("[.] 请输入要测绘的语句（默认icon_hash=\"116323821\"||body=\"Whitelabel Error Page\"）: ")
+    if search == "":
+        searchs = str("aWNvbl9oYXNoPSIxMTYzMjM4MjEifHxib2R5PSJXaGl0ZWxhYmVsIEVycm9yIFBhZ2Ui")
+    else:
+        search = base64.b64encode(search.encode("utf-8"))
+        searchs = str(search.decode('utf-8'))
     f2 = open("fofaout.txt", "wb+")
     f2.close()
-    Key_Test(key,proxies,choices)
+    Key_Test(key,proxies,choices,searchs)
     count = len(open("fofaout.txt", 'r').readlines())
     if count >= 1:
         cprint("[+][+][+] 已经将Fofa的资产结果导出至 fofaout.txt ，共%d行记录" % count,"red")

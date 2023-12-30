@@ -105,7 +105,7 @@ def FofaDowload(key,proxies):
     cprint("======开始对接Fofa接口进行Spring资产测绘======","green")
     cprint('[+] 您的Fofa密钥为：' + key ,"green")
     try:
-        choices = input("\n请输入要测绘的资产数量（默认100条）: ")
+        choices = input("\n[.] 请输入要测绘的资产数量（默认100条）: ")
         if choices == '':
             choices = "100"
         elif int(choices) <= 0:

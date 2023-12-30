@@ -15,6 +15,9 @@ def JSON_load(text):
     data = json.loads(json_str)
     # 提取ip和port信息
     ip_port_list = [(match["portinfo"]["hostname"], match["portinfo"]["service"], match["ip"], match["portinfo"]["port"]) for match in data["matches"]]
+    if ip_port_list == []:
+        cprint("[-] 没有搜索到任何资产，请确认你的语法是否正确","yellow")
+        sys.exit()
     # 打印提取的信息
     for hostname, service, ip, port in ip_port_list:
         if ("https" in service):
@@ -30,7 +33,7 @@ def JSON_load(text):
         f2.close()
         print(f"Service: {outurl}")
 
-def Key_Dowload(key,proxies,choices):
+def Key_Dowload(key,proxies,choices,searchs):
     cprint("======通过ZoomEye密钥进行API下载数据======","green")
     Headers = {
         "API-KEY": key,
@@ -45,7 +48,7 @@ def Key_Dowload(key,proxies,choices):
     i = 1
     while i <= pages:
         page_url = "&page=" + str(i)
-        keyurl = "https://api.zoomeye.org/host/search?query=app:\"Spring Framework\"&t=web"
+        keyurl = "https://api.zoomeye.org/host/search?query="+ searchs + "&t=web"
         dowloadurl = keyurl + page_url
         cprint("[+] 正在尝试下载第 %d 页数据" % i, "red")
         try:
@@ -67,7 +70,7 @@ def Key_Dowload(key,proxies,choices):
             f2.close()
         i = i + 1
 
-def Key_Test(key,proxies,choices):
+def Key_Test(key,proxies,choices,searchs):
     cprint("======您的ZoomEye密钥进行API对接测试======","green")
     Headers = {
         "API-KEY": key,
@@ -79,7 +82,7 @@ def Key_Test(key,proxies,choices):
         testre = requests.get(url=keytesturl, headers=Headers, timeout=6, verify=False, proxies=proxies)
         if (testre.status_code == 200) or (testre.status_code == 201):
             cprint("[+] 您的key有效，测试成功！", "red")
-            Key_Dowload(key,proxies,choices)
+            Key_Dowload(key,proxies,choices,searchs)
         else:
             cprint("[-] API返回状态码为 %d" % testre.status_code,"yellow")
             cprint("[-] 请根据返回的状态码，参考官方手册：https://www.zoomeye.org/doc","yellow")
@@ -107,9 +110,14 @@ def ZoomDowload(key,proxies):
     except Exception as e:
         print("请不要输入无意义的字符串")
         sys.exit()
+    search = input("[.] 请输入要测绘的语句（默认app:\"Spring Framework\"）: ")
+    if search == "":
+        searchs = str("app:\"Spring Framework\"")
+    else:
+        searchs = str(search)
     f2 = open("zoomout.txt", "wb+")
     f2.close()
-    Key_Test(key,proxies,choices)
+    Key_Test(key,proxies,choices,searchs)
     count = len(open("zoomout.txt", 'r').readlines())
     if count >= 1:
         cprint("[+][+][+] 已经将ZoomEye的资产结果导出至 zoomout.txt ，共%d行记录" % count,"red")

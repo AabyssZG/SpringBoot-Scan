@@ -28,6 +28,7 @@
 
 ## 功能支持的更新
 
+* [x] 新增支持资产测绘导出的时候自定义查询语句，更加灵活的导出目标资产数据
 * [x] 新增在敏感端点爆破爆破（单一和批量）的时候进行延时扫描，防止扫描速度太快被拦截
 * [x] 新增 [Hunter资产测绘](https://hunter.qianxin.com/) 导出模块，自动对接API接口将资产导出至 `hunterout.txt`
 * [x] 新增 [Fofa资产测绘](https://fofa.info/) 导出模块，自动对接API接口将资产导出至 `fofaout.txt`
@@ -100,7 +101,7 @@ icon_hash="116323821"||body="Whitelabel Error Page"
            /      \
           |  $$$$$$\  _______  ______   _______      +-------------------------------------+
           | $$___\$$ /       \|      \ |       \     +                                     +
-           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.32                       +
+           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.33                       +
            _\$$$$$$\| $$      /      $$| $$  | $$    + Author: 曾哥(@AabyssZG)             +
           |  \__| $$| $$_____|  $$$$$$$| $$  | $$    + Whoami: https://github.com/AabyssZG +
            \$$    $$ \$$     \\$$    $$| $$  | $$    +                                     +
@@ -133,7 +134,7 @@ python3 SpringBoot-Scan.py -z <ZoomEye的API-KEY>
 
 ![ZoomEye](./pic/ZoomEye.png)
 
-**注：资产测绘结束后，会把通过API下载的结果导出到 `zoomout.txt`，就可以使用其他参数进行操作啦**
+**注：目前该模块已经支持自定义语法的资产测绘导出；资产测绘结束后，会把通过API下载的结果导出到 `zoomout.txt`，就可以使用其他参数进行操作啦**
 
 ### 通过Fofa进行Spring资产测绘
 
@@ -145,7 +146,7 @@ python3 SpringBoot-Scan.py -f <Fofa的API-KEY>
 
 ![Fofa](./pic/Fofa.png)
 
-**注：资产测绘结束后，会把通过API下载的结果导出到 `fofaout.txt`，就可以使用其他参数进行操作啦**
+**注：目前该模块已经支持自定义语法的资产测绘导出；资产测绘结束后，会把通过API下载的结果导出到 `fofaout.txt`，就可以使用其他参数进行操作啦**
 
 ### 通过Hunter鹰图进行Spring资产测绘
 
@@ -157,7 +158,7 @@ python3 SpringBoot-Scan.py -y <Hunter的API-KEY>
 
 ![Hunter](./pic/Hunter.png)
 
-**注：资产测绘结束后，会把通过API下载的结果导出到 `hunterout.txt`，就可以使用其他参数进行操作啦**
+**注：目前该模块已经支持自定义语法的资产测绘导出；资产测绘结束后，会把通过API下载的结果导出到 `hunterout.txt`，就可以使用其他参数进行操作啦**
 
 ## 1# 测试并使用代理
 

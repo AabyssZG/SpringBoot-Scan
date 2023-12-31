@@ -5,7 +5,7 @@
 ################
 
 from inc import output,console
-import requests, sys, random
+import requests, sys, random, json
 from tqdm import tqdm
 from termcolor import cprint
 from time import sleep
@@ -20,7 +20,16 @@ ua = ["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like
       "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20130406 Firefox/23.0",
       "Opera/9.80 (Windows NT 5.1; U; zh-sg) Presto/2.9.181 Version/12.00"]
 
-def url(urllist,proxies):
+def JSON_handle(header1, header2):
+    dict1 = json.loads(str(header1).replace("'", "\""))
+    dict2 = json.loads(str(header2).replace("'", "\""))
+    # 合并两个字典
+    merged_dict = {**dict1, **dict2}
+    # 将合并后的字典转换为 JSON 字符串
+    result_json = json.dumps(merged_dict, indent=2)
+    return result_json
+
+def url(urllist, proxies, header_new):
     f1 = open("urlout.txt", "wb+")
     f1.close()
     cprint(f"======开始对目标URL测试SpringBoot信息泄露端点======", "cyan")
@@ -32,10 +41,11 @@ def url(urllist,proxies):
         for web in webs:
             web = web.strip()
             u = urllist + web
+            header = {"User-Agent": random.choice(ua)}
+            newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
             try:
-                header = {"User-Agent": random.choice(ua)}
                 requests.packages.urllib3.disable_warnings()
-                r = requests.get(url=u, headers=header, timeout=6, allow_redirects=False, verify=False, proxies=proxies)  # 设置超时6秒
+                r = requests.get(url=u, headers=newheader, timeout=6, allow_redirects=False, verify=False, proxies=proxies)  # 设置超时6秒
                 sleep(int(float(sleeps)))
                 if r.status_code == 503:
                     sys.exit()
@@ -52,6 +62,7 @@ def url(urllist,proxies):
                 print("Ctrl + C 手动终止了进程")
                 sys.exit()
             except Exception as e:
+                print(e)
                 cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
     count = len(open("urlout.txt", 'r').readlines())
     if count >= 1:
@@ -59,7 +70,7 @@ def url(urllist,proxies):
         cprint("[+][+][+] 发现目标URL存在SpringBoot敏感信息泄露，已经导出至 urlout.txt ，共%d行记录" % count,"red")
     sys.exit()
 
-def file(filename,proxies):
+def file(filename, proxies, header_new):
     f1 = open("output.txt", "wb+")
     f1.close()
     cprint("======开始读取目标TXT并测试SpringBoot信息泄露端点======","cyan")
@@ -79,10 +90,11 @@ def file(filename,proxies):
                         u = url + "/" + web
                     else:
                         u = url + web
+                    header = {"User-Agent": random.choice(ua)}
+                    newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
                     try:
-                        header = {"User-Agent": random.choice(ua)}
                         requests.packages.urllib3.disable_warnings()
-                        r = requests.get(url=u, headers=header, timeout=6, allow_redirects=False, verify=False, proxies=proxies)  # 设置超时6秒
+                        r = requests.get(url=u, headers=newheader, timeout=6, allow_redirects=False, verify=False, proxies=proxies)  # 设置超时6秒
                         sleep(int(float(sleeps)))
                         if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text) and (len(r.content) != 3318) and ('无访问权限' not in r.text) and ('认证失败' not in r.text)):
                             cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"red")
@@ -104,11 +116,11 @@ def file(filename,proxies):
         cprint("[+][+][+] 发现目标TXT内存在SpringBoot敏感信息泄露，已经导出至 output.txt ，共%d行记录"%count,"red")
     sys.exit()
 
-def dump(urllist,proxies):
-    def download(url: str, fname: str, proxies: str):
+def dump(urllist, proxies, header_new):
+    def download(url: str, fname: str, proxies: str, newheader):
        # 用流stream的方式获取url的数据
         requests.packages.urllib3.disable_warnings()
-        resp = requests.get(url, timeout=6, stream=True, verify=False, proxies=proxies)
+        resp = requests.get(url, headers=newheader, timeout=6, stream=True, verify=False, proxies=proxies)
         # 拿到文件的长度，并把total初始化为0
         total = int(resp.headers.get('content-length', 0))
         # 打开当前目录的fname文件(名字你来传入)
@@ -131,47 +143,55 @@ def dump(urllist,proxies):
     url4 = urllist + "gateway/actuator/heapdump"
     url5 = urllist + "hystrix.stream"
     url6 = urllist + "artemis-portal/artemis/heapdump"
+    header = {"User-Agent": random.choice(ua)}
+    newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
 
-    if str(requests.head(url1)) != "<Response [200]>":
-        cprint("[-] 在 /actuator/heapdump 未发现heapdump敏感文件泄露" ,"yellow")
-    else:
-        url = url1
-        cprint("[+][+][+] 发现 /actuator/heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
-        download(url, "heapdump" ,proxies)
+    try:
+        if str(requests.head(url1)) != "<Response [200]>":
+            cprint("[-] 在 /actuator/heapdump 未发现heapdump敏感文件泄露" ,"yellow")
+        else:
+            url = url1
+            cprint("[+][+][+] 发现 /actuator/heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
+            download(url, "heapdump" ,proxies, newheader)
+            sys.exit()
+        if str(requests.head(url2)) != "<Response [200]>":
+            cprint("[-] 在 /heapdump 未发现heapdump敏感文件泄露" ,"yellow")
+        else:
+            url = url2
+            cprint("[+][+][+] 发现 /heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
+            download(url, "heapdump" ,proxies, newheader)
+            sys.exit()
+        if str(requests.head(url3)) != "<Response [200]>":
+            cprint("[-] 在 /heapdump.json 未发现heapdump敏感文件泄露" ,"yellow")
+        else:
+            url = url3
+            cprint("[+][+][+] 发现 /heapdump.json 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
+            download(url, "heapdump.json" ,proxies, newheader)
+            sys.exit()
+        if str(requests.head(url4)) != "<Response [200]>":
+            cprint("[-] 在 /gateway/actuator/heapdump 未发现heapdump敏感文件泄露" ,"yellow")
+        else:
+            url = url4
+            cprint("[+][+][+] 发现 /gateway/actuator/heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
+            download(url, "heapdump" ,proxies, newheader)
+            sys.exit()
+        if str(requests.head(url5)) != ("<Response [401]>" or "<Response [200]>"):
+            cprint("[-] 在 /hystrix.stream 未发现hystrix监控数据文件泄露，请手动验证","yellow")
+        else:
+            url = url5
+            cprint("[+][+][+] 发现 /hystrix.stream 监控数据文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
+            download(url, "hystrix.stream" ,proxies, newheader)
+            sys.exit()
+        if str(requests.head(url6)) != "<Response [200]>":
+            cprint("[-] 在 /artemis-portal/artemis/heapdump 未发现heapdump监控数据文件泄露，请手动验证","yellow")
+        else:
+            url = url6
+            cprint("[+][+][+] 发现 /artemis-portal/artemis/heapdump 监控数据文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
+            download(url, "heapdump" ,proxies, newheader)
+            sys.exit()
+    except KeyboardInterrupt:
+        print("Ctrl + C 手动终止了进程")
         sys.exit()
-    if str(requests.head(url2)) != "<Response [200]>":
-        cprint("[-] 在 /heapdump 未发现heapdump敏感文件泄露" ,"yellow")
-    else:
-        url = url2
-        cprint("[+][+][+] 发现 /heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
-        download(url, "heapdump" ,proxies)
+    except Exception as e:
+        print("[-] 下载失败，请手动尝试下载")
         sys.exit()
-    if str(requests.head(url3)) != "<Response [200]>":
-        cprint("[-] 在 /heapdump.json 未发现heapdump敏感文件泄露" ,"yellow")
-    else:
-        url = url3
-        cprint("[+][+][+] 发现 /heapdump.json 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
-        download(url, "heapdump.json" ,proxies)
-        sys.exit()
-    if str(requests.head(url4)) != "<Response [200]>":
-        cprint("[-] 在 /gateway/actuator/heapdump 未发现heapdump敏感文件泄露" ,"yellow")
-    else:
-        url = url4
-        cprint("[+][+][+] 发现 /gateway/actuator/heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
-        download(url, "heapdump" ,proxies)
-        sys.exit()
-    if str(requests.head(url5)) != ("<Response [401]>" or "<Response [200]>"):
-        cprint("[-] 在 /hystrix.stream 未发现hystrix监控数据文件泄露，请手动验证","yellow")
-    else:
-        url = url5
-        cprint("[+][+][+] 发现 /hystrix.stream 监控数据文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
-        download(url, "hystrix.stream" ,proxies)
-        sys.exit()
-    if str(requests.head(url6)) != "<Response [200]>":
-        cprint("[-] 在 /artemis-portal/artemis/heapdump 未发现heapdump监控数据文件泄露，请手动验证","yellow")
-    else:
-        url = url6
-        cprint("[+][+][+] 发现 /artemis-portal/artemis/heapdump 监控数据文件泄露" + ' ' + "下载端点URL为:" + url ,"red")
-        download(url, "heapdump" ,proxies)
-        sys.exit()
-    sys.exit()

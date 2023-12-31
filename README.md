@@ -3,7 +3,7 @@
 # ✈️ 一、工具概述
 日常渗透过程中，经常会碰到Spring Boot搭建的微服务，于是就想做一个针对Spring Boot的开源渗透框架，主要用作扫描Spring Boot的敏感信息泄露端点，并可以直接测试Spring的相关高危漏洞。于是，就写了这么一个工具：SpringBoot-Scan  【简称：“SB-Scan”（错乱】
 
-**当前工具版本号：V2.32-2023/12/29**
+**当前工具版本号：V2.40-龙年元旦贺岁版-2024/01/01**
 
 **我还整理了一篇SpringBoot的相关渗透姿势在我的个人博客，欢迎各位师傅前来交流哈哈：[https://blog.zgsec.cn/archives/129.html](https://blog.zgsec.cn/archives/129.html)**
 
@@ -28,6 +28,7 @@
 
 ## 功能支持的更新
 
+* [x] 新增支持多个参数自定义HTTP头部（请求头）进行操作，功能实现啦，快来试试吧~
 * [x] 新增支持资产测绘导出的时候自定义查询语句，更加灵活的导出目标资产数据
 * [x] 新增在敏感端点爆破爆破（单一和批量）的时候进行延时扫描，防止扫描速度太快被拦截
 * [x] 新增 [Hunter资产测绘](https://hunter.qianxin.com/) 导出模块，自动对接API接口将资产导出至 `hunterout.txt`
@@ -101,7 +102,7 @@ icon_hash="116323821"||body="Whitelabel Error Page"
            /      \
           |  $$$$$$\  _______  ______   _______      +-------------------------------------+
           | $$___\$$ /       \|      \ |       \     +                                     +
-           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.33                       +
+           \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Version: 2.40                       +
            _\$$$$$$\| $$      /      $$| $$  | $$    + Author: 曾哥(@AabyssZG)             +
           |  \__| $$| $$_____|  $$$$$$$| $$  | $$    + Whoami: https://github.com/AabyssZG +
            \$$    $$ \$$     \\$$    $$| $$  | $$    +                                     +
@@ -115,6 +116,7 @@ icon_hash="116323821"||body="Whitelabel Error Page"
         读取目标TXT进行批量漏洞扫描：      python3 SpringBoot-Scan.py -vf url.txt
         扫描并下载SpringBoot敏感文件:      python3 SpringBoot-Scan.py -d example.com
         使用HTTP代理并自动进行连通性测试:    python3 SpringBoot-Scan.py -p <代理IP:端口>
+        从TXT文件中导入自定义HTTP头部:       python3 SpringBoot-Scan.py -t header.txt
         通过ZoomEye密钥进行API下载数据:      python3 SpringBoot-Scan.py -z <ZoomEye的API-KEY>
         通过Fofa密钥进行API下载数据:         python3 SpringBoot-Scan.py -f <Fofa的API-KEY>
         通过Hunter密钥进行API下载数据:       python3 SpringBoot-Scan.py -y <Hunter的API-KEY>
@@ -160,7 +162,9 @@ python3 SpringBoot-Scan.py -y <Hunter的API-KEY>
 
 **注：目前该模块已经支持自定义语法的资产测绘导出；资产测绘结束后，会把通过API下载的结果导出到 `hunterout.txt`，就可以使用其他参数进行操作啦**
 
-## 1# 测试并使用代理
+## 1# 测试并使用代理和自定义HTTP头部
+
+### 测试并使用代理
 
 ```
 python3 SpringBoot-Scan.py -p <代理IP:端口>
@@ -175,6 +179,16 @@ python3 SpringBoot-Scan.py -u example.com -p <代理IP:端口>
 python3 SpringBoot-Scan.py -p <HTTP认证账号:HTTP认证密码@代理IP:端口>
 ```
 同样，其他参数（`-u` / `-uf` / `-v` / `-vf` / `-d`）均可以配合代理使用
+
+### 测试并使用自定义HTTP头部（自定义请求头）
+
+```
+python3 SpringBoot-Scan.py -t header.txt
+```
+
+![Headers](./pic/Headers.png)
+
+使用该自定义HTTP头部功能请自行更改 `header.txt` 内的内容，允许（`-u` / `-uf` / `-v` / `-d`）参数使用，因为批量漏洞扫描没有明确需求故没加入该功能
 
 ## 2# 对单一URL进行敏感端点爆破
 

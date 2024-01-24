@@ -110,6 +110,7 @@ def file(filename, proxies, header_new):
                         sys.exit()
                     except Exception as e:
                         cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
+                        break
     count = len(open("output.txt", 'r').readlines())
     if count >= 1:
         print('\n')

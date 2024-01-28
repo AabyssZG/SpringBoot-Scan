@@ -149,7 +149,7 @@ async def file_main(urlfile, proxies, header_new):
         sleeps = "0"
     else:
         sleeps = int(sleeps)
-    max_concurrency = input("\n请输入最大并发数 (默认10): ")
+    max_concurrency = input("请输入最大并发数 (默认10): ")
     if max_concurrency == "":
         max_concurrency = 10
     else:

@@ -37,7 +37,8 @@ def SpringBoot_Scan_Proxy(args):
         except KeyboardInterrupt:
             print("Ctrl + C 手动终止了进程")
             sys.exit()
-        except:
+        except Exception as e:
+            print('error:', e)
             cprint(f"[-] 代理不可用，请更换代理！", "magenta")
             sys.exit()
     else:

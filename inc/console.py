@@ -5,8 +5,8 @@
 ################
 
 from inc import output,run,vul,springcheck,zoom,fofa,poc,hunter
-import sys
-import asyncio
+import sys,asyncio
+
 # 控制台-参数处理和程序调用
 def SpringBoot_Scan_console(args, proxies, header_new):
     if args.url:

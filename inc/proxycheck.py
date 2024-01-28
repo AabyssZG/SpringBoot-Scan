@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
-################
-#   AabyssZG   #
+  ################
+ #   AabyssZG   #
 ################
 
 from inc import output, run, vul, console
@@ -10,7 +10,6 @@ from termcolor import cprint
 import requests.packages.urllib3
 
 requests.packages.urllib3.disable_warnings()
-
 
 # 检查代理的使用
 def SpringBoot_Scan_Proxy(args):
@@ -33,7 +32,6 @@ def SpringBoot_Scan_Proxy(args):
                 if args.urlfile:
                     proxies = f'http://{args.proxy}'
                 SpringBoot_Scan_Header(args, proxies)
-
         except KeyboardInterrupt:
             print("Ctrl + C 手动终止了进程")
             sys.exit()

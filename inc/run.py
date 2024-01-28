@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
-################
-#   AabyssZG   #
-#    fkalis    #
+   ################
+  #   AabyssZG   #
+ #    Fkalis    #
 ################
 import itertools
 
@@ -37,7 +37,6 @@ def JSON_handle(header1, header2):
     result_json = json.dumps(merged_dict, indent=2)
     return result_json
 
-
 def url(urllist, proxies, header_new):
     f1 = open("urlout.txt", "wb+")
     f1.close()
@@ -54,8 +53,7 @@ def url(urllist, proxies, header_new):
             newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
             try:
                 requests.packages.urllib3.disable_warnings()
-                r = requests.get(url=u, headers=newheader, timeout=6, allow_redirects=False, verify=False,
-                                 proxies=proxies)  # 设置超时6秒
+                r = requests.get(url=u, headers=newheader, timeout=6, allow_redirects=False, verify=False, proxies=proxies)  # 设置超时6秒
                 sleep(int(float(sleeps)))
                 if r.status_code == 503:
                     sys.exit()
@@ -68,8 +66,7 @@ def url(urllist, proxies, header_new):
                     f2.close()
                 elif (r.status_code == 200):
                     cprint(
-                        "[+] 状态码%d" % r.status_code + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(
-                            len(r.content)), "magenta")
+                        "[+] 状态码%d" % r.status_code + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)), "magenta")
                 else:
                     cprint("[-] 状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u, "yellow")
             except KeyboardInterrupt:
@@ -81,8 +78,10 @@ def url(urllist, proxies, header_new):
     if count >= 1:
         print('\n')
         cprint("[+][+][+] 发现目标URL存在SpringBoot敏感信息泄露，已经导出至 urlout.txt ，共%d行记录" % count, "red")
+    else:
+        print('\n')
+        cprint("[-] 目标URL没有存在SpringBoot敏感信息泄露", "yellow")
     sys.exit()
-
 
 def get_file(filename):
     with open(filename, 'r') as temp:
@@ -90,7 +89,6 @@ def get_file(filename):
         for urls in temps:
             url = urls.strip()
             yield url
-
 
 async def async_dir(url, proxies, header_new, semaphore, sleeps):
     try:
@@ -118,37 +116,27 @@ async def async_dir(url, proxies, header_new, semaphore, sleeps):
         f2.write(str(e) + '\n')
         f2.close()
 
-
 async def file(u, proxies, header_new):
     header = {"User-Agent": random.choice(ua)}
     newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
     async with aiohttp.ClientSession() as session:
-        async with session.get(url=u, headers=newheader, proxy=proxies, timeout=6,
-                               allow_redirects=False, ssl=False) as r:
+        async with session.get(url=u, headers=newheader, proxy=proxies, timeout=6, allow_redirects=False, ssl=False) as r:
             conntext = await r.text()
-            if ((r.status == 200) and ('need login' not in conntext) and (
-                    '禁止访问' not in conntext) and (
-                    len(conntext) != 3318) and ('无访问权限' not in conntext) and (
-                    '认证失败' not in conntext)):
-                cprint(
-                    "[+] 状态码%d" % r.status + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(
-                        len(conntext)), "red")
+            if ((r.status == 200) and ('need login' not in conntext) and ('禁止访问' not in conntext) and (len(conntext) != 3318) and ('无访问权限' not in conntext) and ('认证失败' not in conntext)):
+                cprint("[+] 状态码%d" % r.status + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(conntext)), "red")
                 f2 = open("output.txt", "a")
                 f2.write(u + '\n')
                 f2.close()
             elif r.status == 200:
                 cprint(
-                    "[+] 状态码%d" % r.status + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(
-                        len(conntext)), "magenta")
+                    "[+] 状态码%d" % r.status + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(conntext)), "magenta")
             else:
                 cprint("[-] 状态码%d" % r.status + ' ' + "无法访问URL为:" + u, "yellow")
-
 
 async def file_semaphore(url, proxies, header_new, semaphore, sleeps):
     async with semaphore:
         output = await file(url, proxies, header_new)
         await asyncio.sleep(int(sleeps))  # 等待4秒
-
 
 async def file_main(urlfile, proxies, header_new):
     urls_lists = []
@@ -182,12 +170,13 @@ async def file_main(urlfile, proxies, header_new):
     if count >= 1:
         print('\n')
         cprint("[+][+][+] 发现目标TXT内存在SpringBoot敏感信息泄露，已经导出至 output.txt ，共%d行记录" % count, "red")
+    else:
+        print('\n')
+        cprint("[-] 目标TXT内没有存在SpringBoot敏感信息泄露", "yellow")
     time_end = time.time()  # 记录结束时间
     time_sum = time_end - time_start  # 计算的时间差为程序的执行时间，单位为秒/s
-    print("\n")
-    print(time_sum)
+    cprint("[+] 批量扫描共耗时 %s 秒" % time_sum, "red")
     sys.exit()
-
 
 def dump(urllist, proxies, header_new):
     def download(url: str, fname: str, proxies: str, newheader):

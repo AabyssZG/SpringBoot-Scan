@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 ################
-#   AabyssZG  # 
-#    fkalis   # 
+#   AabyssZG   #
 ################
 import itertools
 
@@ -76,7 +75,6 @@ def url(urllist, proxies, header_new):
                 print("Ctrl + C 手动终止了进程")
                 sys.exit()
             except Exception as e:
-                print(e)
                 cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
     count = len(open("urlout.txt", 'r').readlines())
     if count >= 1:
@@ -87,56 +85,68 @@ def url(urllist, proxies, header_new):
 
 def get_file(filename):
     with open(filename, 'r') as temp:
+        temps = temp.readlines()
+        for urls in temps:
+            url = urls.strip()
+            yield url
+
+
+async def async_dir(url, proxies, header_new, semaphore, sleeps):
+    try:
+        tasks = []
+        u_list = []
         with open("Dir.txt", 'r') as web:
-            temps = temp.readlines()
             web_lines = web.readlines()
-            for urls in temps:
-                url = urls.strip()
-                for web_line in web_lines:
-                    web_line = web_line.strip()
-                    if ('://' not in url):
-                        url = str("http://") + str(url)
-                    if str(url[-1]) != "/":
-                        u = url + "/" + web_line
-                    else:
-                        u = url + web_line
-                    yield u
+            for web_line in web_lines:
+                web_line = web_line.strip()
+                if ('://' not in url):
+                    url = str("http://") + str(url)
+                if str(url[-1]) != "/":
+                    u = url + "/" + web_line
+                else:
+                    u = url + web_line
+                u_list.append(u)
+        tasks = [asyncio.create_task(file_semaphore(u_dir, proxies, header_new, semaphore, sleeps)) for u_dir in u_list]
+        result = await asyncio.gather(*tasks)
+    except Exception as e:
+        for task in tasks:
+            if not task.cancelled():
+                task.cancel()
+        cprint("[-] URL为 " + url + " 的目标积极拒绝请求，予以跳过！", "magenta")
+        f2 = open("error.log", "a")
+        f2.write(str(e) + '\n')
+        f2.close()
 
 
 async def file(u, proxies, header_new):
     header = {"User-Agent": random.choice(ua)}
     newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
     async with aiohttp.ClientSession() as session:
-        try:
-            async with session.get(url=u, headers=newheader, proxy=proxies, timeout=6,
-                                   allow_redirects=False, ssl=False) as r:
-                conntext = await r.text()
-                if ((r.status == 200) and ('need login' not in conntext) and (
-                        '禁止访问' not in conntext) and (
-                        len(conntext) != 3318) and ('无访问权限' not in conntext) and (
-                        '认证失败' not in conntext)):
-                    cprint(
-                        "[+] 状态码%d" % r.status + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(
-                            len(conntext)), "red")
-                    f2 = open("output.txt", "a")
-                    f2.write(u + '\n')
-                    f2.close()
-                elif r.status == 200:
-                    cprint(
-                        "[+] 状态码%d" % r.status + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(
-                            len(conntext)), "magenta")
-                else:
-                    cprint("[-] 状态码%d" % r.status + ' ' + "无法访问URL为:" + u, "yellow")
-        except Exception as e:
-            cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
+        async with session.get(url=u, headers=newheader, proxy=proxies, timeout=6,
+                               allow_redirects=False, ssl=False) as r:
+            conntext = await r.text()
+            if ((r.status == 200) and ('need login' not in conntext) and (
+                    '禁止访问' not in conntext) and (
+                    len(conntext) != 3318) and ('无访问权限' not in conntext) and (
+                    '认证失败' not in conntext)):
+                cprint(
+                    "[+] 状态码%d" % r.status + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(
+                        len(conntext)), "red")
+                f2 = open("output.txt", "a")
+                f2.write(u + '\n')
+                f2.close()
+            elif r.status == 200:
+                cprint(
+                    "[+] 状态码%d" % r.status + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(
+                        len(conntext)), "magenta")
+            else:
+                cprint("[-] 状态码%d" % r.status + ' ' + "无法访问URL为:" + u, "yellow")
 
 
 async def file_semaphore(url, proxies, header_new, semaphore, sleeps):
     async with semaphore:
         output = await file(url, proxies, header_new)
         await asyncio.sleep(int(sleeps))  # 等待4秒
-        return output
-
 
 
 async def file_main(urlfile, proxies, header_new):
@@ -155,7 +165,7 @@ async def file_main(urlfile, proxies, header_new):
         max_concurrency = 10
     else:
         max_concurrency = int(max_concurrency)
-    max_tasks = 1500
+    max_tasks = 100
     semaphore = asyncio.Semaphore(max_concurrency)
     urls_itr = get_file(urlfile)
     while True:
@@ -163,7 +173,7 @@ async def file_main(urlfile, proxies, header_new):
             urls_lists = list(itertools.islice(urls_itr, max_tasks))
             if not urls_lists:  # 当urls_itr为空时，直接跳出循环
                 break
-            tasks = [file_semaphore(url, proxies, header_new, semaphore, sleeps) for url in urls_lists]
+            tasks = [async_dir(url, proxies, header_new, semaphore, sleeps) for url in urls_lists]
             await asyncio.gather(*tasks)
         except StopIteration:
             break

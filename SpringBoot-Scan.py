@@ -5,7 +5,7 @@
 ################
 
 from inc import output, console, run ,proxycheck
-import re, binascii, argparse, sys, time
+import re, binascii, argparse, sys, time,asyncio
 
 def get_parser():
     parser = argparse.ArgumentParser(usage='python3 SpringBoot-Scan.py',description='SpringBoot-Scan: 针对SpringBoot的开源渗透框架',)
@@ -23,11 +23,11 @@ def get_parser():
     args = parser.parse_args()
     return args
 
-def main():
+async def main():
     output.logo()
     args = get_parser()
-    proxycheck.SpringBoot_Scan_Proxy(args)
+    await proxycheck.SpringBoot_Scan_Proxy(args)
     #console.SpringBoot_Scan_console(args)
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

@@ -8,20 +8,31 @@ from inc import output,run,vul,springcheck,zoom,fofa,poc,hunter
 import sys,asyncio
 
 # 控制台-参数处理和程序调用
-def SpringBoot_Scan_console(args, proxies, header_new):
+async def SpringBoot_Scan_console(args, proxies):
+
     if args.url:
-        urlnew = springcheck.check(args.url, proxies, header_new)
-        run.url(urlnew, proxies, header_new)
+        inp=input("是否需要进行Spring框架探测？：")
+        if inp =="y":
+            urlnew = await springcheck.check(args.url, proxies)
+            await run.async_url(urlnew, proxies)
+        if inp =="n":
+            await run.async_url(args.url, proxies)
     if args.urlfile:
-        asyncio.run(run.file_main(args.urlfile,proxies, header_new))
+        asyncio.run(run.file_main(args.urlfile,proxies))
     if args.vul:
-        urlnew = springcheck.check(args.vul, proxies, header_new)
-        vul.vul(urlnew, proxies, header_new)
+        if inp =="y":
+            urlnew = springcheck.check(args.vul, proxies)
+            vul.vul(urlnew, proxies)
+        if inp =="n":
+            vul.vul(args.vul, proxies)
     if args.vulfile:
         poc.poc(args.vulfile, proxies)
     if args.dump:
-        urlnew = springcheck.check(args.dump, proxies, header_new)
-        run.dump(urlnew, proxies, header_new)
+        if inp =="y":
+            urlnew = springcheck.check(args.dump, proxies)
+            run.dump(urlnew, proxies)
+        if inp =="n":
+            run.dump(args.dump, proxies)
     if args.zoomeye:
         zoom.ZoomDowload(args.zoomeye,proxies)
     if args.fofa:

@@ -11,19 +11,15 @@ import sys,asyncio
 async def SpringBoot_Scan_console(args, proxies,header_new):
 
     if args.url:
-        inp=input("是否需要进行Spring框架探测？(Y or N)：")
-        if inp =="y":
-            urlnew = await springcheck.check(args.url, proxies,header_new)
-            await run.async_url(urlnew, proxies,header_new)
-        if inp =="n":
-            await run.async_url(args.url, proxies,header_new)
+        urlnew = await springcheck.check(args.url, proxies,header_new)
+        await run.async_url(urlnew, proxies,header_new)
     if args.urlfile:
         asyncio.run(run.file_main(args.urlfile,proxies,header_new))
     if args.vul:
         urlnew = springcheck.check(args.vul, proxies,header_new)
         vul.vul(urlnew, proxies,header_new)
     if args.vulfile:
-        poc.poc(args.vulfile, proxies,header_new)
+        poc.poc(args.vulfile, proxies)
     if args.dump:
         urlnew = springcheck.check(args.dump, proxies,header_new)
         run.dump(urlnew, proxies,header_new)

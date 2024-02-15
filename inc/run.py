@@ -26,8 +26,16 @@ ua = [
     "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20130406 Firefox/23.0",
     "Opera/9.80 (Windows NT 5.1; U; zh-sg) Presto/2.9.181 Version/12.00"]
 
+def JSON_handle(header1, header2):
+    dict1 = json.loads(str(header1).replace("'", "\""))
+    dict2 = json.loads(str(header2).replace("'", "\""))
+    # 合并两个字典
+    merged_dict = {**dict1, **dict2}
+    # 将合并后的字典转换为 JSON 字符串
+    result_json = json.dumps(merged_dict, indent=2)
+    return result_json
 
-async def async_url(urllist,proxies):
+async def async_url(urllist,proxies,header_new):
     tasks = []
     cprint(f"======开始对目标URL测试SpringBoot信息泄露端点======", "cyan")
     sleeps = input("\n是否要延时扫描 (默认0秒): ")
@@ -42,41 +50,42 @@ async def async_url(urllist,proxies):
         for dir in webs:
             dir = dir.strip()
             u = urllist + dir
-            task = asyncio.create_task(url(u, sleeps,semaphores,proxies))
+            task = asyncio.create_task(url(u, sleeps,semaphores,proxies,header_new))
             tasks.append(task)
             print(u)
         await asyncio.gather(*tasks)
         sys.exit()
 
-async def url(u,sleeps,semaphore,proxies):
+async def url(u,sleeps,semaphore,proxies,header_new):
     f1 = open("urlout.txt", "wb+")
     f1.close()
     header = {"User-Agent": random.choice(ua)}
+    newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
     try:
         if proxies == "":
             async with semaphore:
-                async with aiohttp.ClientSession(headers=header) as session:
+                async with aiohttp.ClientSession(headers=newheader) as session:
                     async with session.get(u, timeout=6,ssl=False) as r:
                         res= await r.text()
                         cprint(res)
                         status_code =r.status
-                        sleep(int(float(sleeps)))
+                        await asyncio.sleep(int(float(sleeps)))
                         hashlist.append(md5(res.encode(encoding="utf-8")).hexdigest())
         else:
             async with semaphore:
                 conn = ProxyConnector.from_url(proxies)
-                async with aiohttp.ClientSession(headers=header,connector=conn) as session:
+                async with aiohttp.ClientSession(headers=newheader,connector=conn) as session:
                     async with session.get(u, timeout=6,ssl=False) as r:
                         res= await r.text()
                         # cprint(res)
                         cprint(f"当前代理IP为{proxies}","green")
                         status_code =r.status
-                        sleep(int(float(sleeps)))
+                        await asyncio.sleep(int(float(sleeps)))
                         hashlist.append(md5(res.encode(encoding="utf-8")).hexdigest())
         if status_code == 503:
             sys.exit()
-        if ((status_code == 200) and ('need login' not in res) and ('禁止访问' not in res and (len(res) != 3318) and ('无访问权限' not in res) and ('认证失败' not in r.text))):
-            cprint("[+] 状态码%d" % status_code+ ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.t)),"red")
+        if ((status_code == 200) and ('need login' not in res) and ('禁止访问' not in res and (len(res) != 3318) and ('无访问权限' not in res) and ('认证失败' not in res))):
+            cprint("[+] 状态码%d" % status_code+ ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(res)),"red")
             if md5(res.encode(encoding="utf-8")).hexdigest() not in hashlist:
                 f2 = open("urlout.txt", "a")
                 f2.write(u + '\n')
@@ -85,19 +94,19 @@ async def url(u,sleeps,semaphore,proxies):
                 pass
                 cprint(f"[-] 发现页面返回值重复的URL为 {u}", "yellow")
         elif(status_code == 200):
-            cprint("[+] 状态码%d" % status_code + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)),"magenta")
+            cprint("[+] 状态码%d" % status_code + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(await r.content.read())),"magenta")
         else:
             cprint("[-] 状态码%d" % status_code  + ' ' + "无法访问URL为:" + u ,"yellow")
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()
     except Exception as e:
+        exit(f"[-] URL为{u}的任务访问错误，错误代码为{e}")
         cprint(f"[-] URL为{u}的任务访问错误，错误代码为{e}，予以跳过！", "magenta")
     count = len(open("urlout.txt", 'r').readlines())
     if count >= 1:
         print('\n')
         cprint("[+][+][+] 发现目标URL存在SpringBoot敏感信息泄露，已经导出至 urlout.txt ，共%d行记录" % count,"red")
-
 def get_file(filename):
     with open(filename, 'r') as temp:
         temps = temp.readlines()
@@ -105,7 +114,7 @@ def get_file(filename):
             url = urls.strip()
             yield url
 
-async def async_dir(url, proxies, semaphore, sleeps):
+async def async_dir(url, proxies, header_new, semaphore, sleeps):
     try:
         tasks = []
         u_list = []
@@ -120,7 +129,7 @@ async def async_dir(url, proxies, semaphore, sleeps):
                 else:
                     u = url + web_line
                 u_list.append(u)
-        tasks = [asyncio.create_task(file_semaphore(u_dir, proxies, semaphore, sleeps)) for u_dir in u_list]
+        tasks = [asyncio.create_task(file_semaphore(u_dir, proxies, header_new, semaphore, sleeps)) for u_dir in u_list]
         result = await asyncio.gather(*tasks)
     except Exception as e:
         for task in tasks:
@@ -131,10 +140,11 @@ async def async_dir(url, proxies, semaphore, sleeps):
         f2.write(str(e) + '\n')
         f2.close()
 
-async def file(u, proxies):
+async def file(u, proxies, header_new):
     header = {"User-Agent": random.choice(ua)}
+    newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
     async with aiohttp.ClientSession() as session:
-        async with session.get(url=u, headers=header, proxy=proxies, timeout=6, allow_redirects=False, ssl=False) as r:
+        async with session.get(url=u, headers=newheader, proxy=proxies, timeout=6, allow_redirects=False, ssl=False) as r:
             conntext = await r.text()
             if ((r.status == 200) and ('need login' not in conntext) and ('禁止访问' not in conntext) and (len(conntext) != 3318) and ('无访问权限' not in conntext) and ('认证失败' not in conntext)):
                 cprint("[+] 状态码%d" % r.status + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(conntext)), "red")
@@ -147,12 +157,12 @@ async def file(u, proxies):
             else:
                 cprint("[-] 状态码%d" % r.status + ' ' + "无法访问URL为:" + u, "yellow")
 
-async def file_semaphore(url, proxies, semaphore, sleeps):
+async def file_semaphore(url, proxies, header_new, semaphore, sleeps):
     async with semaphore:
-        output = await file(url, proxies)
+        output = await file(url, proxies, header_new)
         await asyncio.sleep(int(sleeps))  # 等待4秒
 
-async def file_main(urlfile, proxies):
+async def file_main(urlfile, proxies, header_new):
     urls_lists = []
     f1 = open("output.txt", "wb+")
     f1.close()
@@ -176,7 +186,7 @@ async def file_main(urlfile, proxies):
             urls_lists = list(itertools.islice(urls_itr, max_tasks))
             if not urls_lists:  # 当urls_itr为空时，直接跳出循环
                 break
-            tasks = [async_dir(url, proxies, semaphore, sleeps) for url in urls_lists]
+            tasks = [async_dir(url, proxies, header_new, semaphore, sleeps) for url in urls_lists]
             await asyncio.gather(*tasks)
         except StopIteration:
             break
@@ -192,7 +202,7 @@ async def file_main(urlfile, proxies):
     cprint("[+] 批量扫描共耗时 %s 秒" % time_sum, "red")
     sys.exit()
 
-def dump(urllist, proxies):
+def dump(urllist, proxies, header_new):
     def download(url: str, fname: str, proxies: str, newheader):
         # 用流stream的方式获取url的数据
         requests.packages.urllib3.disable_warnings()
@@ -221,6 +231,7 @@ def dump(urllist, proxies):
     url5 = urllist + "hystrix.stream"
     url6 = urllist + "artemis-portal/artemis/heapdump"
     header = {"User-Agent": random.choice(ua)}
+    newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
 
     try:
         if str(requests.head(url1)) != "<Response [200]>":
@@ -228,35 +239,35 @@ def dump(urllist, proxies):
         else:
             url = url1
             cprint("[+][+][+] 发现 /actuator/heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url, "red")
-            download(url, "heapdump", proxies, header)
+            download(url, "heapdump", proxies, newheader)
             sys.exit()
         if str(requests.head(url2)) != "<Response [200]>":
             cprint("[-] 在 /heapdump 未发现heapdump敏感文件泄露", "yellow")
         else:
             url = url2
             cprint("[+][+][+] 发现 /heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url, "red")
-            download(url, "heapdump", proxies, header)
+            download(url, "heapdump", proxies, newheader)
             sys.exit()
         if str(requests.head(url3)) != "<Response [200]>":
             cprint("[-] 在 /heapdump.json 未发现heapdump敏感文件泄露", "yellow")
         else:
             url = url3
             cprint("[+][+][+] 发现 /heapdump.json 敏感文件泄露" + ' ' + "下载端点URL为:" + url, "red")
-            download(url, "heapdump.json", proxies, header)
+            download(url, "heapdump.json", proxies, newheader)
             sys.exit()
         if str(requests.head(url4)) != "<Response [200]>":
             cprint("[-] 在 /gateway/actuator/heapdump 未发现heapdump敏感文件泄露", "yellow")
         else:
             url = url4
             cprint("[+][+][+] 发现 /gateway/actuator/heapdump 敏感文件泄露" + ' ' + "下载端点URL为:" + url, "red")
-            download(url, "heapdump", proxies, header)
+            download(url, "heapdump", proxies, newheader)
             sys.exit()
         if str(requests.head(url5)) != ("<Response [401]>" or "<Response [200]>"):
             cprint("[-] 在 /hystrix.stream 未发现hystrix监控数据文件泄露，请手动验证", "yellow")
         else:
             url = url5
             cprint("[+][+][+] 发现 /hystrix.stream 监控数据文件泄露" + ' ' + "下载端点URL为:" + url, "red")
-            download(url, "hystrix.stream", proxies, header)
+            download(url, "hystrix.stream", proxies, newheader)
             sys.exit()
         if str(requests.head(url6)) != "<Response [200]>":
             cprint("[-] 在 /artemis-portal/artemis/heapdump 未发现heapdump监控数据文件泄露，请手动验证", "yellow")
@@ -264,7 +275,7 @@ def dump(urllist, proxies):
             url = url6
             cprint("[+][+][+] 发现 /artemis-portal/artemis/heapdump 监控数据文件泄露" + ' ' + "下载端点URL为:" + url,
                    "red")
-            download(url, "heapdump", proxies, header)
+            download(url, "heapdump", proxies, newheader)
             sys.exit()
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")

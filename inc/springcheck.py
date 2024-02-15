@@ -18,18 +18,28 @@ ua = [
     "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27",
     "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20130406 Firefox/23.0",
     "Opera/9.80 (Windows NT 5.1; U; zh-sg) Presto/2.9.181 Version/12.00"]
-async def Spring_Check(url,proxies):
+def JSON_handle(header1, header2):
+    dict1 = json.loads(str(header1).replace("'", "\""))
+    dict2 = json.loads(str(header2).replace("'", "\""))
+    # 合并两个字典
+    merged_dict = {**dict1, **dict2}
+    # 将合并后的字典转换为 JSON 字符串
+    result_json = json.dumps(merged_dict, indent=2)
+    return result_json
+
+async def Spring_Check(url,proxies,header_new):
     cprint("[.] 正在进行Spring的指纹识别","cyan")
     Spring_hash = "0488faca4c19046b94d07c3ee83cf9d6"
     Paths = ["favicon.ico", "AabyssZG666"]
     header = {"User-Agent": random.choice(ua)}
+    newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
     for path in Paths:
         test_url = str(url) + path
 
         # r = requests.get(test_url, timeout=10, verify=False, headers=header)
         try:
             if proxies == "":
-                async with aiohttp.ClientSession(headers=header) as session:
+                async with aiohttp.ClientSession(headers=newheader) as session:
                     async with session.get(test_url, timeout=6, ssl=False) as r:
                         content_type = r.headers.get("Content-Type", "")
                         resp=await r.text()
@@ -69,7 +79,7 @@ async def Spring_Check(url,proxies):
             f2.write(str(e) + '\n')
             f2.close()
 
-async def check(url,proxies):
+async def check(url,proxies,header_new):
     if ('://' not in url):
         url = str("http://") + str(url)
     if str(url[-1]) != "/":
@@ -81,7 +91,7 @@ async def check(url,proxies):
     if r.status_code == 503:
         sys.exit()
     else:
-        await Spring_Check(url,proxies)
+        await Spring_Check(url,proxies,header_new)
         return url
 # except KeyboardInterrupt:
     print("Ctrl + C 手动终止了进程")

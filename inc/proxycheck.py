@@ -33,23 +33,47 @@ async def SpringBoot_Scan_Proxy(args):
                         cprint(f"[+] 代理可用，马上执行！", "cyan")
                         if args.urlfile:
                             proxies = args.proxy
-                        await console.SpringBoot_Scan_console(args, proxies)
+                        await SpringBoot_Scan_Header(args, proxies)
+
+                        # await console.SpringBoot_Scan_console(args, proxies)
         except KeyboardInterrupt:
             print("Ctrl + C 手动终止了进程")
             sys.exit()
         except Exception as e:
-            if "Connection reset by peer" or "0 bytes read on a total of 2 expected bytes" in str(e):
-                cprint(f"[-] 代理不可用，请更换代理！", "magenta")
-            else:
-                cprint(f"[-] 出现错误{str(e)}", "magenta")
+            # if "Connection reset by peer" or "0 bytes read on a total of 2 expected bytes" in str(e):
+            #     cprint(f"[-] 代理不可用，请更换代理！", "magenta")
+            # else:
+            cprint(f"[-] 出现错误{str(e)}", "magenta")
             sys.exit()
     else:
         await console.SpringBoot_Scan_console(args, "",)
+# 导入自定义HTTP头部
+async def SpringBoot_Scan_Header(args, proxies):
+    if args.newheader:
+        cprint(f"=====正在导入自定义HTTP头部=====", "cyan")
+        filename = args.newheader
+        with open(filename, 'r') as file:
+            lines = file.readlines()
+        # 创建 JSON 对象
+        header_json = {}
+        for line in lines:
+            # 按照 ':' 分隔每行内容，取前后两部分
+            parts = line.split(':', 1)
+            if len(parts) == 2:
+                key = parts[0].strip()
+                value = parts[1].strip()
+                header_json[key] = value
+        header_new = json.dumps(header_json, indent=2)
+        print(header_new)
+        await SpringBoot_Scan_Main(args, proxies, header_new)
+    else:
+        header_new = '{}'
+        await SpringBoot_Scan_Main(args, proxies, header_new)
 
-def SpringBoot_Scan_Main(args, proxies):
+async def SpringBoot_Scan_Main(args, proxies,header_new):
     if (args.url or args.urlfile or args.vul or args.vulfile or args.dump or args.zoomeye or args.fofa or args.hunter):
         print(args.url)
-        console.SpringBoot_Scan_console(args, proxies)
+        await console.SpringBoot_Scan_console(args, proxies,header_new)
 
     else:
         output.usage()

@@ -40,13 +40,14 @@ async def SpringBoot_Scan_Proxy(args):
             print("Ctrl + C 手动终止了进程")
             sys.exit()
         except Exception as e:
-            # if "Connection reset by peer" or "0 bytes read on a total of 2 expected bytes" in str(e):
-            #     cprint(f"[-] 代理不可用，请更换代理！", "magenta")
-            # else:
-            cprint(f"[-] 出现错误{str(e)}", "magenta")
-            sys.exit()
+            if "Connection reset by peer" or "0 bytes read on a total of 2 expected bytes" in str(e):
+                cprint(f"[-] 代理不可用，请更换代理！", "magenta")
+            else:
+                cprint(f"[-] 出现错误{str(e)}", "magenta")
+                sys.exit()
     else:
-        await console.SpringBoot_Scan_console(args, "",)
+        proxies = ''
+        await SpringBoot_Scan_Header(args, proxies)
 # 导入自定义HTTP头部
 async def SpringBoot_Scan_Header(args, proxies):
     if args.newheader:

@@ -41,7 +41,7 @@ async def async_url(urllist,proxies,header_new):
     sleeps = input("\n是否要延时扫描 (默认0秒): ")
     if sleeps == "":
         sleeps = int("0")
-    semaphore=input("\n请设置当前任务最大并发量 (默认为10): ")
+    semaphore=input("\n请设置当前任务最大并发量 (默认为10 推荐不大于50): ")
     if semaphore == "":
         semaphore = int("10")
     semaphores = asyncio.Semaphore(semaphore)
@@ -77,7 +77,6 @@ async def url(u,sleeps,semaphore,proxies,header_new):
                 async with aiohttp.ClientSession(headers=newheader,connector=conn) as session:
                     async with session.get(u, timeout=6,ssl=False) as r:
                         res= await r.text()
-                        # cprint(res)
                         cprint(f"当前代理IP为{proxies}","green")
                         status_code =r.status
                         await asyncio.sleep(int(float(sleeps)))

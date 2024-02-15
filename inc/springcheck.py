@@ -35,8 +35,6 @@ async def Spring_Check(url,proxies,header_new):
     newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
     for path in Paths:
         test_url = str(url) + path
-
-        # r = requests.get(test_url, timeout=10, verify=False, headers=header)
         try:
             if proxies == "":
                 async with aiohttp.ClientSession(headers=newheader) as session:

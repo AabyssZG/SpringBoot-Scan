@@ -11,7 +11,7 @@ import sys,asyncio
 async def SpringBoot_Scan_console(args, proxies,header_new):
 
     if args.url:
-        inp=input("是否需要进行Spring框架探测？：")
+        inp=input("是否需要进行Spring框架探测？(Y or N)：")
         if inp =="y":
             urlnew = await springcheck.check(args.url, proxies,header_new)
             await run.async_url(urlnew, proxies,header_new)

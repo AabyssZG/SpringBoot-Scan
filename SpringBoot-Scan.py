@@ -27,7 +27,6 @@ async def main():
     output.logo()
     args = get_parser()
     await proxycheck.SpringBoot_Scan_Proxy(args)
-    #console.SpringBoot_Scan_console(args)
 
 if __name__ == '__main__':
     asyncio.run(main())

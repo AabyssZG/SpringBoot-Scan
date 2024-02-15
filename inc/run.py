@@ -67,7 +67,6 @@ async def url(u,sleeps,semaphore,proxies,header_new):
                 async with aiohttp.ClientSession(headers=newheader) as session:
                     async with session.get(u, timeout=6,ssl=False) as r:
                         res= await r.text()
-                        cprint(res)
                         status_code =r.status
                         await asyncio.sleep(int(float(sleeps)))
                         hashlist.append(md5(res.encode(encoding="utf-8")).hexdigest())

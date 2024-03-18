@@ -253,6 +253,7 @@ def dump(urllist, proxies, header_new):
                    "red")
             download(url, "heapdump", proxies, newheader)
             sys.exit()
+        sys.exit()
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()

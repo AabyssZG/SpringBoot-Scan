@@ -56,7 +56,7 @@ def check(url,proxies,header_new):
         print("Ctrl + C 手动终止了进程")
         sys.exit()
     except Exception as e:
-        cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！已记入日志error.log", "magenta")
+        cprint("[-] URL为 " + url + " 的目标积极拒绝请求，予以跳过！已记入日志error.log", "magenta")
         f2 = open("error.log", "a")
         f2.write(str(e) + '\n')
         f2.close()

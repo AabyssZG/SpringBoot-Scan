@@ -6,7 +6,7 @@
 ################
 import itertools
 from inc import output, console
-import requests, sys, random, json
+import requests, sys, random, json, hashlib
 from tqdm import tqdm
 from termcolor import cprint
 from time import sleep
@@ -44,6 +44,7 @@ def url(urllist, proxies, header_new):
     sleeps = input("\n是否要延时扫描 (默认0秒): ")
     if sleeps == "":
         sleeps = int("0")
+    encountered_hashes = []
     with open("Dir.txt", 'r') as web:
         webs = web.readlines()
         for web in webs:
@@ -53,20 +54,22 @@ def url(urllist, proxies, header_new):
             newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
             try:
                 requests.packages.urllib3.disable_warnings()
-                r = requests.get(url=u, headers=newheader, allow_redirects=False, verify=False, proxies=proxies)  # 设置超时6秒
+                r = requests.get(url=u, headers=newheader, allow_redirects=False, verify=False, proxies=proxies)
                 sleep(int(float(sleeps)))
                 if r.status_code == 503:
                     sys.exit()
-                if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text) and (
-                        len(r.content) != 3318) and ('无访问权限' not in r.text) and ('认证失败' not in r.text)):
-                    cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(
-                        len(r.content)), "red")
-                    f2 = open("urlout.txt", "a")
-                    f2.write(u + '\n')
-                    f2.close()
+                if ((r.status_code == 200) and ('need login' not in r.text) and ('禁止访问' not in r.text) and (len(r.content) != 3318) and ('无访问权限' not in r.text) and ('认证失败' not in r.text)):
+                    content_hash = hashlib.md5(r.content).hexdigest()
+                    if content_hash not in encountered_hashes:
+                        encountered_hashes.append(content_hash)
+                        cprint("[+] 状态码%d" % r.status_code + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)), "red")
+                        f2 = open("urlout.txt", "a")
+                        f2.write(u + '\n')
+                        f2.close()
+                    else:
+                        cprint("[*] 已存在重复内容的URL:" + u, "yellow")
                 elif (r.status_code == 200):
-                    cprint(
-                        "[+] 状态码%d" % r.status_code + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)), "magenta")
+                    cprint("[+] 状态码%d" % r.status_code + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)), "magenta")
                 else:
                     cprint("[-] 状态码%d" % r.status_code + ' ' + "无法访问URL为:" + u, "yellow")
             except KeyboardInterrupt:

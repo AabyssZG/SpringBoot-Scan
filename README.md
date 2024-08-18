@@ -31,7 +31,7 @@
 ## 功能支持的更新
 
 * [x] 对端点爆破模块进行优化，对页面进行Hash计算，如果发现页面Hash相同的情况就不导入到 `urlout.txt`
-* [x] 在目录爆破 `run.py` /POC探测  `poc.py` /漏洞利用 `vul.py` 这三个核心模块，新增全局变量 `requests.timeout = 10` 可自由调整各模块HTTP访问超时时间
+* [x] 在目录爆破 `run.py` /POC探测  `poc.py` /漏洞利用 `vul.py` 这三个核心模块，新增全局变量 `outtime = 10` 可自由调整各模块HTTP访问超时时间
 * [x] 感谢 [`@Viking`](https://github.com/VK2000) 师傅，增加了部分 `Dir.txt` 敏感端点爆破字典的内容
 * [x] 感谢 [`@Fkalis`](https://github.com/FFR66) 师傅，使用 `aiohttp` 对批量信息泄露扫描进行并发处理，大大提高 `-uf` 参数的扫描速度
 * [x] 新增支持多个参数自定义HTTP头部（请求头）进行操作，功能实现啦，快来试试吧~

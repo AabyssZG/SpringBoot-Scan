@@ -16,7 +16,7 @@ import asyncio
 import aiohttp
 
 requests.packages.urllib3.disable_warnings()
-requests.timeout = 10
+outtime = 10
 
 ua = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36,Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36",
@@ -54,7 +54,7 @@ def url(urllist, proxies, header_new):
             newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
             try:
                 requests.packages.urllib3.disable_warnings()
-                r = requests.get(url=u, headers=newheader, allow_redirects=False, verify=False, proxies=proxies)
+                r = requests.get(url=u, headers=newheader, timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
                 sleep(int(float(sleeps)))
                 if r.status_code == 503:
                     sys.exit()
@@ -185,7 +185,7 @@ def dump(urllist, proxies, header_new):
     def download(url: str, fname: str, proxies: str, newheader):
         # 用流stream的方式获取url的数据
         requests.packages.urllib3.disable_warnings()
-        resp = requests.get(url, headers=newheader, stream=True, verify=False, proxies=proxies)
+        resp = requests.get(url, headers=newheader, timeout = outtime, stream=True, verify=False, proxies=proxies)
         # 拿到文件的长度，并把total初始化为0
         total = int(resp.headers.get('content-length', 0))
         # 打开当前目录的fname文件(名字你来传入)

@@ -84,6 +84,7 @@ env.css
 env/(name)
 eureka
 flyway
+functionRouter
 gateway/actuator
 gateway/actuator/auditevents
 gateway/actuator/beans

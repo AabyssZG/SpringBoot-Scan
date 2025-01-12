@@ -50,7 +50,8 @@ def check(url,proxies,header_new):
     try:
         requests.packages.urllib3.disable_warnings()
         r = requests.get(url, timeout = outtime, verify=False, headers=header_new, proxies=proxies)  # 设置超时6秒
-        if r.status_code == 503:
+        if (r.status_code == 503) or (r.status_code == 502):
+            cprint("[-] 网页状态码为503或502", "magenta")
             sys.exit()
         else:
             Spring_Check(url,proxies,header_new)

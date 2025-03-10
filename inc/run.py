@@ -261,5 +261,65 @@ def dump(urllist, proxies, header_new):
         print("Ctrl + C 手动终止了进程")
         sys.exit()
     except Exception as e:
-        print("[-] 下载失败，请手动尝试下载")
+        print(f"[-] 下载失败，请手动尝试下载，报错内容为 {e}")
+        f2 = open("error.log", "a")
+        f2.write(str(e) + '\n')
+        f2.close()
         sys.exit()
+
+def dumpfile(input_file, proxies, header_new):
+    header = {"User-Agent": random.choice(ua)}
+    newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
+    paths = ["actuator/heapdump", "heapdump", "heapdump.json", "gateway/actuator/heapdump", "hystrix.stream", "artemis-portal/artemis/heapdump"]
+    with open(input_file, 'r') as web:
+        urls = web.readlines()
+    processed_urls = []
+    for url in urls:
+        if ('://' not in url):
+            url = "http://" + url
+        if str(url[-1]) != "/":
+            url += "/"
+        processed_urls.append(url)
+    valid_urls = []
+    
+    cprint(f"======开始读取目标TXT并扫描SpringBoot信息文件端点======", "cyan")
+    sleeps = input("\n是否要延时扫描 (默认0秒): ")
+    if sleeps == "":
+        sleeps = int("0")
+    for url in processed_urls:
+        try:
+            for path in paths:
+                full_url = f"{url.rstrip('/')}/{path.lstrip('/')}"
+                full_url = full_url.replace("\n", "")
+                try:
+                    requests.packages.urllib3.disable_warnings()
+                    headnumber = str(requests.head(full_url, timeout=5, proxies=proxies, headers=newheader))
+                    sleep(int(float(sleeps)))
+                    if headnumber == "<Response [200]>":
+                        cprint("[+] 发现SpringBoot敏感文件泄露，地址为 " + full_url, "red")
+                        valid_urls.append(full_url)
+                    else:
+                        cprint("[-] 没有发现SpringBoot敏感文件泄露，地址 " + str(full_url) + " 状态码为 " + str(headnumber), "yellow")
+                except KeyboardInterrupt:
+                    print("Ctrl + C 手动终止了进程")
+                    sys.exit()
+                except Exception as e:
+                    print(f"[-] 访问 {full_url} 出现错误，报错错误日志为 error.log")
+                    raise
+                    f2 = open("error.log", "a")
+                    f2.write(str(e) + '\n')
+                    f2.close()
+        except Exception as e:
+            print(f"[.] 正在跳过该报错URL")
+            continue
+    
+    with open("dumpout.txt", 'w') as f:
+        for valid_url in valid_urls:
+            f.write(valid_url + '\n')
+    count = len(open("dumpout.txt", 'r').readlines())
+    if count >= 1:
+        print('\n')
+        cprint("[+][+][+] 发现目标TXT内存在SpringBoot敏感文件泄露，已经导出至 dumpout.txt ，共%d行记录" % count, "red")
+    else:
+        cprint("[-] 读取指定TXT没有存在SpringBoot敏感文件泄露", "yellow")
+    sys.exit()

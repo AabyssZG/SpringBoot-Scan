@@ -30,6 +30,8 @@
 
 ## 功能支持的更新
 
+* [x] 根据使用者 `@ThumpBo` 师傅，增加了读取指定TXT批量扫描敏感文件的功能 `-df` 并将扫描成功结果导出至 `dumpout.txt` 内
+* [x] 对下载敏感文件的模块进行报错优化，将报错内容并入至 `error.log`
 * [x] 对端点爆破模块进行优化，对页面进行Hash计算，如果发现页面Hash相同的情况就不导入到 `urlout.txt`
 * [x] 在目录爆破 `run.py` /POC探测  `poc.py` /漏洞利用 `vul.py` 这三个核心模块，新增全局变量 `outtime = 10` 可自由调整各模块HTTP访问超时时间
 * [x] 感谢 [`@Viking`](https://github.com/VK2000) 师傅，增加了部分 `Dir.txt` 敏感端点爆破字典的内容
@@ -102,11 +104,11 @@ icon_hash="116323821"||body="Whitelabel Error Page"
  \$$    $$| $$    $$| $$      | $$| $$  | $$ \$$    $$| $$    $$ \$$    $$ \$$    $$  \$$  $$
   \$$$$$$ | $$$$$$$  \$$       \$$ \$$   \$$ _\$$$$$$$ \$$$$$$$   \$$$$$$   \$$$$$$    \$$$$ 
           | $$                              |  \__| $$                                       
-          | $$                               \$$    $$                                       
-           \$$                                \$$$$$$                                        
+          | $$                               \$$    $$   [+] V2.6-2025年 蛇年新春贺岁版     
+           \$$                                \$$$$$$    [+] 感谢一路上支持和关注我们的师傅  
             ______                                                                           
            /      \                                  +-------------------------------------+ 
-          |  $$$$$$\  _______  ______   _______      + Version: 2.56                       + 
+          |  $$$$$$\  _______  ______   _______      + Version: 2.6                        + 
           | $$___\$$ /       \|      \ |       \     + Author: 曾哥(@AabyssZG)             + 
            \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Whoami: https://github.com/AabyssZG + 
            _\$$$$$$\| $$      /      $$| $$  | $$    +-------------------------------------+ 
@@ -115,11 +117,12 @@ icon_hash="116323821"||body="Whitelabel Error Page"
             \$$$$$$   \$$$$$$$ \$$$$$$$ \$$   \$$    +-------------------------------------+ 
 
 用法:
-        对单一URL进行信息泄露扫描:         python3 SpringBoot-Scan.py -u example.com
-        读取目标TXT进行批量信息泄露扫描:    python3 SpringBoot-Scan.py -uf url.txt
-        对单一URL进行漏洞利用:             python3 SpringBoot-Scan.py -v example.com
+        对单一URL进行信息泄露扫描:         python3 SpringBoot-Scan.py -u http://example.com/
+        读取目标TXT进行批量信息泄露扫描:   python3 SpringBoot-Scan.py -uf url.txt
+        对单一URL进行漏洞扫描:             python3 SpringBoot-Scan.py -v http://example.com/
         读取目标TXT进行批量漏洞扫描：      python3 SpringBoot-Scan.py -vf url.txt
-        扫描并下载SpringBoot敏感文件:      python3 SpringBoot-Scan.py -d example.com
+        扫描并下载SpringBoot敏感文件:      python3 SpringBoot-Scan.py -d http://example.com/
+        读取目标TXT进行批量敏感文件扫描:   python3 SpringBoot-Scan.py -df url.txt
         使用HTTP代理并自动进行连通性测试:    python3 SpringBoot-Scan.py -p <代理IP:端口>
         从TXT文件中导入自定义HTTP头部:       python3 SpringBoot-Scan.py -t header.txt
         通过ZoomEye密钥进行API下载数据:      python3 SpringBoot-Scan.py -z <ZoomEye的API-KEY>
@@ -265,6 +268,16 @@ heapdump.json
 hystrix.stream
 artemis-portal/artemis/heapdump
 ```
+
+## 7# 读取目标TXT进行批量敏感文件扫描
+
+```
+python3 SpringBoot-Scan.py -df url.txt
+```
+
+![读取目标TXT进行批量敏感文件扫描](./pic/读取目标TXT进行批量敏感文件扫描.png)
+
+扫描结束后将导出成功的内容至 `dumpout.txt` 内
 
 如果有师傅有其他敏感文件的目录，可以提交issues，谢谢！！！
 

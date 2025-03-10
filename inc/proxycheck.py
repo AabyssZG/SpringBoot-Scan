@@ -69,7 +69,7 @@ def SpringBoot_Scan_Header(args, proxies):
 
 
 def SpringBoot_Scan_Main(args, proxies, header_new):
-    if (args.url or args.urlfile or args.vul or args.vulfile or args.dump or args.zoomeye or args.fofa or args.hunter):
+    if (args.url or args.urlfile or args.vul or args.vulfile or args.dump or args.zoomeye or args.fofa or args.hunter or args.dumpfile):
         console.SpringBoot_Scan_console(args, proxies, header_new)
     else:
         output.usage()

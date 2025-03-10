@@ -22,6 +22,8 @@ def SpringBoot_Scan_console(args, proxies, header_new):
     if args.dump:
         urlnew = springcheck.check(args.dump, proxies, header_new)
         run.dump(urlnew, proxies, header_new)
+    if args.dumpfile:
+        run.dumpfile(args.dumpfile, proxies, header_new)
     if args.zoomeye:
         zoom.ZoomDowload(args.zoomeye,proxies)
     if args.fofa:

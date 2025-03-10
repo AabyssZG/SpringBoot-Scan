@@ -67,7 +67,7 @@ def url(urllist, proxies, header_new):
                         f2.write(u + '\n')
                         f2.close()
                     else:
-                        cprint("[*] 已存在重复内容的URL:" + u, "yellow")
+                        cprint("[*] 已存在重复内容的URL:" + u, "magenta")
                 elif (r.status_code == 200):
                     cprint("[+] 状态码%d" % r.status_code + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(r.content)), "magenta")
                 else:
@@ -77,6 +77,7 @@ def url(urllist, proxies, header_new):
                 sys.exit()
             except Exception as e:
                 cprint("[-] URL为 " + u + " 的目标积极拒绝请求，予以跳过！", "magenta")
+                print(e)
     count = len(open("urlout.txt", 'r').readlines())
     if count >= 1:
         print('\n')
@@ -126,10 +127,14 @@ async def file(u, proxies, header_new):
         async with session.get(url=u, headers=newheader, proxy=proxies, allow_redirects=False, ssl=False) as r:
             conntext = await r.text()
             if ((r.status == 200) and ('need login' not in conntext) and ('禁止访问' not in conntext) and (len(conntext) != 3318) and ('无访问权限' not in conntext) and ('认证失败' not in conntext)):
-                cprint("[+] 状态码%d" % r.status + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(conntext)), "red")
-                f2 = open("output.txt", "a")
-                f2.write(u + '\n')
-                f2.close()
+                r2 = requests.get(url=u + "QWEASD123", headers=newheader, timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
+                if str(len(conntext)) != str(len(r2.content)):
+                    cprint("[+] 状态码%d" % r.status + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(conntext)), "red")
+                    f2 = open("output.txt", "a")
+                    f2.write(u + '\n')
+                    f2.close()
+                else:
+                    cprint("[-] 发现重复长度URL为: " + u + '    ' + "页面长度为:" + str(len(conntext)), "yellow")
             elif r.status == 200:
                 cprint(
                     "[+] 状态码%d" % r.status + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(conntext)), "magenta")
@@ -293,7 +298,7 @@ def dumpfile(input_file, proxies, header_new):
                 full_url = full_url.replace("\n", "")
                 try:
                     requests.packages.urllib3.disable_warnings()
-                    headnumber = str(requests.head(full_url, timeout=5, proxies=proxies, headers=newheader))
+                    headnumber = str(requests.head(full_url, timeout=5, verify=False, proxies=proxies, headers=newheader))
                     sleep(int(float(sleeps)))
                     if headnumber == "<Response [200]>":
                         cprint("[+] 发现SpringBoot敏感文件泄露，地址为 " + full_url, "red")

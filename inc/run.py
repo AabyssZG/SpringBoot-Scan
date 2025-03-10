@@ -134,7 +134,7 @@ async def file(u, proxies, header_new):
                     f2.write(u + '\n')
                     f2.close()
                 else:
-                    cprint("[-] 发现重复长度URL为: " + u + '    ' + "页面长度为:" + str(len(conntext)), "yellow")
+                    cprint("[-] 发现重复长度URL为: " + u + '    ' + "页面长度为:" + str(len(conntext)), "magenta")
             elif r.status == 200:
                 cprint(
                     "[+] 状态码%d" % r.status + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(conntext)), "magenta")

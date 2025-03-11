@@ -36,7 +36,7 @@
 * [x] 对端点爆破模块进行优化，对页面进行Hash计算，如果发现页面Hash相同的情况就不导入到 `urlout.txt`
 * [x] 在目录爆破 `run.py` /POC探测  `poc.py` /漏洞利用 `vul.py` 这三个核心模块，新增全局变量 `outtime = 10` 可自由调整各模块HTTP访问超时时间
 * [x] 感谢 [`@Viking`](https://github.com/VK2000) 师傅，增加了部分 `Dir.txt` 敏感端点爆破字典的内容
-* [x] 感谢 [`@Fkalis`](https://github.com/FFR66) 师傅，使用 `aiohttp` 对批量信息泄露扫描进行并发处理，大大提高 `-uf` 参数的扫描速度
+* [x] 感谢 [`@Fkalis`](https://github.com/WingBy-Fkalis) 师傅，使用 `aiohttp` 对批量信息泄露扫描进行并发处理，大大提高 `-uf` 参数的扫描速度
 * [x] 新增支持多个参数自定义HTTP头部（请求头）进行操作，功能实现啦，快来试试吧~
 * [x] 新增支持资产测绘导出的时候自定义查询语句，更加灵活的导出目标资产数据
 * [x] 新增在敏感端点爆破爆破（单一和批量）的时候进行延时扫描，防止扫描速度太快被拦截
@@ -48,7 +48,7 @@
 * [x] 支持自动对Spring进行指纹识别
 * [x] 在漏洞利用模块，对错误进行输出为 `error.log`
 * [x] 支持使用带认证的HTTP代理节点，自动检测节点状态
-* [x] 由 [`@13exp`](https://github.com/13exp/) 师傅友情制作GUI图形化版本
+* [x] 由 [`@13exp`](https://github.com/13exp) 师傅友情制作GUI图形化版本
 * [x] 验证代理是否存活，并可以使用HTTP代理认证，支持使用HTTP/HTTPS代理所有流量
 * [x] 随机User-Agent请求头
 * [x] 解决SSL证书问题 (自签名证书请改成 `http://` 即可)
@@ -60,7 +60,7 @@
 - **解决了SSL证书问题，可以对采用SSL证书的Spring Boot框架进行扫描（自签名证书请改成 `http://` 即可）**
 - **对于二级目录部署的Spring项目，直接给工具相应的路径就行了（比如 `example.com/test/` 这个路径部署了Spring项目，那直接将 `example.com/test/` 传参给工具就行了）**
 
-**GUI图形化版本，由 [`@13exp`](https://github.com/13exp/) 师傅友情制作，GUI地址：[https://github.com/13exp/SpringBoot-Scan-GUI](https://github.com/13exp/SpringBoot-Scan-GUI)**
+**GUI图形化版本，由 [`@13exp`](https://github.com/13exp) 师傅友情制作，GUI地址：[https://github.com/13exp/SpringBoot-Scan-GUI](https://github.com/13exp/SpringBoot-Scan-GUI)**
 
 ![GUI](./pic/GUI.png)
 

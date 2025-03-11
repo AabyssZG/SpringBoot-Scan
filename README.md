@@ -5,7 +5,7 @@
 
 ![SpringBoot-Scan](./SpringBoot-Scan.png)
 
-**本项目的GitCode地址：[https://gitcode.com/AabyssZG/SpringBoot-Scan](https://gitcode.com/AabyssZG/SpringBoot-Scan)，当前工具版本号：V2.56-2024/08/18**
+**本项目的GitCode地址：[https://gitcode.com/AabyssZG/SpringBoot-Scan](https://gitcode.com/AabyssZG/SpringBoot-Scan)，当前工具版本号：V2.6-2025/03/11**
 
 **我还整理了一篇SpringBoot的相关渗透姿势在我的个人博客，欢迎各位师傅前来交流哈哈：[https://blog.zgsec.cn/archives/129.html](https://blog.zgsec.cn/archives/129.html)**
 
@@ -114,7 +114,7 @@ icon_hash="116323821"||body="Whitelabel Error Page"
            \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Whoami: https://github.com/AabyssZG + 
            _\$$$$$$\| $$      /      $$| $$  | $$    +-------------------------------------+ 
           |  \__| $$| $$_____|  $$$$$$$| $$  | $$    + 多进程速度提升: Fkalis              + 
-           \$$    $$ \$$     \\$$    $$| $$  | $$    + Whoami: https://github.com/FFR66    + 
+           \$$    $$ \$$     \\$$    $$| $$  | $$    + Whoami: github.com/WingBy-Fkalis    + 
             \$$$$$$   \$$$$$$$ \$$$$$$$ \$$   \$$    +-------------------------------------+ 
 
 用法:

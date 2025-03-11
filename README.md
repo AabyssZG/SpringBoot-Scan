@@ -30,7 +30,7 @@
 
 ## 功能支持的更新
 
-* [x] 感谢 `@ThumpBo` 师傅提出的建议，增加了读取指定TXT批量扫描敏感文件的功能 `-df` 并将扫描成功结果导出至 `dumpout.txt` 内
+* [x] 感谢 [`@ThumpBo`](https://github.com/ThumpBo) 师傅提出的建议，增加了读取指定TXT批量扫描敏感文件的功能 `-df` 并将扫描成功结果导出至 `dumpout.txt` 内
 * [x] 对下载敏感文件的模块进行报错优化，将报错内容并入至 `error.log`
 * [x] 感谢 [`@YanXi9999`](https://github.com/YanXi9999) 师傅的贡献，在读取指定TXT并批量信息泄露扫描过程中，去除重复页面提高效率
 * [x] 对端点爆破模块进行优化，对页面进行Hash计算，如果发现页面Hash相同的情况就不导入到 `urlout.txt`

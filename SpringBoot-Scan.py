@@ -21,6 +21,7 @@ def get_parser():
     p.add_argument("-f", "--fofa", type=str, default='', help="使用Fofa导出Spring框架资产")
     p.add_argument("-y", "--hunter", type=str, default='', help="使用Hunter导出Spring框架资产")
     p.add_argument("-t", "--newheader", type=str, help="从TXT文件中导入自定义HTTP头部")
+    p.add_argument("-c", "--cookie", type=str, help="设置请求的Cookie") 
     args = parser.parse_args()
     return args
 

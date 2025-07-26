@@ -13,7 +13,7 @@ def SpringBoot_Scan_console(args, proxies, header_new):
         urlnew = springcheck.check(args.url, proxies, header_new)
         run.url(urlnew, proxies, header_new)
     if args.urlfile:
-        asyncio.run(run.file_main(args.urlfile,proxies, header_new))
+        asyncio.run(run.file_main(args.urlfile, proxies, header_new))
     if args.vul:
         urlnew = springcheck.check(args.vul, proxies, header_new)
         vul.vul(urlnew, proxies, header_new)
@@ -25,11 +25,12 @@ def SpringBoot_Scan_console(args, proxies, header_new):
     if args.dumpfile:
         run.dumpfile(args.dumpfile, proxies, header_new)
     if args.zoomeye:
-        zoom.ZoomDowload(args.zoomeye,proxies)
+        zoom.ZoomDowload(args.zoomeye, proxies)
     if args.fofa:
-        fofa.FofaDowload(args.fofa,proxies)
+        fofa.FofaDowload(args.fofa, proxies)
     if args.hunter:
-        hunter.HunterDowload(args.hunter,proxies)
+        hunter.HunterDowload(args.hunter, proxies)
     else:
         output.usage()
         sys.exit()
+        

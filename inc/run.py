@@ -328,3 +328,4 @@ def dumpfile(input_file, proxies, header_new):
     else:
         cprint("[-] 读取指定TXT没有存在SpringBoot敏感文件泄露", "yellow")
     sys.exit()
+    

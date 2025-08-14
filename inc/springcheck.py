@@ -42,7 +42,8 @@ def Spring_Check(url,proxies,header_new):
             f2.close()
 
 def check(url,proxies,header_new):
-    header_new = json.loads(header_new)
+    if type(header_new) != dict:
+        header_new = json.loads(header_new)
     if ('://' not in url):
         url = str("http://") + str(url)
     if str(url[-1]) != "/":

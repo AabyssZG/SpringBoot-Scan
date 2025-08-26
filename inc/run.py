@@ -110,41 +110,58 @@ async def async_dir(url, proxies, header_new, semaphore, sleeps):
                     u = url + web_line
                 u_list.append(u)
         tasks = [asyncio.create_task(file_semaphore(u_dir, proxies, header_new, semaphore, sleeps)) for u_dir in u_list]
-        result = await asyncio.gather(*tasks)
+        result = await asyncio.gather(*tasks, return_exceptions=True)
+        exceptions = [r for r in result if isinstance(r, Exception)]
+        if exceptions:
+            cprint(f"[*] URL {url} 的部分端点访问失败，但继续扫描其他端点", "yellow")
     except Exception as e:
-        for task in tasks:
-            if not task.cancelled():
-                task.cancel()
         cprint("[-] URL为 " + url + " 的目标积极拒绝请求，予以跳过！", "magenta")
         f2 = open("error.log", "a")
         f2.write(str(e) + '\n')
         f2.close()
 
 async def file(u, proxies, header_new):
-    header = {"User-Agent": random.choice(ua)}
-    newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url=u, headers=newheader, proxy=proxies, allow_redirects=False, ssl=False) as r:
-            conntext = await r.text()
-            if ((r.status == 200) and ('need login' not in conntext) and ('禁止访问' not in conntext) and (len(conntext) != 3318) and ('无访问权限' not in conntext) and ('认证失败' not in conntext)):
-                r2 = requests.get(url=u + "QWEASD123", headers=newheader, timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
-                if str(len(conntext)) != str(len(r2.content)):
-                    cprint("[+] 状态码%d" % r.status + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(conntext)), "red")
-                    f2 = open("output.txt", "a")
-                    f2.write(u + '\n')
-                    f2.close()
+    try:
+        header = {"User-Agent": random.choice(ua)}
+        newheader = json.loads(str(JSON_handle(header, header_new)).replace("'", "\""))
+        # 处理代理格式
+        proxy_str = None
+        if proxies and 'http' in proxies:
+            proxy_str = proxies['http']
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url=u, headers=newheader, proxy=proxy_str, allow_redirects=False, ssl=False, timeout=10) as r:
+                conntext = await r.text()
+                if ((r.status == 200) and ('need login' not in conntext) and ('禁止访问' not in conntext) and (len(conntext) != 3318) and ('无访问权限' not in conntext) and ('认证失败' not in conntext)):
+                    try:
+                        r2 = requests.get(url=u + "QWEASD123", headers=newheader, timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
+                        if str(len(conntext)) != str(len(r2.content)):
+                            cprint("[+] 状态码%d" % r.status + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(conntext)), "red")
+                            f2 = open("output.txt", "a")
+                            f2.write(u + '\n')
+                            f2.close()
+                        else:
+                            cprint("[-] 发现重复长度URL为: " + u + '    ' + "页面长度为:" + str(len(conntext)), "magenta")
+                    except Exception as e:
+
+                        cprint("[+] 状态码%d" % r.status + ' ' + "信息泄露URL为:" + u + '    ' + "页面长度为:" + str(len(conntext)) + " (对比验证失败)", "red")
+                        f2 = open("output.txt", "a")
+                        f2.write(u + '\n')
+                        f2.close()
+                elif r.status == 200:
+                    cprint(
+                        "[+] 状态码%d" % r.status + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(conntext)), "magenta")
                 else:
-                    cprint("[-] 发现重复长度URL为: " + u + '    ' + "页面长度为:" + str(len(conntext)), "magenta")
-            elif r.status == 200:
-                cprint(
-                    "[+] 状态码%d" % r.status + ' ' + "但无法获取信息 URL为:" + u + '    ' + "页面长度为:" + str(len(conntext)), "magenta")
-            else:
-                cprint("[-] 状态码%d" % r.status + ' ' + "无法访问URL为:" + u, "yellow")
+                    cprint("[-] 状态码%d" % r.status + ' ' + "无法访问URL为:" + u, "yellow")
+    except asyncio.TimeoutError:
+        cprint("[-] 访问超时 URL为:" + u, "yellow")
+    except Exception as e:
+        cprint("[-] 访问失败 URL为:" + u + " 错误:" + str(e), "yellow")
 
 async def file_semaphore(url, proxies, header_new, semaphore, sleeps):
     async with semaphore:
-        output = await file(url, proxies, header_new)
-        await asyncio.sleep(int(sleeps))  # 等待4秒
+        await file(url, proxies, header_new)
+        await asyncio.sleep(int(sleeps)) 
 
 async def file_main(urlfile, proxies, header_new):
     urls_lists = []
@@ -171,7 +188,7 @@ async def file_main(urlfile, proxies, header_new):
             if not urls_lists:  # 当urls_itr为空时，直接跳出循环
                 break
             tasks = [async_dir(url, proxies, header_new, semaphore, sleeps) for url in urls_lists]
-            await asyncio.gather(*tasks)
+            await asyncio.gather(*tasks, return_exceptions=True)
         except StopIteration:
             break
     count = len(open("output.txt", 'r').readlines())

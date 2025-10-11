@@ -13,6 +13,7 @@
 
 ## 漏洞支持的更新
 
+* [x] 感谢 [`@ez-lbz`](https://github.com/ez-lbz) 师傅提交的PR，添加支持CVE-2025-41243 (Spring Cloud Gateway环境属性修改漏洞) 
 * [x] 添加支持2023 JeeSpringCloud 任意文件上传漏洞
 * [x] 添加支持CVE-2022-22947 (Spring Cloud Gateway SpELRCE漏洞)
 * [x] 添加支持CVE-2022-22963 (Spring Cloud Function SpEL RCE漏洞)

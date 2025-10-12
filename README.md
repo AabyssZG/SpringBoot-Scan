@@ -5,7 +5,7 @@
 
 ![SpringBoot-Scan](./SpringBoot-Scan.png)
 
-**本项目的GitCode地址：[https://gitcode.com/AabyssZG/SpringBoot-Scan](https://gitcode.com/AabyssZG/SpringBoot-Scan)，当前工具版本号：V2.7-2025/10/11**
+**本项目的GitCode地址：[https://gitcode.com/AabyssZG/SpringBoot-Scan](https://gitcode.com/AabyssZG/SpringBoot-Scan)，当前工具版本号：V2.7.1-2025/10/12**
 
 **我还整理了一篇SpringBoot的相关渗透姿势在我的个人博客，欢迎各位师傅前来交流哈哈：[https://blog.zgsec.cn/archives/129.html](https://blog.zgsec.cn/archives/129.html)**
 
@@ -13,7 +13,8 @@
 
 ## 漏洞支持的更新
 
-* [x] 感谢 [`@ez-lbz`](https://github.com/ez-lbz) 师傅提交的PR，添加支持CVE-2025-41243 (Spring Cloud Gateway环境属性修改漏洞) 
+* [x] 感谢 [`@ez-lbz`](https://github.com/ez-lbz) 师傅提交的PR，添加支持CVE-2025-41243 (Spring Cloud Gateway环境属性修改漏洞)
+* [x] 感谢 [`@ez-lbz`](https://github.com/ez-lbz) 师傅提交的PR，添加支持CVE-2024-37084 (Spring Cloud Data Flow远程命令执行漏洞)
 * [x] 添加支持2023 JeeSpringCloud 任意文件上传漏洞
 * [x] 添加支持CVE-2022-22947 (Spring Cloud Gateway SpELRCE漏洞)
 * [x] 添加支持CVE-2022-22963 (Spring Cloud Function SpEL RCE漏洞)
@@ -108,7 +109,7 @@ icon_hash="116323821"||body="Whitelabel Error Page"
  \$$    $$| $$    $$| $$      | $$| $$  | $$ \$$    $$| $$    $$ \$$    $$ \$$    $$  \$$  $$
   \$$$$$$ | $$$$$$$  \$$       \$$ \$$   \$$ _\$$$$$$$ \$$$$$$$   \$$$$$$   \$$$$$$    \$$$$ 
           | $$                              |  \__| $$                                       
-          | $$                               \$$    $$   [+] V2.7-2025年 欢度国庆佳节版     
+          | $$                               \$$    $$   [+] V2.7.1-2025年 欢度国庆佳节版     
            \$$                                \$$$$$$    [+] 感谢一路上支持和关注我们的师傅  
             ______                                                                           
            /      \                                  +-------------------------------------+ 

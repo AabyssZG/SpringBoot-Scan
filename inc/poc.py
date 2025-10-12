@@ -477,6 +477,7 @@ def CVE_2024_37084(url, proxies):
     }
     try:
         try:
+            requests.packages.urllib3.disable_warnings()
             response = requests.get(url + "api/package/", headers=Headers_1, timeout=outtime, verify=False,
                                     proxies=proxies)
             response.raise_for_status()

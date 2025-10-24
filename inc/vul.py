@@ -514,6 +514,7 @@ def CVE_2018_1273(url, proxies, header_new):
         f2.close()
 
 
+# 请不要使用vulhub上复现CVE-2022-22947的环境直接来测试这里的任意文件读取
 def CVE_2025_41243(url, proxies, header_new):
     cprint("======开始对目标URL进行CVE-2025-41243漏洞利用======", "green")
     oldHeader_1 = {

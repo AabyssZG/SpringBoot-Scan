@@ -13,7 +13,7 @@
 
 ## 漏洞支持的更新
 
-* [x] 感谢 [`@iChet666`](https://github.com/iChet666) 师傅的反馈，针对 Eureka_Xstream 反序列化漏洞在利用过程中可能导致破坏业务的情况，进行流程优化和Exp利用二次确认
+* [x] 感谢 [`@iChet666`](https://github.com/iChet666) 师傅的反馈，针对CVE-2021-21344 (Eureka_Xstream 反序列化漏洞) 在利用过程中可能导致破坏业务的情况，进行流程优化和Exp利用二次确认
 * [x] 感谢 [`@ez-lbz`](https://github.com/ez-lbz) 师傅提交的PR，添加支持CVE-2025-41243 (Spring Cloud Gateway环境属性修改漏洞)
 * [x] 感谢 [`@ez-lbz`](https://github.com/ez-lbz) 师傅提交的PR，添加支持CVE-2024-37084 (Spring Cloud Data Flow远程命令执行漏洞)
 * [x] 添加支持2023 JeeSpringCloud 任意文件上传漏洞

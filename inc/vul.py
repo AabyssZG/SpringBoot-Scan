@@ -202,6 +202,66 @@ def run_cve_2024_37084(url, proxies, header_new):
         cprint("[-] CVE-2024-37084远程命令执行漏洞不存在\n", "yellow")
 
 
+def run_cve_2025_22235(url, proxies, header_new):
+    cprint("======开始对目标URL进行CVE-2025-22235漏洞测试======", "green")
+    hits = exploits.check_cve_2025_22235(url, proxies, header_new)
+    if hits:
+        cprint("[+] 发现 /null/** 路径被应用接管，可能存在EndpointRequest鉴权绕过：", "red")
+        for hit in hits:
+            cprint(f"[+] {hit['path']} 状态码为 {hit['status']}", "red")
+        cprint("[+] 请人工确认 /null/** 下是否存在本应鉴权的敏感资源\n", "red")
+    else:
+        cprint("[-] 未发现CVE-2025-22235漏洞特征\n", "yellow")
+
+
+def run_cve_2025_24813(url, proxies, header_new):
+    cprint("======开始对目标URL进行CVE-2025-24813(Tomcat partial PUT)漏洞测试======", "green")
+    result = exploits.check_cve_2025_24813(url, proxies, header_new)
+    if not result:
+        cprint("[-] 目标未开放PUT方法，不存在CVE-2025-24813利用条件\n", "yellow")
+        return
+    cprint(f"[+] 目标允许PUT方法（上传返回状态码 {result['put_status']}）", "red")
+    if result["write"]:
+        cprint("[+] 测试文件已成功写入并回读，确认DefaultServlet开启写入！", "red")
+        cprint("[+] 若目标同时开启文件会话持久化(PersistentManager+FileStore)且存在反序列化利用链，可进一步RCE", "red")
+        cprint("[+] 建议使用Java Chains/ysoserial生成序列化Payload进行深度利用\n", "red")
+    else:
+        cprint(f"[.] PUT请求被接受但未能回读文件（可能为partial PUT临时文件机制），请人工深入验证： {result['file']}\n", "yellow")
+
+
+def run_cve_2026_59378(url, proxies, header_new):
+    cprint("======开始对目标URL进行CVE-2026-59378漏洞测试======", "green")
+    result = exploits.check_cve_2026_59378(url, proxies, header_new)
+    if not result:
+        cprint("[-] 未发现CVE-2026-59378漏洞特征\n", "yellow")
+        return
+    for hit in result["hits"]:
+        cprint(f"[+] POST {hit['path']} 状态码为 {hit['status']}", "red")
+        if hit["same_body"]:
+            cprint("[.] 注意：POST与GET响应内容一致，可能是同一个宽松handler，信号较弱", "yellow")
+    if result["secured"]:
+        cprint("[+] 已确认目标启用默认鉴权（受保护路径返回401/403），health路径却放行非GET请求", "red")
+        cprint("[+] 若该路径同时映射了Jersey(JAX-RS)业务资源，未认证请求可直达资源，建议人工深入验证\n", "red")
+    else:
+        cprint("[.] 注意：未检测到目标启用默认鉴权（受保护路径未返回401/403）", "yellow")
+        cprint("[.] 上述结果更可能是业务自定义的公开health端点或宽松路由，属正常响应而非鉴权绕过，请人工甄别\n", "yellow")
+
+
+def run_cve_2026_47884(url, proxies, header_new):
+    cprint("======开始对目标URL进行CVE-2026-47884(XsltView SSRF/RCE)漏洞测试======", "green")
+    result = exploits.check_cve_2026_47884(url, proxies, header_new)
+    if not result:
+        cprint("[-] 未发现XsltView特征（目标可能未使用XsltView或未开启通配视图渲染）\n", "yellow")
+        return
+    cprint(f"[+] 在 {result['endpoint']} 发现XSLT错误特征，目标使用XsltView进行视图渲染", "red")
+    if result["lfi"]:
+        cprint(f"[+] 确认可通过视图名读取任意文件（系统为{result['os']}），Poc地址如下：", "red")
+        cprint(result["poc"], "red")
+        cprint("[+] 可进一步托管恶意XSLT样式表实现SSRF/RCE（Xalan Java扩展）\n", "red")
+    else:
+        cprint("[.] 未能通过视图名读取文件，建议人工尝试SSRF/RCE载荷\n", "yellow")
+
+
 RUNNERS = {
     1: run_jeespring,
     2: run_cve_2022_22947,
@@ -214,6 +274,10 @@ RUNNERS = {
     9: run_cve_2018_1273,
     10: run_cve_2025_41243,
     11: run_cve_2024_37084,
+    12: run_cve_2025_22235,
+    13: run_cve_2025_24813,
+    14: run_cve_2026_59378,
+    15: run_cve_2026_47884,
 }
 
 

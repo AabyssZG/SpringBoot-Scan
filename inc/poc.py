@@ -64,6 +64,21 @@ def detect(choice, url, proxies):
         if exploits.check_cve_2024_37084(url, proxies) and exploits.exploit_cve_2024_37084(url, "aaa", proxies):
             return "[+] [CVE-2024-37084] " + url
         return None
+    if choice == 12:
+        hits = exploits.check_cve_2025_22235(url, proxies)
+        return "[+] [CVE-2025-22235] " + url if hits else None
+    if choice == 13:
+        result = exploits.check_cve_2025_24813(url, proxies)
+        return "[+] [CVE-2025-24813] " + url if result and result["write"] else None
+    if choice == 14:
+        result = exploits.check_cve_2026_59378(url, proxies)
+        # 批量模式只记录已确认启用默认鉴权的高置信度命中，降低误报
+        if result and result["secured"]:
+            return "[+] [CVE-2026-59378] " + url
+        return None
+    if choice == 15:
+        result = exploits.check_cve_2026_47884(url, proxies)
+        return "[+] [CVE-2026-47884] " + url if result and result["lfi"] else None
     return None
 
 

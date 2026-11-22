@@ -88,6 +88,20 @@ def http_delete(url, headers=None, proxies=None, **kwargs):
     return requests.delete(url, headers=headers, proxies=proxies, **kwargs)
 
 
+def http_options(url, headers=None, proxies=None, **kwargs):
+    kwargs.setdefault('timeout', OUTTIME)
+    kwargs.setdefault('verify', False)
+    kwargs.setdefault('allow_redirects', False)
+    return requests.options(url, headers=headers, proxies=proxies, **kwargs)
+
+
+def http_put(url, headers=None, proxies=None, **kwargs):
+    kwargs.setdefault('timeout', OUTTIME)
+    kwargs.setdefault('verify', False)
+    kwargs.setdefault('allow_redirects', False)
+    return requests.put(url, headers=headers, proxies=proxies, **kwargs)
+
+
 def exit_interrupt():
     print("Ctrl + C 手动终止了进程")
     sys.exit()

@@ -5,7 +5,7 @@
 
 ![SpringBoot-Scan](./SpringBoot-Scan.png)
 
-**本项目的GitCode地址：[https://gitcode.com/AabyssZG/SpringBoot-Scan](https://gitcode.com/AabyssZG/SpringBoot-Scan)，当前工具版本号：V2.7.2-2025/11/09**
+**本项目的GitCode地址：[https://gitcode.com/AabyssZG/SpringBoot-Scan](https://gitcode.com/AabyssZG/SpringBoot-Scan)，当前工具版本号：V3.1.1-2026/11/22**
 
 **我还整理了一篇SpringBoot的相关渗透姿势在我的个人博客，欢迎各位师傅前来交流哈哈：[https://blog.zgsec.cn/archives/129.html](https://blog.zgsec.cn/archives/129.html)**
 
@@ -114,11 +114,11 @@ icon_hash="116323821"||body="Whitelabel Error Page"
  \$$    $$| $$    $$| $$      | $$| $$  | $$ \$$    $$| $$    $$ \$$    $$ \$$    $$  \$$  $$
   \$$$$$$ | $$$$$$$  \$$       \$$ \$$   \$$ _\$$$$$$$ \$$$$$$$   \$$$$$$   \$$$$$$    \$$$$ 
           | $$                              |  \__| $$                                       
-          | $$                               \$$    $$   [+] V2.7.2-2025年 欢度国庆佳节版     
+          | $$                               \$$    $$   [+] V3.1.1-2026年 代码重构版     
            \$$                                \$$$$$$    [+] 感谢一路上支持和关注我们的师傅  
             ______                                                                           
            /      \                                  +-------------------------------------+ 
-          |  $$$$$$\  _______  ______   _______      + Version: 2.7.2                      + 
+          |  $$$$$$\  _______  ______   _______      + Version: 3.1.1                      + 
           | $$___\$$ /       \|      \ |       \     + Author: 曾哥(@AabyssZG)             + 
            \$$    \ |  $$$$$$$ \$$$$$$\| $$$$$$$\    + Whoami: https://github.com/AabyssZG + 
            _\$$$$$$\| $$      /      $$| $$  | $$    +-------------------------------------+ 

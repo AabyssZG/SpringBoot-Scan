@@ -13,6 +13,9 @@
 
 ## 漏洞支持的更新
 
+* [x] 添加支持Whitelabel Error Page SpEL RCE漏洞 (Spring Boot 1.1.0-1.1.12 / 1.2.0-1.2.7 / 1.3.0 错误页SpEL表达式注入)
+* [x] 新增Jolokia脱敏属性明文读取功能（通过getProperty读取Actuator端点脱敏为******的配置明文，并自动扫描env端点列出脱敏属性）
+* [x] 扩充 `Dir.txt` 敏感路径字典，补充Druid监控页面系列路径（weburi.json、websession.json、sql.html、wall.html等）
 * [x] 添加支持CVE-2026-47884 (Spring Framework XsltView SSRF/RCE漏洞，参考公开PoC审核后集成)
 * [x] 添加支持CVE-2026-59378 (Spring Boot Actuator默认安全配置鉴权绕过漏洞)
 * [x] 添加支持CVE-2025-24813 (Apache Tomcat partial PUT文件写入/RCE漏洞)

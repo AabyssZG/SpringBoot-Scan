@@ -79,6 +79,9 @@ def detect(choice, url, proxies):
     if choice == 15:
         result = exploits.check_cve_2026_47884(url, proxies)
         return "[+] [CVE-2026-47884] " + url if result and result["lfi"] else None
+    if choice == 16:
+        result = exploits.check_whitelabel_spel(url, proxies)
+        return "[+] [Whitelabel_SpEL_RCE] " + result["poc"] if result else None
     return None
 
 

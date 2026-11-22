@@ -40,6 +40,7 @@
 
 ## 功能支持的更新
 
+* [x] 感谢 [`@RuoJi6`](https://github.com/RuoJi6) 师傅的反馈，针对文章[《JAVA攻防基础之SpringBoot漏洞利用姿势》](https://mp.weixin.qq.com/s/S1BLrSmjME1duMhDD1uKKA)内的技术要点进行融入
 * [x] 感谢 [`@kn1g78`](https://github.com/kn1g78) 师傅提交的PR，修复了端点扫描的若干BUG
 * [x] 感谢 [`@ngc660sec`](https://github.com/ngc660sec) 师傅提交的PR，对于自定义请求头进行类型判断，防止二次转换类型
 * [x] 感谢 [`@ThumpBo`](https://github.com/ThumpBo) 师傅提出的建议，增加了读取指定TXT批量扫描敏感文件的功能 `-df` 并将扫描成功结果导出至 `dumpout.txt` 内
